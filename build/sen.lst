@@ -1,0 +1,1038 @@
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"sen.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "MotorFoc/sen.c"
+  20              		.section	.text.PositionToZero,"ax",%progbits
+  21              		.align	1
+  22              		.global	PositionToZero
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	PositionToZero:
+  28              	.LFB272:
+   1:MotorFoc/sen.c **** /**
+   2:MotorFoc/sen.c ****  * @file sen.c
+   3:MotorFoc/sen.c ****  * @brief 实现编码器有感 FOC 的调零、电流环、速度环和位置环。
+   4:MotorFoc/sen.c ****  *
+   5:MotorFoc/sen.c ****  * 闭环级联关系为：位置误差 -> 速度给定 -> q 轴电流给定 -> q 轴电压；d 轴
+   6:MotorFoc/sen.c ****  * 电流固定为零。电流环使用 20 kHz 控制角度，速度和位置环通过软件分频�
+   7:MotorFoc/sen.c ****  */
+   8:MotorFoc/sen.c **** 
+   9:MotorFoc/sen.c **** #include "motor_ctrl.h"
+  10:MotorFoc/sen.c **** #include "sen.h"
+  11:MotorFoc/sen.c **** #include "motor_para.h"
+  12:MotorFoc/sen.c **** /**
+  13:MotorFoc/sen.c ****  * @brief 用固定 alpha 轴电压吸合转子并把当前位置定义为编码器零点。
+  14:MotorFoc/sen.c ****  *
+  15:MotorFoc/sen.c ****  * 先使能六路互补 PWM，输出 Ualpha=1、Ubeta=0 的静止电压矢量并等待转子稳定
+  16:MotorFoc/sen.c ****  * 然后清零 TIM3->CNT 和 Motor.E_theta，最后关闭 PWM 输出。
+  17:MotorFoc/sen.c ****  * @warning 函数包含秒级阻塞延时并会产生保持转矩，只能在停机校准流程调
+  18:MotorFoc/sen.c ****  */
+  19:MotorFoc/sen.c **** void PositionToZero(void)
+  20:MotorFoc/sen.c **** {
+  29              		.loc 1 20 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 38B5     		push	{r3, r4, r5, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 16
+  36              		.cfi_offset 3, -16
+  37              		.cfi_offset 4, -12
+  38              		.cfi_offset 5, -8
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s 			page 2
+
+
+  39              		.cfi_offset 14, -4
+  21:MotorFoc/sen.c ****     TIM1->CCER |= 0x5555;
+  40              		.loc 1 21 5 view .LVU1
+  41              		.loc 1 21 9 is_stmt 0 view .LVU2
+  42 0002 224D     		ldr	r5, .L3
+  43 0004 2B6A     		ldr	r3, [r5, #32]
+  44              		.loc 1 21 16 view .LVU3
+  45 0006 43F4AA43 		orr	r3, r3, #21760
+  46 000a 43F05503 		orr	r3, r3, #85
+  47 000e 2B62     		str	r3, [r5, #32]
+  22:MotorFoc/sen.c ****     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+  48              		.loc 1 22 5 is_stmt 1 view .LVU4
+  49 0010 1F4C     		ldr	r4, .L3+4
+  50 0012 0021     		movs	r1, #0
+  51 0014 2046     		mov	r0, r4
+  52 0016 FFF7FEFF 		bl	HAL_TIM_PWM_Start
+  53              	.LVL0:
+  23:MotorFoc/sen.c ****     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+  54              		.loc 1 23 5 view .LVU5
+  55 001a 0421     		movs	r1, #4
+  56 001c 2046     		mov	r0, r4
+  57 001e FFF7FEFF 		bl	HAL_TIM_PWM_Start
+  58              	.LVL1:
+  24:MotorFoc/sen.c ****     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+  59              		.loc 1 24 5 view .LVU6
+  60 0022 0821     		movs	r1, #8
+  61 0024 2046     		mov	r0, r4
+  62 0026 FFF7FEFF 		bl	HAL_TIM_PWM_Start
+  63              	.LVL2:
+  25:MotorFoc/sen.c ****     HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
+  64              		.loc 1 25 5 view .LVU7
+  65 002a 0021     		movs	r1, #0
+  66 002c 2046     		mov	r0, r4
+  67 002e FFF7FEFF 		bl	HAL_TIMEx_PWMN_Start
+  68              	.LVL3:
+  26:MotorFoc/sen.c ****     HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
+  69              		.loc 1 26 5 view .LVU8
+  70 0032 0421     		movs	r1, #4
+  71 0034 2046     		mov	r0, r4
+  72 0036 FFF7FEFF 		bl	HAL_TIMEx_PWMN_Start
+  73              	.LVL4:
+  27:MotorFoc/sen.c ****     HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
+  74              		.loc 1 27 5 view .LVU9
+  75 003a 0821     		movs	r1, #8
+  76 003c 2046     		mov	r0, r4
+  77 003e FFF7FEFF 		bl	HAL_TIMEx_PWMN_Start
+  78              	.LVL5:
+  28:MotorFoc/sen.c ****     HAL_Delay(100);
+  79              		.loc 1 28 5 view .LVU10
+  80 0042 6420     		movs	r0, #100
+  81 0044 FFF7FEFF 		bl	HAL_Delay
+  82              	.LVL6:
+  29:MotorFoc/sen.c **** 
+  30:MotorFoc/sen.c ****     Svpwm.Ualpha = 1; // 固定定子电压矢量，使转子磁极对齐 alpha 轴。
+  83              		.loc 1 30 5 view .LVU11
+  84              		.loc 1 30 18 is_stmt 0 view .LVU12
+  85 0048 1248     		ldr	r0, .L3+8
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s 			page 3
+
+
+  86 004a 4FF07E53 		mov	r3, #1065353216
+  87 004e 0360     		str	r3, [r0]	@ float
+  31:MotorFoc/sen.c ****     Svpwm.Ubeta = 0;
+  88              		.loc 1 31 5 is_stmt 1 view .LVU13
+  89              		.loc 1 31 17 is_stmt 0 view .LVU14
+  90 0050 0024     		movs	r4, #0
+  91 0052 4460     		str	r4, [r0, #4]	@ float
+  32:MotorFoc/sen.c ****     SvpwmCal((M_SVPWM)&Svpwm);
+  92              		.loc 1 32 5 is_stmt 1 view .LVU15
+  93 0054 FFF7FEFF 		bl	SvpwmCal
+  94              	.LVL7:
+  33:MotorFoc/sen.c ****     HAL_Delay(1000);
+  95              		.loc 1 33 5 view .LVU16
+  96 0058 4FF47A70 		mov	r0, #1000
+  97 005c FFF7FEFF 		bl	HAL_Delay
+  98              	.LVL8:
+  34:MotorFoc/sen.c ****     TIM3->CNT = 0;     // 把吸合后的机械位置定义为编码器零点。
+  99              		.loc 1 34 5 view .LVU17
+ 100              		.loc 1 34 15 is_stmt 0 view .LVU18
+ 101 0060 0D4B     		ldr	r3, .L3+12
+ 102 0062 0022     		movs	r2, #0
+ 103 0064 5A62     		str	r2, [r3, #36]
+  35:MotorFoc/sen.c ****     Motor.E_theta = 0;
+ 104              		.loc 1 35 5 is_stmt 1 view .LVU19
+ 105              		.loc 1 35 19 is_stmt 0 view .LVU20
+ 106 0066 0D4B     		ldr	r3, .L3+16
+ 107 0068 5C60     		str	r4, [r3, #4]	@ float
+  36:MotorFoc/sen.c ****     HAL_Delay(500);
+ 108              		.loc 1 36 5 is_stmt 1 view .LVU21
+ 109 006a 4FF4FA70 		mov	r0, #500
+ 110 006e FFF7FEFF 		bl	HAL_Delay
+ 111              	.LVL9:
+  37:MotorFoc/sen.c **** 
+  38:MotorFoc/sen.c ****     TIM1->CCER &= 0xAAAA;
+ 112              		.loc 1 38 5 view .LVU22
+ 113              		.loc 1 38 9 is_stmt 0 view .LVU23
+ 114 0072 2B6A     		ldr	r3, [r5, #32]
+ 115              		.loc 1 38 16 view .LVU24
+ 116 0074 23F4AA43 		bic	r3, r3, #21760
+ 117 0078 23F05503 		bic	r3, r3, #85
+ 118 007c 1B04     		lsls	r3, r3, #16
+ 119 007e 1B0C     		lsrs	r3, r3, #16
+ 120 0080 2B62     		str	r3, [r5, #32]
+  39:MotorFoc/sen.c ****     HAL_Delay(500);
+ 121              		.loc 1 39 5 is_stmt 1 view .LVU25
+ 122 0082 4FF4FA70 		mov	r0, #500
+ 123 0086 FFF7FEFF 		bl	HAL_Delay
+ 124              	.LVL10:
+  40:MotorFoc/sen.c **** }
+ 125              		.loc 1 40 1 is_stmt 0 view .LVU26
+ 126 008a 38BD     		pop	{r3, r4, r5, pc}
+ 127              	.L4:
+ 128              		.align	2
+ 129              	.L3:
+ 130 008c 00000140 		.word	1073807360
+ 131 0090 00000000 		.word	htim1
+ 132 0094 00000000 		.word	Svpwm
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s 			page 4
+
+
+ 133 0098 00040040 		.word	1073742848
+ 134 009c 00000000 		.word	Motor
+ 135              		.cfi_endproc
+ 136              	.LFE272:
+ 138              		.section	.text.PostionToZeroDouble,"ax",%progbits
+ 139              		.align	1
+ 140              		.global	PostionToZeroDouble
+ 141              		.syntax unified
+ 142              		.thumb
+ 143              		.thumb_func
+ 145              	PostionToZeroDouble:
+ 146              	.LFB273:
+  41:MotorFoc/sen.c **** 
+  42:MotorFoc/sen.c **** /**
+  43:MotorFoc/sen.c ****  * @brief 先后施加 beta、alpha 两个电压矢量后执行编码器调零。
+  44:MotorFoc/sen.c ****  *
+  45:MotorFoc/sen.c ****  * 第一次吸合让转子离开可能的不确定初始位置，第二次吸合到最终 alpha �
+  46:MotorFoc/sen.c ****  * 可减小单次吸合受静摩擦或初始夹角影响产生的零位误差。最后清零编码
+  47:MotorFoc/sen.c ****  * @warning 函数会驱动电机且包含多个阻塞延时，机构必须允许校准运动。
+  48:MotorFoc/sen.c ****  */
+  49:MotorFoc/sen.c **** void PostionToZeroDouble(void)
+  50:MotorFoc/sen.c **** {
+ 147              		.loc 1 50 1 is_stmt 1 view -0
+ 148              		.cfi_startproc
+ 149              		@ args = 0, pretend = 0, frame = 0
+ 150              		@ frame_needed = 0, uses_anonymous_args = 0
+ 151 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 152              	.LCFI1:
+ 153              		.cfi_def_cfa_offset 24
+ 154              		.cfi_offset 3, -24
+ 155              		.cfi_offset 4, -20
+ 156              		.cfi_offset 5, -16
+ 157              		.cfi_offset 6, -12
+ 158              		.cfi_offset 7, -8
+ 159              		.cfi_offset 14, -4
+  51:MotorFoc/sen.c ****     TIM1->CCER |= 0x5555;
+ 160              		.loc 1 51 5 view .LVU28
+ 161              		.loc 1 51 9 is_stmt 0 view .LVU29
+ 162 0002 284D     		ldr	r5, .L7
+ 163 0004 2B6A     		ldr	r3, [r5, #32]
+ 164              		.loc 1 51 16 view .LVU30
+ 165 0006 43F4AA43 		orr	r3, r3, #21760
+ 166 000a 43F05503 		orr	r3, r3, #85
+ 167 000e 2B62     		str	r3, [r5, #32]
+  52:MotorFoc/sen.c ****     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+ 168              		.loc 1 52 5 is_stmt 1 view .LVU31
+ 169 0010 254C     		ldr	r4, .L7+4
+ 170 0012 0021     		movs	r1, #0
+ 171 0014 2046     		mov	r0, r4
+ 172 0016 FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 173              	.LVL11:
+  53:MotorFoc/sen.c ****     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+ 174              		.loc 1 53 5 view .LVU32
+ 175 001a 0421     		movs	r1, #4
+ 176 001c 2046     		mov	r0, r4
+ 177 001e FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 178              	.LVL12:
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s 			page 5
+
+
+  54:MotorFoc/sen.c ****     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+ 179              		.loc 1 54 5 view .LVU33
+ 180 0022 0821     		movs	r1, #8
+ 181 0024 2046     		mov	r0, r4
+ 182 0026 FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 183              	.LVL13:
+  55:MotorFoc/sen.c ****     HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
+ 184              		.loc 1 55 5 view .LVU34
+ 185 002a 0021     		movs	r1, #0
+ 186 002c 2046     		mov	r0, r4
+ 187 002e FFF7FEFF 		bl	HAL_TIMEx_PWMN_Start
+ 188              	.LVL14:
+  56:MotorFoc/sen.c ****     HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
+ 189              		.loc 1 56 5 view .LVU35
+ 190 0032 0421     		movs	r1, #4
+ 191 0034 2046     		mov	r0, r4
+ 192 0036 FFF7FEFF 		bl	HAL_TIMEx_PWMN_Start
+ 193              	.LVL15:
+  57:MotorFoc/sen.c ****     HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
+ 194              		.loc 1 57 5 view .LVU36
+ 195 003a 0821     		movs	r1, #8
+ 196 003c 2046     		mov	r0, r4
+ 197 003e FFF7FEFF 		bl	HAL_TIMEx_PWMN_Start
+ 198              	.LVL16:
+  58:MotorFoc/sen.c **** 
+  59:MotorFoc/sen.c ****     HAL_Delay(100);
+ 199              		.loc 1 59 5 view .LVU37
+ 200 0042 6420     		movs	r0, #100
+ 201 0044 FFF7FEFF 		bl	HAL_Delay
+ 202              	.LVL17:
+  60:MotorFoc/sen.c **** 
+  61:MotorFoc/sen.c ****     Svpwm.Ualpha = 0.0f;
+ 203              		.loc 1 61 5 view .LVU38
+ 204              		.loc 1 61 18 is_stmt 0 view .LVU39
+ 205 0048 184C     		ldr	r4, .L7+8
+ 206 004a 0026     		movs	r6, #0
+ 207 004c 2660     		str	r6, [r4]	@ float
+  62:MotorFoc/sen.c ****     Svpwm.Ubeta = 0.5f; // 第一次沿 beta 轴吸合。
+ 208              		.loc 1 62 5 is_stmt 1 view .LVU40
+ 209              		.loc 1 62 17 is_stmt 0 view .LVU41
+ 210 004e 4FF07C57 		mov	r7, #1056964608
+ 211 0052 6760     		str	r7, [r4, #4]	@ float
+  63:MotorFoc/sen.c ****     SvpwmCal((M_SVPWM)&Svpwm);
+ 212              		.loc 1 63 5 is_stmt 1 view .LVU42
+ 213 0054 2046     		mov	r0, r4
+ 214 0056 FFF7FEFF 		bl	SvpwmCal
+ 215              	.LVL18:
+  64:MotorFoc/sen.c ****     HAL_Delay(1000);
+ 216              		.loc 1 64 5 view .LVU43
+ 217 005a 4FF47A70 		mov	r0, #1000
+ 218 005e FFF7FEFF 		bl	HAL_Delay
+ 219              	.LVL19:
+  65:MotorFoc/sen.c **** 
+  66:MotorFoc/sen.c ****     Svpwm.Ualpha = 0.5f; // 第二次沿 alpha 轴吸合到最终零位。
+ 220              		.loc 1 66 5 view .LVU44
+ 221              		.loc 1 66 18 is_stmt 0 view .LVU45
+ 222 0062 2760     		str	r7, [r4]	@ float
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s 			page 6
+
+
+  67:MotorFoc/sen.c ****     Svpwm.Ubeta = 0.0f;
+ 223              		.loc 1 67 5 is_stmt 1 view .LVU46
+ 224              		.loc 1 67 17 is_stmt 0 view .LVU47
+ 225 0064 6660     		str	r6, [r4, #4]	@ float
+  68:MotorFoc/sen.c ****     SvpwmCal((M_SVPWM)&Svpwm);
+ 226              		.loc 1 68 5 is_stmt 1 view .LVU48
+ 227 0066 2046     		mov	r0, r4
+ 228 0068 FFF7FEFF 		bl	SvpwmCal
+ 229              	.LVL20:
+  69:MotorFoc/sen.c ****     HAL_Delay(1000);
+ 230              		.loc 1 69 5 view .LVU49
+ 231 006c 4FF47A70 		mov	r0, #1000
+ 232 0070 FFF7FEFF 		bl	HAL_Delay
+ 233              	.LVL21:
+  70:MotorFoc/sen.c **** 
+  71:MotorFoc/sen.c ****     TIM3->CNT = 0;
+ 234              		.loc 1 71 5 view .LVU50
+ 235              		.loc 1 71 15 is_stmt 0 view .LVU51
+ 236 0074 0E4B     		ldr	r3, .L7+12
+ 237 0076 0022     		movs	r2, #0
+ 238 0078 5A62     		str	r2, [r3, #36]
+  72:MotorFoc/sen.c ****     Motor.E_theta = 0;
+ 239              		.loc 1 72 5 is_stmt 1 view .LVU52
+ 240              		.loc 1 72 19 is_stmt 0 view .LVU53
+ 241 007a 0E4B     		ldr	r3, .L7+16
+ 242 007c 5E60     		str	r6, [r3, #4]	@ float
+  73:MotorFoc/sen.c **** 
+  74:MotorFoc/sen.c ****     HAL_Delay(1000);
+ 243              		.loc 1 74 5 is_stmt 1 view .LVU54
+ 244 007e 4FF47A70 		mov	r0, #1000
+ 245 0082 FFF7FEFF 		bl	HAL_Delay
+ 246              	.LVL22:
+  75:MotorFoc/sen.c **** 
+  76:MotorFoc/sen.c ****     TIM1->CCER &= 0xAAAA;
+ 247              		.loc 1 76 5 view .LVU55
+ 248              		.loc 1 76 9 is_stmt 0 view .LVU56
+ 249 0086 2B6A     		ldr	r3, [r5, #32]
+ 250              		.loc 1 76 16 view .LVU57
+ 251 0088 23F4AA43 		bic	r3, r3, #21760
+ 252 008c 23F05503 		bic	r3, r3, #85
+ 253 0090 1B04     		lsls	r3, r3, #16
+ 254 0092 1B0C     		lsrs	r3, r3, #16
+ 255 0094 2B62     		str	r3, [r5, #32]
+  77:MotorFoc/sen.c ****     HAL_Delay(1000);
+ 256              		.loc 1 77 5 is_stmt 1 view .LVU58
+ 257 0096 4FF47A70 		mov	r0, #1000
+ 258 009a FFF7FEFF 		bl	HAL_Delay
+ 259              	.LVL23:
+  78:MotorFoc/sen.c **** 
+  79:MotorFoc/sen.c ****     MotorStop();
+ 260              		.loc 1 79 5 view .LVU59
+ 261 009e FFF7FEFF 		bl	MotorStop
+ 262              	.LVL24:
+  80:MotorFoc/sen.c **** }
+ 263              		.loc 1 80 1 is_stmt 0 view .LVU60
+ 264 00a2 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 265              	.L8:
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s 			page 7
+
+
+ 266              		.align	2
+ 267              	.L7:
+ 268 00a4 00000140 		.word	1073807360
+ 269 00a8 00000000 		.word	htim1
+ 270 00ac 00000000 		.word	Svpwm
+ 271 00b0 00040040 		.word	1073742848
+ 272 00b4 00000000 		.word	Motor
+ 273              		.cfi_endproc
+ 274              	.LFE273:
+ 276              		.section	.text.CurCloseloop,"ax",%progbits
+ 277              		.align	1
+ 278              		.global	CurCloseloop
+ 279              		.syntax unified
+ 280              		.thumb
+ 281              		.thumb_func
+ 283              	CurCloseloop:
+ 284              	.LVL25:
+ 285              	.LFB274:
+  81:MotorFoc/sen.c **** 
+  82:MotorFoc/sen.c **** /**
+  83:MotorFoc/sen.c ****  * @brief 使用给定电角度完成有感 d/q 电流双闭环。
+  84:MotorFoc/sen.c ****  * @param IqRef q 轴电流给定，单位 A，正负决定转矩方向。
+  85:MotorFoc/sen.c ****  * @param Theta 编码器换算得到的转子电角度，单位 rad。
+  86:MotorFoc/sen.c ****  *
+  87:MotorFoc/sen.c ****  * 表贴式 PMSM 常用 IdRef=0，使定子电流主要用于产生转矩。两个 PI 输出 Ud/Uq
+  88:MotorFoc/sen.c ****  * 再经反 Park 变换形成供 SVPWM 使用的 Ualpha/Ubeta。
+  89:MotorFoc/sen.c ****  */
+  90:MotorFoc/sen.c **** void CurCloseloop(float IqRef, float Theta)
+  91:MotorFoc/sen.c **** {
+ 286              		.loc 1 91 1 is_stmt 1 view -0
+ 287              		.cfi_startproc
+ 288              		@ args = 0, pretend = 0, frame = 0
+ 289              		@ frame_needed = 0, uses_anonymous_args = 0
+ 290              		.loc 1 91 1 is_stmt 0 view .LVU62
+ 291 0000 2DE9F041 		push	{r4, r5, r6, r7, r8, lr}
+ 292              	.LCFI2:
+ 293              		.cfi_def_cfa_offset 24
+ 294              		.cfi_offset 4, -24
+ 295              		.cfi_offset 5, -20
+ 296              		.cfi_offset 6, -16
+ 297              		.cfi_offset 7, -12
+ 298              		.cfi_offset 8, -8
+ 299              		.cfi_offset 14, -4
+ 300 0004 10EE107A 		vmov	r7, s0
+ 301 0008 10EE906A 		vmov	r6, s1
+  92:MotorFoc/sen.c ****     pi_id.Ref = 0.0f;
+ 302              		.loc 1 92 5 is_stmt 1 view .LVU63
+ 303              		.loc 1 92 15 is_stmt 0 view .LVU64
+ 304 000c 0E4D     		ldr	r5, .L11
+ 305 000e 0023     		movs	r3, #0
+ 306 0010 2B60     		str	r3, [r5]	@ float
+  93:MotorFoc/sen.c ****     pi_id.Fbk = Park.Ds;
+ 307              		.loc 1 93 5 is_stmt 1 view .LVU65
+ 308              		.loc 1 93 21 is_stmt 0 view .LVU66
+ 309 0012 DFF84080 		ldr	r8, .L11+12
+ 310 0016 D8F80C30 		ldr	r3, [r8, #12]	@ float
+ 311              		.loc 1 93 15 view .LVU67
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s 			page 8
+
+
+ 312 001a 6B60     		str	r3, [r5, #4]	@ float
+  94:MotorFoc/sen.c ****     PiController((M_PI_Control)&pi_id);
+ 313              		.loc 1 94 5 is_stmt 1 view .LVU68
+ 314 001c 2846     		mov	r0, r5
+ 315 001e FFF7FEFF 		bl	PiController
+ 316              	.LVL26:
+  95:MotorFoc/sen.c **** 
+  96:MotorFoc/sen.c ****     pi_iq.Ref = IqRef;
+ 317              		.loc 1 96 5 view .LVU69
+ 318              		.loc 1 96 15 is_stmt 0 view .LVU70
+ 319 0022 0A4C     		ldr	r4, .L11+4
+ 320 0024 2760     		str	r7, [r4]	@ float
+  97:MotorFoc/sen.c ****     pi_iq.Fbk = Park.Qs;
+ 321              		.loc 1 97 5 is_stmt 1 view .LVU71
+ 322              		.loc 1 97 21 is_stmt 0 view .LVU72
+ 323 0026 D8F81030 		ldr	r3, [r8, #16]	@ float
+ 324              		.loc 1 97 15 view .LVU73
+ 325 002a 6360     		str	r3, [r4, #4]	@ float
+  98:MotorFoc/sen.c ****     PiController((M_PI_Control)&pi_iq);
+ 326              		.loc 1 98 5 is_stmt 1 view .LVU74
+ 327 002c 2046     		mov	r0, r4
+ 328 002e FFF7FEFF 		bl	PiController
+ 329              	.LVL27:
+  99:MotorFoc/sen.c **** 
+ 100:MotorFoc/sen.c ****     Ipark.Theta = Theta;
+ 330              		.loc 1 100 5 view .LVU75
+ 331              		.loc 1 100 17 is_stmt 0 view .LVU76
+ 332 0032 0748     		ldr	r0, .L11+8
+ 333 0034 8660     		str	r6, [r0, #8]	@ float
+ 101:MotorFoc/sen.c ****     Ipark.Ds = pi_id.Out;
+ 334              		.loc 1 101 5 is_stmt 1 view .LVU77
+ 335              		.loc 1 101 21 is_stmt 0 view .LVU78
+ 336 0036 AB68     		ldr	r3, [r5, #8]	@ float
+ 337              		.loc 1 101 14 view .LVU79
+ 338 0038 C360     		str	r3, [r0, #12]	@ float
+ 102:MotorFoc/sen.c ****     Ipark.Qs = pi_iq.Out;
+ 339              		.loc 1 102 5 is_stmt 1 view .LVU80
+ 340              		.loc 1 102 21 is_stmt 0 view .LVU81
+ 341 003a A368     		ldr	r3, [r4, #8]	@ float
+ 342              		.loc 1 102 14 view .LVU82
+ 343 003c 0361     		str	r3, [r0, #16]	@ float
+ 103:MotorFoc/sen.c ****     IPARK_Cale((M_IPARK)&Ipark);
+ 344              		.loc 1 103 5 is_stmt 1 view .LVU83
+ 345 003e FFF7FEFF 		bl	IPARK_Cale
+ 346              	.LVL28:
+ 104:MotorFoc/sen.c **** }
+ 347              		.loc 1 104 1 is_stmt 0 view .LVU84
+ 348 0042 BDE8F081 		pop	{r4, r5, r6, r7, r8, pc}
+ 349              	.LVL29:
+ 350              	.L12:
+ 351              		.loc 1 104 1 view .LVU85
+ 352 0046 00BF     		.align	2
+ 353              	.L11:
+ 354 0048 00000000 		.word	pi_id
+ 355 004c 00000000 		.word	pi_iq
+ 356 0050 00000000 		.word	Ipark
+ 357 0054 00000000 		.word	Park
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s 			page 9
+
+
+ 358              		.cfi_endproc
+ 359              	.LFE274:
+ 361              		.section	.text.SpeedCloseloop,"ax",%progbits
+ 362              		.align	1
+ 363              		.global	SpeedCloseloop
+ 364              		.syntax unified
+ 365              		.thumb
+ 366              		.thumb_func
+ 368              	SpeedCloseloop:
+ 369              	.LVL30:
+ 370              	.LFB275:
+ 105:MotorFoc/sen.c **** 
+ 106:MotorFoc/sen.c **** /**
+ 107:MotorFoc/sen.c ****  * @brief 运行有感速度 PI，并把输出作为内层 q 轴电流给定。
+ 108:MotorFoc/sen.c ****  * @param SpeedRef 机械速度给定，单位 rpm。
+ 109:MotorFoc/sen.c ****  * @param UseRamp 1 使用斜坡限制速度变化；0 直接给定并限为 +/-100 rpm。
+ 110:MotorFoc/sen.c ****  *
+ 111:MotorFoc/sen.c ****  * 斜坡模式在速度误差过大时暂停斜坡计数，避免给定继续远离实际速度。
+ 112:MotorFoc/sen.c ****  * 使用电气 rpm，因此给定乘极对数 P；PI 输出再低通后送入 CurCloseloop()。
+ 113:MotorFoc/sen.c ****  */
+ 114:MotorFoc/sen.c **** void SpeedCloseloop(int16_t SpeedRef, uint8_t UseRamp)
+ 115:MotorFoc/sen.c **** {
+ 371              		.loc 1 115 1 is_stmt 1 view -0
+ 372              		.cfi_startproc
+ 373              		@ args = 0, pretend = 0, frame = 0
+ 374              		@ frame_needed = 0, uses_anonymous_args = 0
+ 375              		.loc 1 115 1 is_stmt 0 view .LVU87
+ 376 0000 10B5     		push	{r4, lr}
+ 377              	.LCFI3:
+ 378              		.cfi_def_cfa_offset 8
+ 379              		.cfi_offset 4, -8
+ 380              		.cfi_offset 14, -4
+ 381 0002 00EE100A 		vmov	s0, r0	@ int
+ 116:MotorFoc/sen.c ****     float final_spd_ref = 0.0f;
+ 382              		.loc 1 116 5 is_stmt 1 view .LVU88
+ 383              	.LVL31:
+ 117:MotorFoc/sen.c **** 
+ 118:MotorFoc/sen.c ****     if (UseRamp)
+ 384              		.loc 1 118 5 view .LVU89
+ 385              		.loc 1 118 8 is_stmt 0 view .LVU90
+ 386 0006 0029     		cmp	r1, #0
+ 387 0008 43D0     		beq	.L14
+ 119:MotorFoc/sen.c ****     {
+ 120:MotorFoc/sen.c **** 		SpdRefGXieLv.XieLv_Grad = SPD_REF_OD;
+ 388              		.loc 1 120 3 is_stmt 1 view .LVU91
+ 389              		.loc 1 120 27 is_stmt 0 view .LVU92
+ 390 000a 394B     		ldr	r3, .L24
+ 391 000c 394A     		ldr	r2, .L24+4
+ 392 000e 9A60     		str	r2, [r3, #8]	@ float
+ 121:MotorFoc/sen.c **** 		SpdRefGXieLv.Grad_Timer = SPD_REF_TIMER;
+ 393              		.loc 1 121 3 is_stmt 1 view .LVU93
+ 394              		.loc 1 121 27 is_stmt 0 view .LVU94
+ 395 0010 1E22     		movs	r2, #30
+ 396 0012 5A73     		strb	r2, [r3, #13]
+ 122:MotorFoc/sen.c ****         SpdRefGXieLv.XieLv_X = SpeedRef;
+ 397              		.loc 1 122 9 is_stmt 1 view .LVU95
+ 398              		.loc 1 122 30 is_stmt 0 view .LVU96
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s 			page 10
+
+
+ 399 0014 B8EEC00A 		vcvt.f32.s32	s0, s0
+ 400 0018 83ED000A 		vstr.32	s0, [r3]
+ 123:MotorFoc/sen.c ****         SpdRefGXieLv.Timer_Count++;
+ 401              		.loc 1 123 9 is_stmt 1 view .LVU97
+ 402              		.loc 1 123 21 is_stmt 0 view .LVU98
+ 403 001c 1A7B     		ldrb	r2, [r3, #12]	@ zero_extendqisi2
+ 404              		.loc 1 123 33 view .LVU99
+ 405 001e 0132     		adds	r2, r2, #1
+ 406 0020 1A73     		strb	r2, [r3, #12]
+ 124:MotorFoc/sen.c ****         if (my_abs(pi_spd.Ref - pi_spd.Fbk) >= 1000)
+ 407              		.loc 1 124 9 is_stmt 1 view .LVU100
+ 408              		.loc 1 124 26 is_stmt 0 view .LVU101
+ 409 0022 354B     		ldr	r3, .L24+8
+ 410 0024 93ED000A 		vldr.32	s0, [r3]
+ 411              		.loc 1 124 39 view .LVU102
+ 412 0028 D3ED017A 		vldr.32	s15, [r3, #4]
+ 413              		.loc 1 124 13 view .LVU103
+ 414 002c 30EE670A 		vsub.f32	s0, s0, s15
+ 415 0030 FFF7FEFF 		bl	my_abs
+ 416              	.LVL32:
+ 417              		.loc 1 124 12 discriminator 1 view .LVU104
+ 418 0034 DFED317A 		vldr.32	s15, .L24+12
+ 419 0038 B4EEE70A 		vcmpe.f32	s0, s15
+ 420 003c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 421 0040 03DB     		blt	.L15
+ 125:MotorFoc/sen.c ****             SpdRefGXieLv.Timer_Count--;
+ 422              		.loc 1 125 13 is_stmt 1 view .LVU105
+ 423              		.loc 1 125 25 is_stmt 0 view .LVU106
+ 424 0042 2B4A     		ldr	r2, .L24
+ 425 0044 137B     		ldrb	r3, [r2, #12]	@ zero_extendqisi2
+ 426              		.loc 1 125 37 view .LVU107
+ 427 0046 013B     		subs	r3, r3, #1
+ 428 0048 1373     		strb	r3, [r2, #12]
+ 429              	.L15:
+ 126:MotorFoc/sen.c **** 
+ 127:MotorFoc/sen.c ****         if (SpdRefGXieLv.Timer_Count > SpdRefGXieLv.Grad_Timer)
+ 430              		.loc 1 127 9 is_stmt 1 view .LVU108
+ 431              		.loc 1 127 25 is_stmt 0 view .LVU109
+ 432 004a 294B     		ldr	r3, .L24
+ 433 004c 1A7B     		ldrb	r2, [r3, #12]	@ zero_extendqisi2
+ 434              		.loc 1 127 52 view .LVU110
+ 435 004e 5B7B     		ldrb	r3, [r3, #13]	@ zero_extendqisi2
+ 436              		.loc 1 127 12 view .LVU111
+ 437 0050 9A42     		cmp	r2, r3
+ 438 0052 18D8     		bhi	.L22
+ 439              	.L17:
+ 128:MotorFoc/sen.c ****         {
+ 129:MotorFoc/sen.c ****             SpdRefGXieLv.Timer_Count = 0;
+ 130:MotorFoc/sen.c ****             GradXieLv((p_GXieLv)&SpdRefGXieLv);
+ 131:MotorFoc/sen.c ****         }
+ 132:MotorFoc/sen.c ****         final_spd_ref = Limit_Sat(SpdRefGXieLv.XieLv_Y, SPD_REF_MAX, -SPD_REF_MAX);
+ 440              		.loc 1 132 9 is_stmt 1 view .LVU112
+ 441              		.loc 1 132 25 is_stmt 0 view .LVU113
+ 442 0054 9FED2A1A 		vldr.32	s2, .L24+16
+ 443 0058 DFED2A0A 		vldr.32	s1, .L24+20
+ 444 005c 244B     		ldr	r3, .L24
+ 445 005e 93ED010A 		vldr.32	s0, [r3, #4]
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s 			page 11
+
+
+ 446 0062 FFF7FEFF 		bl	Limit_Sat
+ 447              	.LVL33:
+ 448              	.L18:
+ 133:MotorFoc/sen.c ****     }
+ 134:MotorFoc/sen.c ****     else
+ 135:MotorFoc/sen.c ****     {
+ 136:MotorFoc/sen.c ****         final_spd_ref = (float)SpeedRef;
+ 137:MotorFoc/sen.c ****         final_spd_ref = Limit_Sat(final_spd_ref, 100, -100);
+ 138:MotorFoc/sen.c ****     }
+ 139:MotorFoc/sen.c **** 
+ 140:MotorFoc/sen.c ****     // 速度环按 SPEED_CNT 分频运行，电流环仍在每个高速控制周期执行。
+ 141:MotorFoc/sen.c ****     if (++Para.SpeedCalTime >= SPEED_CNT)
+ 449              		.loc 1 141 5 is_stmt 1 view .LVU114
+ 450              		.loc 1 141 15 is_stmt 0 view .LVU115
+ 451 0066 284A     		ldr	r2, .L24+24
+ 452 0068 9379     		ldrb	r3, [r2, #6]	@ zero_extendqisi2
+ 453              		.loc 1 141 9 view .LVU116
+ 454 006a 0133     		adds	r3, r3, #1
+ 455 006c DBB2     		uxtb	r3, r3
+ 456              		.loc 1 141 8 view .LVU117
+ 457 006e 9371     		strb	r3, [r2, #6]
+ 458 0070 012B     		cmp	r3, #1
+ 459 0072 17D8     		bhi	.L23
+ 460              	.LVL34:
+ 461              	.L19:
+ 142:MotorFoc/sen.c ****     {
+ 143:MotorFoc/sen.c ****         Para.SpeedCalTime = 0;
+ 144:MotorFoc/sen.c **** 
+ 145:MotorFoc/sen.c ****         pi_spd.Ref = final_spd_ref * Motor.P;
+ 146:MotorFoc/sen.c ****         pi_spd.Fbk = Motor.speed_E_rpm;
+ 147:MotorFoc/sen.c **** 
+ 148:MotorFoc/sen.c ****         PiController((M_PI_Control)&pi_spd);
+ 149:MotorFoc/sen.c ****         pi_spd.OutF = pi_spd.OutF * LPF_I_RUN_B + pi_spd.Out * LPF_I_RUN_A;
+ 150:MotorFoc/sen.c ****     }
+ 151:MotorFoc/sen.c **** 
+ 152:MotorFoc/sen.c ****     CurCloseloop(pi_spd.OutF, Motor.E_theta);
+ 462              		.loc 1 152 5 is_stmt 1 view .LVU118
+ 463 0074 254B     		ldr	r3, .L24+28
+ 464 0076 D3ED010A 		vldr.32	s1, [r3, #4]
+ 465 007a 1F4B     		ldr	r3, .L24+8
+ 466 007c 93ED030A 		vldr.32	s0, [r3, #12]
+ 467 0080 FFF7FEFF 		bl	CurCloseloop
+ 468              	.LVL35:
+ 153:MotorFoc/sen.c **** }
+ 469              		.loc 1 153 1 is_stmt 0 view .LVU119
+ 470 0084 10BD     		pop	{r4, pc}
+ 471              	.LVL36:
+ 472              	.L22:
+ 129:MotorFoc/sen.c ****             GradXieLv((p_GXieLv)&SpdRefGXieLv);
+ 473              		.loc 1 129 13 is_stmt 1 view .LVU120
+ 129:MotorFoc/sen.c ****             GradXieLv((p_GXieLv)&SpdRefGXieLv);
+ 474              		.loc 1 129 38 is_stmt 0 view .LVU121
+ 475 0086 1A48     		ldr	r0, .L24
+ 476 0088 0023     		movs	r3, #0
+ 477 008a 0373     		strb	r3, [r0, #12]
+ 130:MotorFoc/sen.c ****         }
+ 478              		.loc 1 130 13 is_stmt 1 view .LVU122
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s 			page 12
+
+
+ 479 008c FFF7FEFF 		bl	GradXieLv
+ 480              	.LVL37:
+ 481 0090 E0E7     		b	.L17
+ 482              	.LVL38:
+ 483              	.L14:
+ 136:MotorFoc/sen.c ****         final_spd_ref = Limit_Sat(final_spd_ref, 100, -100);
+ 484              		.loc 1 136 9 view .LVU123
+ 137:MotorFoc/sen.c ****     }
+ 485              		.loc 1 137 9 view .LVU124
+ 137:MotorFoc/sen.c ****     }
+ 486              		.loc 1 137 25 is_stmt 0 view .LVU125
+ 487 0092 9FED1F1A 		vldr.32	s2, .L24+32
+ 488 0096 DFED1F0A 		vldr.32	s1, .L24+36
+ 489 009a B8EEC00A 		vcvt.f32.s32	s0, s0
+ 490              	.LVL39:
+ 137:MotorFoc/sen.c ****     }
+ 491              		.loc 1 137 25 view .LVU126
+ 492 009e FFF7FEFF 		bl	Limit_Sat
+ 493              	.LVL40:
+ 137:MotorFoc/sen.c ****     }
+ 494              		.loc 1 137 25 view .LVU127
+ 495 00a2 E0E7     		b	.L18
+ 496              	.LVL41:
+ 497              	.L23:
+ 143:MotorFoc/sen.c **** 
+ 498              		.loc 1 143 9 is_stmt 1 view .LVU128
+ 143:MotorFoc/sen.c **** 
+ 499              		.loc 1 143 27 is_stmt 0 view .LVU129
+ 500 00a4 1346     		mov	r3, r2
+ 501 00a6 0022     		movs	r2, #0
+ 502 00a8 9A71     		strb	r2, [r3, #6]
+ 145:MotorFoc/sen.c ****         pi_spd.Fbk = Motor.speed_E_rpm;
+ 503              		.loc 1 145 9 is_stmt 1 view .LVU130
+ 145:MotorFoc/sen.c ****         pi_spd.Fbk = Motor.speed_E_rpm;
+ 504              		.loc 1 145 43 is_stmt 0 view .LVU131
+ 505 00aa 184B     		ldr	r3, .L24+28
+ 506 00ac 93F82420 		ldrb	r2, [r3, #36]	@ zero_extendqisi2
+ 507 00b0 07EE902A 		vmov	s15, r2	@ int
+ 145:MotorFoc/sen.c ****         pi_spd.Fbk = Motor.speed_E_rpm;
+ 508              		.loc 1 145 36 view .LVU132
+ 509 00b4 F8EEE77A 		vcvt.f32.s32	s15, s15
+ 510 00b8 67EE807A 		vmul.f32	s15, s15, s0
+ 145:MotorFoc/sen.c ****         pi_spd.Fbk = Motor.speed_E_rpm;
+ 511              		.loc 1 145 20 view .LVU133
+ 512 00bc 0E4C     		ldr	r4, .L24+8
+ 513 00be C4ED007A 		vstr.32	s15, [r4]
+ 146:MotorFoc/sen.c **** 
+ 514              		.loc 1 146 9 is_stmt 1 view .LVU134
+ 146:MotorFoc/sen.c **** 
+ 515              		.loc 1 146 27 is_stmt 0 view .LVU135
+ 516 00c2 DB68     		ldr	r3, [r3, #12]	@ float
+ 146:MotorFoc/sen.c **** 
+ 517              		.loc 1 146 20 view .LVU136
+ 518 00c4 6360     		str	r3, [r4, #4]	@ float
+ 148:MotorFoc/sen.c ****         pi_spd.OutF = pi_spd.OutF * LPF_I_RUN_B + pi_spd.Out * LPF_I_RUN_A;
+ 519              		.loc 1 148 9 is_stmt 1 view .LVU137
+ 520 00c6 2046     		mov	r0, r4
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s 			page 13
+
+
+ 521 00c8 FFF7FEFF 		bl	PiController
+ 522              	.LVL42:
+ 149:MotorFoc/sen.c ****     }
+ 523              		.loc 1 149 9 view .LVU138
+ 149:MotorFoc/sen.c ****     }
+ 524              		.loc 1 149 29 is_stmt 0 view .LVU139
+ 525 00cc D4ED037A 		vldr.32	s15, [r4, #12]
+ 149:MotorFoc/sen.c ****     }
+ 526              		.loc 1 149 35 view .LVU140
+ 527 00d0 9FED117A 		vldr.32	s14, .L24+40
+ 528 00d4 67EE877A 		vmul.f32	s15, s15, s14
+ 149:MotorFoc/sen.c ****     }
+ 529              		.loc 1 149 57 view .LVU141
+ 530 00d8 94ED027A 		vldr.32	s14, [r4, #8]
+ 149:MotorFoc/sen.c ****     }
+ 531              		.loc 1 149 62 view .LVU142
+ 532 00dc DFED0F6A 		vldr.32	s13, .L24+44
+ 533 00e0 27EE267A 		vmul.f32	s14, s14, s13
+ 149:MotorFoc/sen.c ****     }
+ 534              		.loc 1 149 49 view .LVU143
+ 535 00e4 77EE877A 		vadd.f32	s15, s15, s14
+ 149:MotorFoc/sen.c ****     }
+ 536              		.loc 1 149 21 view .LVU144
+ 537 00e8 C4ED037A 		vstr.32	s15, [r4, #12]
+ 538 00ec C2E7     		b	.L19
+ 539              	.L25:
+ 540 00ee 00BF     		.align	2
+ 541              	.L24:
+ 542 00f0 00000000 		.word	SpdRefGXieLv
+ 543 00f4 0000A040 		.word	1084227584
+ 544 00f8 00000000 		.word	pi_spd
+ 545 00fc 00007A44 		.word	1148846080
+ 546 0100 00007AC5 		.word	-981860352
+ 547 0104 00007A45 		.word	1165623296
+ 548 0108 00000000 		.word	Para
+ 549 010c 00000000 		.word	Motor
+ 550 0110 0000C8C2 		.word	-1027080192
+ 551 0114 0000C842 		.word	1120403456
+ 552 0118 957D1F3F 		.word	1059028373
+ 553 011c D504C13E 		.word	1052837077
+ 554              		.cfi_endproc
+ 555              	.LFE275:
+ 557              		.section	.text.PosCloseloop,"ax",%progbits
+ 558              		.align	1
+ 559              		.global	PosCloseloop
+ 560              		.syntax unified
+ 561              		.thumb
+ 562              		.thumb_func
+ 564              	PosCloseloop:
+ 565              	.LFB276:
+ 154:MotorFoc/sen.c **** 
+ 155:MotorFoc/sen.c **** /* 环形编码器位置范围及位置环输出约束。 */
+ 156:MotorFoc/sen.c **** #define ENC_MIN 1
+ 157:MotorFoc/sen.c **** #define ENC_MAX 3999
+ 158:MotorFoc/sen.c **** #define ENC_RANGE (ENC_MAX - ENC_MIN + 1)
+ 159:MotorFoc/sen.c **** #define POS_MAX_SPEED 3000
+ 160:MotorFoc/sen.c **** #define POS_I_LIMIT 500
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s 			page 14
+
+
+ 161:MotorFoc/sen.c **** 
+ 162:MotorFoc/sen.c **** /**
+ 163:MotorFoc/sen.c ****  * @brief 运行环形位置 P 控制，并级联有感速度环和电流环。
+ 164:MotorFoc/sen.c ****  *
+ 165:MotorFoc/sen.c ****  * 12 位 Para.PosRef 的 0..4095 被反向映射到编码器 3999..1。位置误差按环形空间
+ 166:MotorFoc/sen.c ****  * 取最短路径：超过半圈时加减 ENC_RANGE。每四次调用更新一次位置 P 输出�
+ 167:MotorFoc/sen.c ****  * 为 +/-POS_MAX_SPEED rpm，随后每拍调用 SpeedCloseloop()。
+ 168:MotorFoc/sen.c ****  * @note 积分位置项保留在注释代码中，当前实际控制器仅使用比例项 Pos.Kp*e
+ 169:MotorFoc/sen.c ****  */
+ 170:MotorFoc/sen.c **** void PosCloseloop(void)
+ 171:MotorFoc/sen.c **** {
+ 566              		.loc 1 171 1 is_stmt 1 view -0
+ 567              		.cfi_startproc
+ 568              		@ args = 0, pretend = 0, frame = 0
+ 569              		@ frame_needed = 0, uses_anonymous_args = 0
+ 570 0000 10B5     		push	{r4, lr}
+ 571              	.LCFI4:
+ 572              		.cfi_def_cfa_offset 8
+ 573              		.cfi_offset 4, -8
+ 574              		.cfi_offset 14, -4
+ 172:MotorFoc/sen.c ****     static uint32_t PosLoopDivCnt = 0;
+ 575              		.loc 1 172 5 view .LVU146
+ 173:MotorFoc/sen.c ****     float SpeedRef = 0.0f;
+ 576              		.loc 1 173 5 view .LVU147
+ 577              	.LVL43:
+ 174:MotorFoc/sen.c **** 
+ 175:MotorFoc/sen.c ****     Pos.P_Fdb = TIM3->CNT;
+ 578              		.loc 1 175 5 view .LVU148
+ 579              		.loc 1 175 21 is_stmt 0 view .LVU149
+ 580 0002 214B     		ldr	r3, .L31
+ 581 0004 596A     		ldr	r1, [r3, #36]
+ 582              		.loc 1 175 15 view .LVU150
+ 583 0006 214B     		ldr	r3, .L31+4
+ 584 0008 9960     		str	r1, [r3, #8]
+ 176:MotorFoc/sen.c **** 
+ 177:MotorFoc/sen.c ****     if (++PosLoopDivCnt >= 4)
+ 585              		.loc 1 177 5 is_stmt 1 view .LVU151
+ 586              		.loc 1 177 9 is_stmt 0 view .LVU152
+ 587 000a 214A     		ldr	r2, .L31+8
+ 588 000c 1368     		ldr	r3, [r2]
+ 589 000e 0133     		adds	r3, r3, #1
+ 590              		.loc 1 177 8 view .LVU153
+ 591 0010 1360     		str	r3, [r2]
+ 592 0012 032B     		cmp	r3, #3
+ 593 0014 2AD9     		bls	.L27
+ 594              	.LBB2:
+ 178:MotorFoc/sen.c ****     {
+ 179:MotorFoc/sen.c ****         PosLoopDivCnt = 0;
+ 595              		.loc 1 179 9 is_stmt 1 view .LVU154
+ 596              		.loc 1 179 23 is_stmt 0 view .LVU155
+ 597 0016 1346     		mov	r3, r2
+ 598 0018 0022     		movs	r2, #0
+ 599 001a 1A60     		str	r2, [r3]
+ 180:MotorFoc/sen.c **** 
+ 181:MotorFoc/sen.c ****         // 0..4095 反向线性映射到有效编码器区间 3999..1。
+ 182:MotorFoc/sen.c ****         uint32_t t = ((uint32_t)Para.PosRef * (ENC_RANGE - 1)) >> 12;
+ 600              		.loc 1 182 9 is_stmt 1 view .LVU156
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s 			page 15
+
+
+ 601              		.loc 1 182 37 is_stmt 0 view .LVU157
+ 602 001c 1D4B     		ldr	r3, .L31+12
+ 603 001e 9B69     		ldr	r3, [r3, #24]
+ 604              		.loc 1 182 45 view .LVU158
+ 605 0020 40F69E72 		movw	r2, #3998
+ 606 0024 02FB03F3 		mul	r3, r2, r3
+ 607              	.LVL44:
+ 183:MotorFoc/sen.c ****         uint16_t mapped = (uint16_t)(ENC_MAX - t);
+ 608              		.loc 1 183 9 is_stmt 1 view .LVU159
+ 609              		.loc 1 183 27 is_stmt 0 view .LVU160
+ 610 0028 C3F30F33 		ubfx	r3, r3, #12, #16
+ 611              	.LVL45:
+ 612              		.loc 1 183 18 view .LVU161
+ 613 002c C3F57963 		rsb	r3, r3, #3984
+ 614 0030 0F33     		adds	r3, r3, #15
+ 615 0032 9BB2     		uxth	r3, r3
+ 616              	.LVL46:
+ 184:MotorFoc/sen.c ****         Pos.P_Ref = (int32_t)mapped;
+ 617              		.loc 1 184 9 is_stmt 1 view .LVU162
+ 618              		.loc 1 184 19 is_stmt 0 view .LVU163
+ 619 0034 154A     		ldr	r2, .L31+4
+ 620              	.LVL47:
+ 621              		.loc 1 184 19 view .LVU164
+ 622 0036 D360     		str	r3, [r2, #12]
+ 185:MotorFoc/sen.c **** 
+ 186:MotorFoc/sen.c ****         // 环形位置取最短方向，避免跨零点时误走接近一整圈。
+ 187:MotorFoc/sen.c ****         int32_t err = (int32_t)mapped - (int32_t)Pos.P_Fdb;
+ 623              		.loc 1 187 9 is_stmt 1 view .LVU165
+ 624              		.loc 1 187 17 is_stmt 0 view .LVU166
+ 625 0038 5B1A     		subs	r3, r3, r1
+ 626              	.LVL48:
+ 188:MotorFoc/sen.c ****         int32_t half = ENC_RANGE / 2;
+ 627              		.loc 1 188 9 is_stmt 1 view .LVU167
+ 189:MotorFoc/sen.c ****         if (err > half)
+ 628              		.loc 1 189 9 view .LVU168
+ 629              		.loc 1 189 12 is_stmt 0 view .LVU169
+ 630 003a B3F5FA6F 		cmp	r3, #2000
+ 631 003e 1CDB     		blt	.L28
+ 190:MotorFoc/sen.c ****             err -= ENC_RANGE;
+ 632              		.loc 1 190 13 is_stmt 1 view .LVU170
+ 633              		.loc 1 190 17 is_stmt 0 view .LVU171
+ 634 0040 A3F69F73 		subw	r3, r3, #3999
+ 635              	.LVL49:
+ 636              	.L29:
+ 191:MotorFoc/sen.c ****         else if (err < -half)
+ 192:MotorFoc/sen.c ****             err += ENC_RANGE;
+ 193:MotorFoc/sen.c **** 
+ 194:MotorFoc/sen.c ****         float up = Pos.Kp * (float)err;
+ 637              		.loc 1 194 9 is_stmt 1 view .LVU172
+ 638              		.loc 1 194 23 is_stmt 0 view .LVU173
+ 639 0044 114C     		ldr	r4, .L31+4
+ 640 0046 94ED060A 		vldr.32	s0, [r4, #24]
+ 641              		.loc 1 194 29 view .LVU174
+ 642 004a 07EE903A 		vmov	s15, r3	@ int
+ 643 004e F8EEE77A 		vcvt.f32.s32	s15, s15
+ 644              	.LVL50:
+ 195:MotorFoc/sen.c **** 
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s 			page 16
+
+
+ 196:MotorFoc/sen.c ****         /*
+ 197:MotorFoc/sen.c ****         Pos.P_Integral += Pos.Ki * (float)err;
+ 198:MotorFoc/sen.c ****         Pos.P_Integral = Limit_Sat(Pos.P_Integral, POS_I_LIMIT, -POS_I_LIMIT);
+ 199:MotorFoc/sen.c ****         SpeedRef = up + Pos.P_Integral;
+ 200:MotorFoc/sen.c ****         */
+ 201:MotorFoc/sen.c **** 
+ 202:MotorFoc/sen.c ****         SpeedRef = up;
+ 645              		.loc 1 202 9 is_stmt 1 view .LVU175
+ 203:MotorFoc/sen.c ****         Pos.P_Out = (int16_t)Limit_Sat(SpeedRef, POS_MAX_SPEED, -POS_MAX_SPEED);
+ 646              		.loc 1 203 9 view .LVU176
+ 647              		.loc 1 203 30 is_stmt 0 view .LVU177
+ 648 0052 9FED111A 		vldr.32	s2, .L31+16
+ 649 0056 DFED110A 		vldr.32	s1, .L31+20
+ 650 005a 20EE270A 		vmul.f32	s0, s0, s15
+ 651              	.LVL51:
+ 652              		.loc 1 203 30 view .LVU178
+ 653 005e FFF7FEFF 		bl	Limit_Sat
+ 654              	.LVL52:
+ 655              		.loc 1 203 21 discriminator 1 view .LVU179
+ 656 0062 BDEEC00A 		vcvt.s32.f32	s0, s0
+ 657              		.loc 1 203 19 discriminator 1 view .LVU180
+ 658 0066 10EE103A 		vmov	r3, s0	@ int
+ 659 006a 2384     		strh	r3, [r4, #32]	@ movhi
+ 660              	.LVL53:
+ 661              	.L27:
+ 662              		.loc 1 203 19 discriminator 1 view .LVU181
+ 663              	.LBE2:
+ 204:MotorFoc/sen.c ****     }
+ 205:MotorFoc/sen.c **** 
+ 206:MotorFoc/sen.c ****     SpeedCloseloop(Pos.P_Out, 0);
+ 664              		.loc 1 206 5 is_stmt 1 view .LVU182
+ 665 006c 0021     		movs	r1, #0
+ 666 006e 074B     		ldr	r3, .L31+4
+ 667 0070 B3F92000 		ldrsh	r0, [r3, #32]
+ 668 0074 FFF7FEFF 		bl	SpeedCloseloop
+ 669              	.LVL54:
+ 207:MotorFoc/sen.c **** }
+ 670              		.loc 1 207 1 is_stmt 0 view .LVU183
+ 671 0078 10BD     		pop	{r4, pc}
+ 672              	.LVL55:
+ 673              	.L28:
+ 674              	.LBB3:
+ 191:MotorFoc/sen.c ****             err += ENC_RANGE;
+ 675              		.loc 1 191 14 is_stmt 1 view .LVU184
+ 191:MotorFoc/sen.c ****             err += ENC_RANGE;
+ 676              		.loc 1 191 17 is_stmt 0 view .LVU185
+ 677 007a 13F5FA6F 		cmn	r3, #2000
+ 678 007e E1DC     		bgt	.L29
+ 192:MotorFoc/sen.c **** 
+ 679              		.loc 1 192 13 is_stmt 1 view .LVU186
+ 192:MotorFoc/sen.c **** 
+ 680              		.loc 1 192 17 is_stmt 0 view .LVU187
+ 681 0080 03F69F73 		addw	r3, r3, #3999
+ 682              	.LVL56:
+ 192:MotorFoc/sen.c **** 
+ 683              		.loc 1 192 17 view .LVU188
+ 684 0084 DEE7     		b	.L29
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s 			page 17
+
+
+ 685              	.L32:
+ 686 0086 00BF     		.align	2
+ 687              	.L31:
+ 688 0088 00040040 		.word	1073742848
+ 689 008c 00000000 		.word	Pos
+ 690 0090 00000000 		.word	PosLoopDivCnt.0
+ 691 0094 00000000 		.word	Para
+ 692 0098 00803BC5 		.word	-985956352
+ 693 009c 00803B45 		.word	1161527296
+ 694              	.LBE3:
+ 695              		.cfi_endproc
+ 696              	.LFE276:
+ 698              		.section	.bss.PosLoopDivCnt.0,"aw",%nobits
+ 699              		.align	2
+ 702              	PosLoopDivCnt.0:
+ 703 0000 00000000 		.space	4
+ 704              		.text
+ 705              	.Letext0:
+ 706              		.file 2 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 707              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 708              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 709              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 710              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 711              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 712              		.file 8 "MotorFoc/foc.h"
+ 713              		.file 9 "App/task.h"
+ 714              		.file 10 "MotorFoc/pid.h"
+ 715              		.file 11 "MotorFoc/motor_ctrl.h"
+ 716              		.file 12 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 717              		.file 13 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h"
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s 			page 18
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 sen.c
+C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s:21     .text.PositionToZero:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s:27     .text.PositionToZero:00000000 PositionToZero
+C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s:130    .text.PositionToZero:0000008c $d
+C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s:139    .text.PostionToZeroDouble:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s:145    .text.PostionToZeroDouble:00000000 PostionToZeroDouble
+C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s:268    .text.PostionToZeroDouble:000000a4 $d
+C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s:277    .text.CurCloseloop:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s:283    .text.CurCloseloop:00000000 CurCloseloop
+C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s:354    .text.CurCloseloop:00000048 $d
+C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s:362    .text.SpeedCloseloop:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s:368    .text.SpeedCloseloop:00000000 SpeedCloseloop
+C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s:542    .text.SpeedCloseloop:000000f0 $d
+C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s:558    .text.PosCloseloop:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s:564    .text.PosCloseloop:00000000 PosCloseloop
+C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s:688    .text.PosCloseloop:00000088 $d
+C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s:702    .bss.PosLoopDivCnt.0:00000000 PosLoopDivCnt.0
+C:\Users\sunhao\AppData\Local\Temp\ccw6JbLn.s:699    .bss.PosLoopDivCnt.0:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_TIM_PWM_Start
+HAL_TIMEx_PWMN_Start
+HAL_Delay
+SvpwmCal
+htim1
+Svpwm
+Motor
+MotorStop
+PiController
+IPARK_Cale
+pi_id
+pi_iq
+Ipark
+Park
+my_abs
+Limit_Sat
+GradXieLv
+SpdRefGXieLv
+pi_spd
+Para
+Pos

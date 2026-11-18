@@ -1,0 +1,269 @@
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc8i6t01.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"led_drv.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Sdrive/led_drv.c"
+  20              		.section	.text.TurnOnLed,"ax",%progbits
+  21              		.align	1
+  22              		.global	TurnOnLed
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	TurnOnLed:
+  28              	.LVL0:
+  29              	.LFB239:
+   1:Sdrive/led_drv.c **** /**
+   2:Sdrive/led_drv.c ****  * @file led_drv.c
+   3:Sdrive/led_drv.c ****  * @brief 实现 RGB LED 逻辑编号到 GPIO 的映射及低电平点亮操作。
+   4:Sdrive/led_drv.c ****  *
+   5:Sdrive/led_drv.c ****  * g_gpioList[] 的顺序是蓝、绿、红。硬件采用灌电流驱动，GPIO_RESET 点亮，
+   6:Sdrive/led_drv.c ****  * GPIO_SET 熄灭；上层无需关心这种反相逻辑。
+   7:Sdrive/led_drv.c ****  */
+   8:Sdrive/led_drv.c **** 
+   9:Sdrive/led_drv.c **** #include "led_drv.h"
+  10:Sdrive/led_drv.c **** 
+  11:Sdrive/led_drv.c **** typedef struct
+  12:Sdrive/led_drv.c **** {
+  13:Sdrive/led_drv.c **** 	GPIO_TypeDef *gpio; /**< LED 通道所在 GPIO 端口。 */
+  14:Sdrive/led_drv.c **** 	uint32_t pin;       /**< LED 通道对应的 GPIO 位掩码。 */
+  15:Sdrive/led_drv.c **** } Led_GPIO_t;
+  16:Sdrive/led_drv.c **** 
+  17:Sdrive/led_drv.c **** static Led_GPIO_t g_gpioList[] =
+  18:Sdrive/led_drv.c **** {
+  19:Sdrive/led_drv.c **** 	{LED_B_GPIO_Port, LED_B_Pin},
+  20:Sdrive/led_drv.c ****     {LED_G_GPIO_Port, LED_G_Pin},
+  21:Sdrive/led_drv.c ****     {LED_R_GPIO_Port, LED_R_Pin}
+  22:Sdrive/led_drv.c **** };
+  23:Sdrive/led_drv.c **** 
+  24:Sdrive/led_drv.c **** #define LED_NUM_MAX (sizeof(g_gpioList) / sizeof(g_gpioList[0]))
+  25:Sdrive/led_drv.c **** 
+  26:Sdrive/led_drv.c **** /**
+  27:Sdrive/led_drv.c ****  * @brief 把指定 LED 引脚拉低以点亮通道。
+  28:Sdrive/led_drv.c ****  * @param ledNo g_gpioList[] 索引，越界时不访问 GPIO。
+  29:Sdrive/led_drv.c ****  */
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc8i6t01.s 			page 2
+
+
+  30:Sdrive/led_drv.c **** void TurnOnLed(uint8_t ledNo)
+  31:Sdrive/led_drv.c **** {
+  30              		.loc 1 31 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  32:Sdrive/led_drv.c **** 	if (ledNo >= LED_NUM_MAX)
+  34              		.loc 1 32 2 view .LVU1
+  35              		.loc 1 32 5 is_stmt 0 view .LVU2
+  36 0000 0228     		cmp	r0, #2
+  37 0002 00D9     		bls	.L7
+  38 0004 7047     		bx	lr
+  39              	.L7:
+  31:Sdrive/led_drv.c **** 	if (ledNo >= LED_NUM_MAX)
+  40              		.loc 1 31 1 view .LVU3
+  41 0006 08B5     		push	{r3, lr}
+  42              	.LCFI0:
+  43              		.cfi_def_cfa_offset 8
+  44              		.cfi_offset 3, -8
+  45              		.cfi_offset 14, -4
+  33:Sdrive/led_drv.c **** 	{
+  34:Sdrive/led_drv.c **** 		return;
+  35:Sdrive/led_drv.c **** 	}
+  36:Sdrive/led_drv.c **** 	HAL_GPIO_WritePin(g_gpioList[ledNo].gpio, g_gpioList[ledNo].pin, GPIO_PIN_RESET);
+  46              		.loc 1 36 2 is_stmt 1 view .LVU4
+  47              		.loc 1 36 61 is_stmt 0 view .LVU5
+  48 0008 044B     		ldr	r3, .L8
+  49 000a 03EBC001 		add	r1, r3, r0, lsl #3
+  50              		.loc 1 36 2 view .LVU6
+  51 000e 0022     		movs	r2, #0
+  52 0010 8988     		ldrh	r1, [r1, #4]
+  53 0012 53F83000 		ldr	r0, [r3, r0, lsl #3]
+  54              	.LVL1:
+  55              		.loc 1 36 2 view .LVU7
+  56 0016 FFF7FEFF 		bl	HAL_GPIO_WritePin
+  57              	.LVL2:
+  37:Sdrive/led_drv.c **** }
+  58              		.loc 1 37 1 view .LVU8
+  59 001a 08BD     		pop	{r3, pc}
+  60              	.L9:
+  61              		.align	2
+  62              	.L8:
+  63 001c 00000000 		.word	g_gpioList
+  64              		.cfi_endproc
+  65              	.LFE239:
+  67              		.section	.text.TurnOffLed,"ax",%progbits
+  68              		.align	1
+  69              		.global	TurnOffLed
+  70              		.syntax unified
+  71              		.thumb
+  72              		.thumb_func
+  74              	TurnOffLed:
+  75              	.LVL3:
+  76              	.LFB240:
+  38:Sdrive/led_drv.c **** 
+  39:Sdrive/led_drv.c **** /**
+  40:Sdrive/led_drv.c ****  * @brief 把指定 LED 引脚拉高以熄灭通道。
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc8i6t01.s 			page 3
+
+
+  41:Sdrive/led_drv.c ****  * @param ledNo g_gpioList[] 索引，越界时不访问 GPIO。
+  42:Sdrive/led_drv.c ****  */
+  43:Sdrive/led_drv.c **** void TurnOffLed(uint8_t ledNo)
+  44:Sdrive/led_drv.c **** {
+  77              		.loc 1 44 1 is_stmt 1 view -0
+  78              		.cfi_startproc
+  79              		@ args = 0, pretend = 0, frame = 0
+  80              		@ frame_needed = 0, uses_anonymous_args = 0
+  45:Sdrive/led_drv.c **** 	if (ledNo >= LED_NUM_MAX)
+  81              		.loc 1 45 2 view .LVU10
+  82              		.loc 1 45 5 is_stmt 0 view .LVU11
+  83 0000 0228     		cmp	r0, #2
+  84 0002 00D9     		bls	.L16
+  85 0004 7047     		bx	lr
+  86              	.L16:
+  44:Sdrive/led_drv.c **** 	if (ledNo >= LED_NUM_MAX)
+  87              		.loc 1 44 1 view .LVU12
+  88 0006 08B5     		push	{r3, lr}
+  89              	.LCFI1:
+  90              		.cfi_def_cfa_offset 8
+  91              		.cfi_offset 3, -8
+  92              		.cfi_offset 14, -4
+  46:Sdrive/led_drv.c **** 	{
+  47:Sdrive/led_drv.c **** 		return;
+  48:Sdrive/led_drv.c **** 	}
+  49:Sdrive/led_drv.c **** 	HAL_GPIO_WritePin(g_gpioList[ledNo].gpio, g_gpioList[ledNo].pin, GPIO_PIN_SET);
+  93              		.loc 1 49 2 is_stmt 1 view .LVU13
+  94              		.loc 1 49 61 is_stmt 0 view .LVU14
+  95 0008 044B     		ldr	r3, .L17
+  96 000a 03EBC001 		add	r1, r3, r0, lsl #3
+  97              		.loc 1 49 2 view .LVU15
+  98 000e 0122     		movs	r2, #1
+  99 0010 8988     		ldrh	r1, [r1, #4]
+ 100 0012 53F83000 		ldr	r0, [r3, r0, lsl #3]
+ 101              	.LVL4:
+ 102              		.loc 1 49 2 view .LVU16
+ 103 0016 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 104              	.LVL5:
+  50:Sdrive/led_drv.c **** }
+ 105              		.loc 1 50 1 view .LVU17
+ 106 001a 08BD     		pop	{r3, pc}
+ 107              	.L18:
+ 108              		.align	2
+ 109              	.L17:
+ 110 001c 00000000 		.word	g_gpioList
+ 111              		.cfi_endproc
+ 112              	.LFE240:
+ 114              		.section	.text.ToggleLed,"ax",%progbits
+ 115              		.align	1
+ 116              		.global	ToggleLed
+ 117              		.syntax unified
+ 118              		.thumb
+ 119              		.thumb_func
+ 121              	ToggleLed:
+ 122              	.LVL6:
+ 123              	.LFB241:
+  51:Sdrive/led_drv.c **** 
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc8i6t01.s 			page 4
+
+
+  52:Sdrive/led_drv.c **** /**
+  53:Sdrive/led_drv.c ****  * @brief 翻转指定 LED 引脚，可用于闪烁或状态指示。
+  54:Sdrive/led_drv.c ****  * @param ledNo g_gpioList[] 索引，越界时不访问 GPIO。
+  55:Sdrive/led_drv.c ****  */
+  56:Sdrive/led_drv.c **** void ToggleLed(uint8_t ledNo)
+  57:Sdrive/led_drv.c **** {
+ 124              		.loc 1 57 1 is_stmt 1 view -0
+ 125              		.cfi_startproc
+ 126              		@ args = 0, pretend = 0, frame = 0
+ 127              		@ frame_needed = 0, uses_anonymous_args = 0
+  58:Sdrive/led_drv.c **** 	if (ledNo >= LED_NUM_MAX)
+ 128              		.loc 1 58 2 view .LVU19
+ 129              		.loc 1 58 5 is_stmt 0 view .LVU20
+ 130 0000 0228     		cmp	r0, #2
+ 131 0002 00D9     		bls	.L25
+ 132 0004 7047     		bx	lr
+ 133              	.L25:
+  57:Sdrive/led_drv.c **** 	if (ledNo >= LED_NUM_MAX)
+ 134              		.loc 1 57 1 view .LVU21
+ 135 0006 08B5     		push	{r3, lr}
+ 136              	.LCFI2:
+ 137              		.cfi_def_cfa_offset 8
+ 138              		.cfi_offset 3, -8
+ 139              		.cfi_offset 14, -4
+  59:Sdrive/led_drv.c **** 	{
+  60:Sdrive/led_drv.c **** 		return;
+  61:Sdrive/led_drv.c **** 	}
+  62:Sdrive/led_drv.c **** 	HAL_GPIO_TogglePin(g_gpioList[ledNo].gpio, g_gpioList[ledNo].pin);
+ 140              		.loc 1 62 2 is_stmt 1 view .LVU22
+ 141              		.loc 1 62 62 is_stmt 0 view .LVU23
+ 142 0008 044B     		ldr	r3, .L26
+ 143 000a 03EBC002 		add	r2, r3, r0, lsl #3
+ 144              		.loc 1 62 2 view .LVU24
+ 145 000e 9188     		ldrh	r1, [r2, #4]
+ 146 0010 53F83000 		ldr	r0, [r3, r0, lsl #3]
+ 147              	.LVL7:
+ 148              		.loc 1 62 2 view .LVU25
+ 149 0014 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 150              	.LVL8:
+  63:Sdrive/led_drv.c **** }
+ 151              		.loc 1 63 1 view .LVU26
+ 152 0018 08BD     		pop	{r3, pc}
+ 153              	.L27:
+ 154 001a 00BF     		.align	2
+ 155              	.L26:
+ 156 001c 00000000 		.word	g_gpioList
+ 157              		.cfi_endproc
+ 158              	.LFE241:
+ 160              		.section	.rodata.g_gpioList,"a"
+ 161              		.align	2
+ 164              	g_gpioList:
+ 165 0000 000C0240 		.word	1073875968
+ 166 0004 00080000 		.word	2048
+ 167 0008 000C0240 		.word	1073875968
+ 168 000c 00100000 		.word	4096
+ 169 0010 000C0240 		.word	1073875968
+ 170 0014 00200000 		.word	8192
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc8i6t01.s 			page 5
+
+
+ 171              		.text
+ 172              	.Letext0:
+ 173              		.file 2 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 174              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 175              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 176              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc8i6t01.s 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 led_drv.c
+C:\Users\sunhao\AppData\Local\Temp\cc8i6t01.s:21     .text.TurnOnLed:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cc8i6t01.s:27     .text.TurnOnLed:00000000 TurnOnLed
+C:\Users\sunhao\AppData\Local\Temp\cc8i6t01.s:63     .text.TurnOnLed:0000001c $d
+C:\Users\sunhao\AppData\Local\Temp\cc8i6t01.s:164    .rodata.g_gpioList:00000000 g_gpioList
+C:\Users\sunhao\AppData\Local\Temp\cc8i6t01.s:68     .text.TurnOffLed:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cc8i6t01.s:74     .text.TurnOffLed:00000000 TurnOffLed
+C:\Users\sunhao\AppData\Local\Temp\cc8i6t01.s:110    .text.TurnOffLed:0000001c $d
+C:\Users\sunhao\AppData\Local\Temp\cc8i6t01.s:115    .text.ToggleLed:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cc8i6t01.s:121    .text.ToggleLed:00000000 ToggleLed
+C:\Users\sunhao\AppData\Local\Temp\cc8i6t01.s:156    .text.ToggleLed:0000001c $d
+C:\Users\sunhao\AppData\Local\Temp\cc8i6t01.s:161    .rodata.g_gpioList:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_WritePin
+HAL_GPIO_TogglePin

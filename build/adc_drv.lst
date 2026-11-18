@@ -1,0 +1,554 @@
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"adc_drv.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Sdrive/adc_drv.c"
+  20              		.section	.text.AdcSample,"ax",%progbits
+  21              		.align	1
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	AdcSample:
+  27              	.LFB273:
+   1:Sdrive/adc_drv.c **** /**
+   2:Sdrive/adc_drv.c ****  * @file adc_drv.c
+   3:Sdrive/adc_drv.c ****  * @brief 实现 ADC 零点校准、物理量换算和一阶低通滤波。
+   4:Sdrive/adc_drv.c ****  *
+   5:Sdrive/adc_drv.c ****  * DMA 通道顺序由 CubeMX 配置决定：代码使用索引 0/3 采 U/W 相电流，索引 2
+   6:Sdrive/adc_drv.c ****  * 采母线电压，索引 1 采温度，索引 4 采电位器。GetAdc() 在 TIM1 20 kHz
+   7:Sdrive/adc_drv.c ****  * 更新中断中调用，因此换算和滤波必须保持短小、确定且不可阻塞。
+   8:Sdrive/adc_drv.c ****  */
+   9:Sdrive/adc_drv.c **** 
+  10:Sdrive/adc_drv.c **** #include "task.h"
+  11:Sdrive/adc_drv.c **** #include "motor_para.h"
+  12:Sdrive/adc_drv.c **** ADC_Sample AdcPara = ADC_Sample_DEFAULTS;       /**< 当前一拍未经低通的采样物理量。 
+  13:Sdrive/adc_drv.c **** ADC_Sample_F AdcFilPara = ADC_Sample_F_DEFAULTS; /**< 当前一拍低通后的采样物理量。 */
+  14:Sdrive/adc_drv.c **** 
+  15:Sdrive/adc_drv.c **** uint16_t ADC_Value[5];
+  16:Sdrive/adc_drv.c **** 
+  17:Sdrive/adc_drv.c **** /**
+  18:Sdrive/adc_drv.c ****  * @brief 在零电流条件下估计 U、W 两相电流采样的 ADC 偏置。
+  19:Sdrive/adc_drv.c ****  *
+  20:Sdrive/adc_drv.c ****  * 外层执行 10 次，每次等待并读取约 100 ms 后把该次末值累加，最终取 10 �
+  21:Sdrive/adc_drv.c ****  * 后续相电流换算使用 I=(Offset-ADC)*I_GAIN 消除运放和 ADC 的静态零漂。
+  22:Sdrive/adc_drv.c ****  * @warning 校准期间功率级必须没有相电流，否则该电流会被误认为零点并带
+  23:Sdrive/adc_drv.c ****  */
+  24:Sdrive/adc_drv.c **** void AdcSampleOffset(void)
+  25:Sdrive/adc_drv.c **** {
+  26:Sdrive/adc_drv.c **** 	uint8_t i = 0;
+  27:Sdrive/adc_drv.c **** 	uint8_t j = 0;
+  28:Sdrive/adc_drv.c **** 	uint16_t Sum1 = 0;
+  29:Sdrive/adc_drv.c **** 	uint16_t Sum2 = 0;
+  30:Sdrive/adc_drv.c **** 
+  31:Sdrive/adc_drv.c **** 	for (i = 0; i < 10; i++)
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s 			page 2
+
+
+  32:Sdrive/adc_drv.c **** 	{
+  33:Sdrive/adc_drv.c **** 		for (j = 0; j < 100; j++)
+  34:Sdrive/adc_drv.c **** 		{
+  35:Sdrive/adc_drv.c **** 			AdcPara.OffsetCurU = ADC_Value[0];
+  36:Sdrive/adc_drv.c **** 			AdcPara.OffsetCurW = ADC_Value[3];
+  37:Sdrive/adc_drv.c **** 
+  38:Sdrive/adc_drv.c **** 			HAL_Delay(1);
+  39:Sdrive/adc_drv.c **** 		}
+  40:Sdrive/adc_drv.c **** 		Sum1 += AdcPara.OffsetCurU;
+  41:Sdrive/adc_drv.c **** 		Sum2 += AdcPara.OffsetCurW;
+  42:Sdrive/adc_drv.c **** 	}
+  43:Sdrive/adc_drv.c **** 	AdcFilPara.OffsetCurU = Sum1 / 10;
+  44:Sdrive/adc_drv.c **** 	AdcFilPara.OffsetCurW = Sum2 / 10;
+  45:Sdrive/adc_drv.c **** }
+  46:Sdrive/adc_drv.c **** 
+  47:Sdrive/adc_drv.c **** /**
+  48:Sdrive/adc_drv.c ****  * @brief 将 ADC DMA 原始码值换算为三相电流、母线电压和辅助通道值。
+  49:Sdrive/adc_drv.c ****  *
+  50:Sdrive/adc_drv.c ****  * U/W 相：I=(Offset-ADC)*I_GAIN；V 相由星形电机无中性线条件
+  51:Sdrive/adc_drv.c ****  * Iu+Iv+Iw=0 重构，即 Iv=-Iu-Iw。母线电压使用 Vbus=ADC*VBUS_GAIN。
+  52:Sdrive/adc_drv.c ****  */
+  53:Sdrive/adc_drv.c **** static void AdcSample(void)
+  54:Sdrive/adc_drv.c **** {
+  28              		.loc 1 54 1 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  55:Sdrive/adc_drv.c **** 	AdcPara.CurU = (float)(AdcFilPara.OffsetCurU - ADC_Value[0]) * I_GAIN;
+  33              		.loc 1 55 2 view .LVU1
+  34              		.loc 1 55 35 is_stmt 0 view .LVU2
+  35 0000 1B48     		ldr	r0, .L2
+  36 0002 B0F91430 		ldrsh	r3, [r0, #20]
+  37              		.loc 1 55 58 view .LVU3
+  38 0006 1B49     		ldr	r1, .L2+4
+  39 0008 0A88     		ldrh	r2, [r1]
+  40              		.loc 1 55 47 view .LVU4
+  41 000a 9B1A     		subs	r3, r3, r2
+  42 000c 07EE903A 		vmov	s15, r3	@ int
+  43              		.loc 1 55 17 view .LVU5
+  44 0010 F8EEE77A 		vcvt.f32.s32	s15, s15
+  45              		.loc 1 55 63 view .LVU6
+  46 0014 DFED186A 		vldr.32	s13, .L2+8
+  47 0018 67EEA67A 		vmul.f32	s15, s15, s13
+  48              		.loc 1 55 15 view .LVU7
+  49 001c 174A     		ldr	r2, .L2+12
+  50 001e C2ED037A 		vstr.32	s15, [r2, #12]
+  56:Sdrive/adc_drv.c **** 	AdcPara.CurW = (float)(AdcFilPara.OffsetCurW - ADC_Value[3]) * I_GAIN;
+  51              		.loc 1 56 2 is_stmt 1 view .LVU8
+  52              		.loc 1 56 35 is_stmt 0 view .LVU9
+  53 0022 B0F91830 		ldrsh	r3, [r0, #24]
+  54              		.loc 1 56 58 view .LVU10
+  55 0026 C888     		ldrh	r0, [r1, #6]
+  56              		.loc 1 56 47 view .LVU11
+  57 0028 1B1A     		subs	r3, r3, r0
+  58 002a 07EE103A 		vmov	s14, r3	@ int
+  59              		.loc 1 56 17 view .LVU12
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s 			page 3
+
+
+  60 002e B8EEC77A 		vcvt.f32.s32	s14, s14
+  61              		.loc 1 56 63 view .LVU13
+  62 0032 27EE267A 		vmul.f32	s14, s14, s13
+  63              		.loc 1 56 15 view .LVU14
+  64 0036 82ED057A 		vstr.32	s14, [r2, #20]
+  57:Sdrive/adc_drv.c **** 	AdcPara.CurV = -AdcPara.CurU - AdcPara.CurW;
+  65              		.loc 1 57 2 is_stmt 1 view .LVU15
+  66              		.loc 1 57 17 is_stmt 0 view .LVU16
+  67 003a F1EE677A 		vneg.f32	s15, s15
+  68              		.loc 1 57 31 view .LVU17
+  69 003e 77EEC77A 		vsub.f32	s15, s15, s14
+  70              		.loc 1 57 15 view .LVU18
+  71 0042 C2ED047A 		vstr.32	s15, [r2, #16]
+  58:Sdrive/adc_drv.c **** 
+  59:Sdrive/adc_drv.c **** 	AdcPara.Vbus = (float)ADC_Value[2] * VBUS_GAIN;
+  72              		.loc 1 59 2 is_stmt 1 view .LVU19
+  73              		.loc 1 59 33 is_stmt 0 view .LVU20
+  74 0046 8B88     		ldrh	r3, [r1, #4]
+  75 0048 07EE903A 		vmov	s15, r3	@ int
+  76              		.loc 1 59 17 view .LVU21
+  77 004c F8EE677A 		vcvt.f32.u32	s15, s15
+  78              		.loc 1 59 37 view .LVU22
+  79 0050 9FED0B7A 		vldr.32	s14, .L2+16
+  80 0054 67EE877A 		vmul.f32	s15, s15, s14
+  81              		.loc 1 59 15 view .LVU23
+  82 0058 C2ED007A 		vstr.32	s15, [r2]
+  60:Sdrive/adc_drv.c **** 	AdcPara.Temp = (float)ADC_Value[1];
+  83              		.loc 1 60 2 is_stmt 1 view .LVU24
+  84              		.loc 1 60 33 is_stmt 0 view .LVU25
+  85 005c 4B88     		ldrh	r3, [r1, #2]
+  86              		.loc 1 60 15 view .LVU26
+  87 005e 1381     		strh	r3, [r2, #8]	@ movhi
+  61:Sdrive/adc_drv.c **** 	AdcPara.Vr = (float)ADC_Value[4];
+  88              		.loc 1 61 2 is_stmt 1 view .LVU27
+  89              		.loc 1 61 31 is_stmt 0 view .LVU28
+  90 0060 0B89     		ldrh	r3, [r1, #8]
+  91 0062 07EE903A 		vmov	s15, r3	@ int
+  92              		.loc 1 61 15 view .LVU29
+  93 0066 F8EE677A 		vcvt.f32.u32	s15, s15
+  94              		.loc 1 61 13 view .LVU30
+  95 006a C2ED017A 		vstr.32	s15, [r2, #4]
+  62:Sdrive/adc_drv.c **** }
+  96              		.loc 1 62 1 view .LVU31
+  97 006e 7047     		bx	lr
+  98              	.L3:
+  99              		.align	2
+ 100              	.L2:
+ 101 0070 00000000 		.word	AdcFilPara
+ 102 0074 00000000 		.word	ADC_Value
+ 103 0078 5709963C 		.word	1016465751
+ 104 007c 00000000 		.word	AdcPara
+ 105 0080 FF3F113C 		.word	1007763455
+ 106              		.cfi_endproc
+ 107              	.LFE273:
+ 109              		.section	.text.AdcSampleDeal,"ax",%progbits
+ 110              		.align	1
+ 111              		.syntax unified
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s 			page 4
+
+
+ 112              		.thumb
+ 113              		.thumb_func
+ 115              	AdcSampleDeal:
+ 116              	.LFB274:
+  63:Sdrive/adc_drv.c **** 
+  64:Sdrive/adc_drv.c **** /**
+  65:Sdrive/adc_drv.c ****  * @brief 对电流、母线电压和温度执行一阶离散低通滤波。
+  66:Sdrive/adc_drv.c ****  *
+  67:Sdrive/adc_drv.c ****  * 通用形式为 y[n]=B*y[n-1]+A*x[n]。电流采用较高截止频率的 RUN 系数以保留
+  68:Sdrive/adc_drv.c ****  * 控制带宽；母线电压和温度采用较低截止频率的 STOP 系数以抑制慢变量噪
+  69:Sdrive/adc_drv.c ****  */
+  70:Sdrive/adc_drv.c **** static void AdcSampleDeal(void)
+  71:Sdrive/adc_drv.c **** {
+ 117              		.loc 1 71 1 is_stmt 1 view -0
+ 118              		.cfi_startproc
+ 119              		@ args = 0, pretend = 0, frame = 0
+ 120              		@ frame_needed = 0, uses_anonymous_args = 0
+ 121              		@ link register save eliminated.
+  72:Sdrive/adc_drv.c **** 	AdcFilPara.CurU = LPF_I_RUN_B * AdcFilPara.CurU + LPF_I_RUN_A * AdcPara.CurU;
+ 122              		.loc 1 72 2 view .LVU33
+ 123              		.loc 1 72 44 is_stmt 0 view .LVU34
+ 124 0000 244B     		ldr	r3, .L5
+ 125 0002 D3ED027A 		vldr.32	s15, [r3, #8]
+ 126              		.loc 1 72 32 view .LVU35
+ 127 0006 9FED247A 		vldr.32	s14, .L5+4
+ 128 000a 67EE877A 		vmul.f32	s15, s15, s14
+ 129              		.loc 1 72 73 view .LVU36
+ 130 000e 234A     		ldr	r2, .L5+8
+ 131 0010 92ED036A 		vldr.32	s12, [r2, #12]
+ 132              		.loc 1 72 64 view .LVU37
+ 133 0014 DFED226A 		vldr.32	s13, .L5+12
+ 134 0018 26EE266A 		vmul.f32	s12, s12, s13
+ 135              		.loc 1 72 50 view .LVU38
+ 136 001c 77EE867A 		vadd.f32	s15, s15, s12
+ 137              		.loc 1 72 18 view .LVU39
+ 138 0020 C3ED027A 		vstr.32	s15, [r3, #8]
+  73:Sdrive/adc_drv.c **** 	AdcFilPara.CurV = LPF_I_RUN_B * AdcFilPara.CurV + LPF_I_RUN_A * AdcPara.CurV;
+ 139              		.loc 1 73 2 is_stmt 1 view .LVU40
+ 140              		.loc 1 73 44 is_stmt 0 view .LVU41
+ 141 0024 D3ED037A 		vldr.32	s15, [r3, #12]
+ 142              		.loc 1 73 32 view .LVU42
+ 143 0028 67EE877A 		vmul.f32	s15, s15, s14
+ 144              		.loc 1 73 73 view .LVU43
+ 145 002c 92ED046A 		vldr.32	s12, [r2, #16]
+ 146              		.loc 1 73 64 view .LVU44
+ 147 0030 26EE266A 		vmul.f32	s12, s12, s13
+ 148              		.loc 1 73 50 view .LVU45
+ 149 0034 77EE867A 		vadd.f32	s15, s15, s12
+ 150              		.loc 1 73 18 view .LVU46
+ 151 0038 C3ED037A 		vstr.32	s15, [r3, #12]
+  74:Sdrive/adc_drv.c **** 	AdcFilPara.CurW = LPF_I_RUN_B * AdcFilPara.CurW + LPF_I_RUN_A * AdcPara.CurW;
+ 152              		.loc 1 74 2 is_stmt 1 view .LVU47
+ 153              		.loc 1 74 44 is_stmt 0 view .LVU48
+ 154 003c D3ED047A 		vldr.32	s15, [r3, #16]
+ 155              		.loc 1 74 32 view .LVU49
+ 156 0040 67EE877A 		vmul.f32	s15, s15, s14
+ 157              		.loc 1 74 73 view .LVU50
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s 			page 5
+
+
+ 158 0044 92ED057A 		vldr.32	s14, [r2, #20]
+ 159              		.loc 1 74 64 view .LVU51
+ 160 0048 27EE267A 		vmul.f32	s14, s14, s13
+ 161              		.loc 1 74 50 view .LVU52
+ 162 004c 77EE877A 		vadd.f32	s15, s15, s14
+ 163              		.loc 1 74 18 view .LVU53
+ 164 0050 C3ED047A 		vstr.32	s15, [r3, #16]
+  75:Sdrive/adc_drv.c **** 	AdcFilPara.Vbus = AdcFilPara.Vbus * LPF_I_STOP_B + AdcPara.Vbus * LPF_I_STOP_A;
+ 165              		.loc 1 75 2 is_stmt 1 view .LVU54
+ 166              		.loc 1 75 30 is_stmt 0 view .LVU55
+ 167 0054 D3ED007A 		vldr.32	s15, [r3]
+ 168              		.loc 1 75 36 view .LVU56
+ 169 0058 9FED126A 		vldr.32	s12, .L5+16
+ 170 005c 67EE867A 		vmul.f32	s15, s15, s12
+ 171              		.loc 1 75 60 view .LVU57
+ 172 0060 92ED007A 		vldr.32	s14, [r2]
+ 173              		.loc 1 75 66 view .LVU58
+ 174 0064 DFED106A 		vldr.32	s13, .L5+20
+ 175 0068 27EE267A 		vmul.f32	s14, s14, s13
+ 176              		.loc 1 75 51 view .LVU59
+ 177 006c 77EE877A 		vadd.f32	s15, s15, s14
+ 178              		.loc 1 75 18 view .LVU60
+ 179 0070 C3ED007A 		vstr.32	s15, [r3]
+  76:Sdrive/adc_drv.c **** 	AdcFilPara.Temp = AdcFilPara.Temp * LPF_I_STOP_B + AdcPara.Temp * LPF_I_STOP_A;
+ 180              		.loc 1 76 2 is_stmt 1 view .LVU61
+ 181              		.loc 1 76 30 is_stmt 0 view .LVU62
+ 182 0074 D3ED017A 		vldr.32	s15, [r3, #4]
+ 183              		.loc 1 76 36 view .LVU63
+ 184 0078 67EE867A 		vmul.f32	s15, s15, s12
+ 185              		.loc 1 76 60 view .LVU64
+ 186 007c 1289     		ldrh	r2, [r2, #8]
+ 187 007e 07EE102A 		vmov	s14, r2	@ int
+ 188              		.loc 1 76 66 view .LVU65
+ 189 0082 B8EEC77A 		vcvt.f32.s32	s14, s14
+ 190 0086 27EE267A 		vmul.f32	s14, s14, s13
+ 191              		.loc 1 76 51 view .LVU66
+ 192 008a 77EE877A 		vadd.f32	s15, s15, s14
+ 193              		.loc 1 76 18 view .LVU67
+ 194 008e C3ED017A 		vstr.32	s15, [r3, #4]
+  77:Sdrive/adc_drv.c **** }
+ 195              		.loc 1 77 1 view .LVU68
+ 196 0092 7047     		bx	lr
+ 197              	.L6:
+ 198              		.align	2
+ 199              	.L5:
+ 200 0094 00000000 		.word	AdcFilPara
+ 201 0098 957D1F3F 		.word	1059028373
+ 202 009c 00000000 		.word	AdcPara
+ 203 00a0 D504C13E 		.word	1052837077
+ 204 00a4 1D327F3F 		.word	1065300509
+ 205 00a8 2EE34D3B 		.word	994960174
+ 206              		.cfi_endproc
+ 207              	.LFE274:
+ 209              		.section	.text.AdcSampleOffset,"ax",%progbits
+ 210              		.align	1
+ 211              		.global	AdcSampleOffset
+ 212              		.syntax unified
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s 			page 6
+
+
+ 213              		.thumb
+ 214              		.thumb_func
+ 216              	AdcSampleOffset:
+ 217              	.LFB272:
+  25:Sdrive/adc_drv.c **** 	uint8_t i = 0;
+ 218              		.loc 1 25 1 is_stmt 1 view -0
+ 219              		.cfi_startproc
+ 220              		@ args = 0, pretend = 0, frame = 0
+ 221              		@ frame_needed = 0, uses_anonymous_args = 0
+ 222 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 223              	.LCFI0:
+ 224              		.cfi_def_cfa_offset 24
+ 225              		.cfi_offset 3, -24
+ 226              		.cfi_offset 4, -20
+ 227              		.cfi_offset 5, -16
+ 228              		.cfi_offset 6, -12
+ 229              		.cfi_offset 7, -8
+ 230              		.cfi_offset 14, -4
+  26:Sdrive/adc_drv.c **** 	uint8_t j = 0;
+ 231              		.loc 1 26 2 view .LVU70
+ 232              	.LVL0:
+  27:Sdrive/adc_drv.c **** 	uint16_t Sum1 = 0;
+ 233              		.loc 1 27 2 view .LVU71
+  28:Sdrive/adc_drv.c **** 	uint16_t Sum2 = 0;
+ 234              		.loc 1 28 2 view .LVU72
+  29:Sdrive/adc_drv.c **** 
+ 235              		.loc 1 29 2 view .LVU73
+  31:Sdrive/adc_drv.c **** 	{
+ 236              		.loc 1 31 2 view .LVU74
+  29:Sdrive/adc_drv.c **** 
+ 237              		.loc 1 29 11 is_stmt 0 view .LVU75
+ 238 0002 0026     		movs	r6, #0
+  28:Sdrive/adc_drv.c **** 	uint16_t Sum2 = 0;
+ 239              		.loc 1 28 11 view .LVU76
+ 240 0004 3746     		mov	r7, r6
+  31:Sdrive/adc_drv.c **** 	{
+ 241              		.loc 1 31 9 view .LVU77
+ 242 0006 3546     		mov	r5, r6
+  31:Sdrive/adc_drv.c **** 	{
+ 243              		.loc 1 31 2 view .LVU78
+ 244 0008 17E0     		b	.L8
+ 245              	.LVL1:
+ 246              	.L9:
+  35:Sdrive/adc_drv.c **** 			AdcPara.OffsetCurW = ADC_Value[3];
+ 247              		.loc 1 35 4 is_stmt 1 view .LVU79
+  35:Sdrive/adc_drv.c **** 			AdcPara.OffsetCurW = ADC_Value[3];
+ 248              		.loc 1 35 34 is_stmt 0 view .LVU80
+ 249 000a 134A     		ldr	r2, .L14
+ 250 000c B2F90010 		ldrsh	r1, [r2]
+  35:Sdrive/adc_drv.c **** 			AdcPara.OffsetCurW = ADC_Value[3];
+ 251              		.loc 1 35 23 view .LVU81
+ 252 0010 124B     		ldr	r3, .L14+4
+ 253 0012 1983     		strh	r1, [r3, #24]	@ movhi
+  36:Sdrive/adc_drv.c **** 
+ 254              		.loc 1 36 4 is_stmt 1 view .LVU82
+  36:Sdrive/adc_drv.c **** 
+ 255              		.loc 1 36 34 is_stmt 0 view .LVU83
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s 			page 7
+
+
+ 256 0014 B2F90620 		ldrsh	r2, [r2, #6]
+  36:Sdrive/adc_drv.c **** 
+ 257              		.loc 1 36 23 view .LVU84
+ 258 0018 9A83     		strh	r2, [r3, #28]	@ movhi
+  38:Sdrive/adc_drv.c **** 		}
+ 259              		.loc 1 38 4 is_stmt 1 view .LVU85
+ 260 001a 0120     		movs	r0, #1
+ 261 001c FFF7FEFF 		bl	HAL_Delay
+ 262              	.LVL2:
+  33:Sdrive/adc_drv.c **** 		{
+ 263              		.loc 1 33 25 discriminator 3 view .LVU86
+ 264 0020 0134     		adds	r4, r4, #1
+ 265              	.LVL3:
+  33:Sdrive/adc_drv.c **** 		{
+ 266              		.loc 1 33 25 is_stmt 0 discriminator 3 view .LVU87
+ 267 0022 E4B2     		uxtb	r4, r4
+ 268              	.LVL4:
+ 269              	.L10:
+  33:Sdrive/adc_drv.c **** 		{
+ 270              		.loc 1 33 17 is_stmt 1 discriminator 1 view .LVU88
+ 271 0024 632C     		cmp	r4, #99
+ 272 0026 F0D9     		bls	.L9
+  40:Sdrive/adc_drv.c **** 		Sum2 += AdcPara.OffsetCurW;
+ 273              		.loc 1 40 3 view .LVU89
+  40:Sdrive/adc_drv.c **** 		Sum2 += AdcPara.OffsetCurW;
+ 274              		.loc 1 40 18 is_stmt 0 view .LVU90
+ 275 0028 0C4A     		ldr	r2, .L14+4
+ 276 002a 138B     		ldrh	r3, [r2, #24]
+  40:Sdrive/adc_drv.c **** 		Sum2 += AdcPara.OffsetCurW;
+ 277              		.loc 1 40 8 view .LVU91
+ 278 002c 3B44     		add	r3, r3, r7
+ 279 002e 9FB2     		uxth	r7, r3
+ 280              	.LVL5:
+  41:Sdrive/adc_drv.c **** 	}
+ 281              		.loc 1 41 3 is_stmt 1 view .LVU92
+  41:Sdrive/adc_drv.c **** 	}
+ 282              		.loc 1 41 18 is_stmt 0 view .LVU93
+ 283 0030 938B     		ldrh	r3, [r2, #28]
+  41:Sdrive/adc_drv.c **** 	}
+ 284              		.loc 1 41 8 view .LVU94
+ 285 0032 3344     		add	r3, r3, r6
+ 286 0034 9EB2     		uxth	r6, r3
+ 287              	.LVL6:
+  31:Sdrive/adc_drv.c **** 	{
+ 288              		.loc 1 31 23 is_stmt 1 discriminator 2 view .LVU95
+ 289 0036 0135     		adds	r5, r5, #1
+ 290              	.LVL7:
+  31:Sdrive/adc_drv.c **** 	{
+ 291              		.loc 1 31 23 is_stmt 0 discriminator 2 view .LVU96
+ 292 0038 EDB2     		uxtb	r5, r5
+ 293              	.LVL8:
+ 294              	.L8:
+  31:Sdrive/adc_drv.c **** 	{
+ 295              		.loc 1 31 16 is_stmt 1 discriminator 1 view .LVU97
+ 296 003a 092D     		cmp	r5, #9
+ 297 003c 01D8     		bhi	.L13
+  33:Sdrive/adc_drv.c **** 		{
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s 			page 8
+
+
+ 298              		.loc 1 33 10 is_stmt 0 view .LVU98
+ 299 003e 0024     		movs	r4, #0
+ 300 0040 F0E7     		b	.L10
+ 301              	.L13:
+  43:Sdrive/adc_drv.c **** 	AdcFilPara.OffsetCurW = Sum2 / 10;
+ 302              		.loc 1 43 2 is_stmt 1 view .LVU99
+  43:Sdrive/adc_drv.c **** 	AdcFilPara.OffsetCurW = Sum2 / 10;
+ 303              		.loc 1 43 24 is_stmt 0 view .LVU100
+ 304 0042 0749     		ldr	r1, .L14+8
+ 305 0044 074A     		ldr	r2, .L14+12
+ 306 0046 A2FB0703 		umull	r0, r3, r2, r7
+ 307 004a DB08     		lsrs	r3, r3, #3
+ 308 004c 8B82     		strh	r3, [r1, #20]	@ movhi
+  44:Sdrive/adc_drv.c **** }
+ 309              		.loc 1 44 2 is_stmt 1 view .LVU101
+  44:Sdrive/adc_drv.c **** }
+ 310              		.loc 1 44 24 is_stmt 0 view .LVU102
+ 311 004e A2FB0623 		umull	r2, r3, r2, r6
+ 312 0052 DB08     		lsrs	r3, r3, #3
+ 313 0054 0B83     		strh	r3, [r1, #24]	@ movhi
+  45:Sdrive/adc_drv.c **** 
+ 314              		.loc 1 45 1 view .LVU103
+ 315 0056 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 316              	.LVL9:
+ 317              	.L15:
+  45:Sdrive/adc_drv.c **** 
+ 318              		.loc 1 45 1 view .LVU104
+ 319              		.align	2
+ 320              	.L14:
+ 321 0058 00000000 		.word	ADC_Value
+ 322 005c 00000000 		.word	AdcPara
+ 323 0060 00000000 		.word	AdcFilPara
+ 324 0064 CDCCCCCC 		.word	-858993459
+ 325              		.cfi_endproc
+ 326              	.LFE272:
+ 328              		.section	.text.GetAdc,"ax",%progbits
+ 329              		.align	1
+ 330              		.global	GetAdc
+ 331              		.syntax unified
+ 332              		.thumb
+ 333              		.thumb_func
+ 335              	GetAdc:
+ 336              	.LFB275:
+  78:Sdrive/adc_drv.c **** 
+  79:Sdrive/adc_drv.c **** /**
+  80:Sdrive/adc_drv.c ****  * @brief 更新本控制周期的原始采样量和滤波采样量。
+  81:Sdrive/adc_drv.c ****  * @note 由 TIM1 更新中断每 50 us 调用一次；不得在此函数中加入延时或阻塞�
+  82:Sdrive/adc_drv.c ****  */
+  83:Sdrive/adc_drv.c **** void GetAdc(void)
+  84:Sdrive/adc_drv.c **** {
+ 337              		.loc 1 84 1 is_stmt 1 view -0
+ 338              		.cfi_startproc
+ 339              		@ args = 0, pretend = 0, frame = 0
+ 340              		@ frame_needed = 0, uses_anonymous_args = 0
+ 341 0000 08B5     		push	{r3, lr}
+ 342              	.LCFI1:
+ 343              		.cfi_def_cfa_offset 8
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s 			page 9
+
+
+ 344              		.cfi_offset 3, -8
+ 345              		.cfi_offset 14, -4
+  85:Sdrive/adc_drv.c **** 	AdcSample();
+ 346              		.loc 1 85 2 view .LVU106
+ 347 0002 FFF7FEFF 		bl	AdcSample
+ 348              	.LVL10:
+  86:Sdrive/adc_drv.c **** 	AdcSampleDeal();
+ 349              		.loc 1 86 2 view .LVU107
+ 350 0006 FFF7FEFF 		bl	AdcSampleDeal
+ 351              	.LVL11:
+  87:Sdrive/adc_drv.c **** }
+ 352              		.loc 1 87 1 is_stmt 0 view .LVU108
+ 353 000a 08BD     		pop	{r3, pc}
+ 354              		.cfi_endproc
+ 355              	.LFE275:
+ 357              		.global	ADC_Value
+ 358              		.section	.bss.ADC_Value,"aw",%nobits
+ 359              		.align	2
+ 362              	ADC_Value:
+ 363 0000 00000000 		.space	10
+ 363      00000000 
+ 363      0000
+ 364              		.global	AdcFilPara
+ 365              		.section	.bss.AdcFilPara,"aw",%nobits
+ 366              		.align	2
+ 369              	AdcFilPara:
+ 370 0000 00000000 		.space	28
+ 370      00000000 
+ 370      00000000 
+ 370      00000000 
+ 370      00000000 
+ 371              		.global	AdcPara
+ 372              		.section	.bss.AdcPara,"aw",%nobits
+ 373              		.align	2
+ 376              	AdcPara:
+ 377 0000 00000000 		.space	32
+ 377      00000000 
+ 377      00000000 
+ 377      00000000 
+ 377      00000000 
+ 378              		.text
+ 379              	.Letext0:
+ 380              		.file 2 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 381              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 382              		.file 4 "Sdrive/adc_drv.h"
+ 383              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s 			page 10
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 adc_drv.c
+C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s:21     .text.AdcSample:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s:26     .text.AdcSample:00000000 AdcSample
+C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s:101    .text.AdcSample:00000070 $d
+C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s:369    .bss.AdcFilPara:00000000 AdcFilPara
+C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s:362    .bss.ADC_Value:00000000 ADC_Value
+C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s:376    .bss.AdcPara:00000000 AdcPara
+C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s:110    .text.AdcSampleDeal:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s:115    .text.AdcSampleDeal:00000000 AdcSampleDeal
+C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s:200    .text.AdcSampleDeal:00000094 $d
+C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s:210    .text.AdcSampleOffset:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s:216    .text.AdcSampleOffset:00000000 AdcSampleOffset
+C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s:321    .text.AdcSampleOffset:00000058 $d
+C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s:329    .text.GetAdc:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s:335    .text.GetAdc:00000000 GetAdc
+C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s:359    .bss.ADC_Value:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s:366    .bss.AdcFilPara:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccmQYO2F.s:373    .bss.AdcPara:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_Delay

@@ -1,0 +1,310 @@
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccanPYQF.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"task.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "App/task.c"
+  20              		.section	.text.DrvInit,"ax",%progbits
+  21              		.align	1
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	DrvInit:
+  27              	.LFB272:
+   1:App/task.c    **** // /**
+   2:App/task.c    **** //  * @file task.c
+   3:App/task.c    **** //  * @brief 实现简单的前后台时间片调度器和整机上电初始化流程。
+   4:App/task.c    **** //  *
+   5:App/task.c    **** //  * SysTick 每 1 ms 调用 TaskScheduleCb()，仅递减计数并置位 run；主循环中的
+   6:App/task.c    **** //  * TaskHandler() 再执行已经就绪的业务函数。高速 FOC 环不经过本调度器，�
+   7:App/task.c    **** //  * TIM1 的 20 kHz 更新中断直接驱动。
+   8:App/task.c    **** //  */
+   9:App/task.c    **** #include "task.h"
+  10:App/task.c    **** #include "motor_para.h"
+  11:App/task.c    **** #include "motor_ctrl.h"
+  12:App/task.c    **** #include "sen.h"
+  13:App/task.c    **** #include "tim.h"
+  14:App/task.c    **** // typedef struct
+  15:App/task.c    **** // {
+  16:App/task.c    **** // 	uint8_t run;                 /**< 就绪标志：1 表示等待主循环执行，0 表示未到
+  17:App/task.c    **** // 	uint16_t timCount;           /**< 当前倒计时，单位为 1 ms 调度节拍。 */
+  18:App/task.c    **** // 	uint16_t timRload;           /**< 周期重载值，任务执行周期约为 timRload ms。 */
+  19:App/task.c    **** // 	void (*pTaskFuncCb)(void);   /**< 到期后由主循环调用的无参数业务函数。 */
+  20:App/task.c    **** // } TaskComps_t;
+  21:App/task.c    **** 
+  22:App/task.c    **** // static TaskComps_t g_taskComps[] =
+  23:App/task.c    **** // 	{
+  24:App/task.c    **** // #if VR_OR_PC
+  25:App/task.c    **** // 		{0, 1, 1, VrTask}, // 电位器处理任务
+  26:App/task.c    **** // #else
+  27:App/task.c    **** // 		{0, 10, 10, RecevToVofa}, // 接收数据任务
+  28:App/task.c    **** // #endif
+  29:App/task.c    **** // 		{0, 5, 5, HmiTask},		 // 按键处理任务
+  30:App/task.c    **** // 		//{0, 10, 10, SendToVofa}, // 发送数据任务
+  31:App/task.c    **** // 		{0, 1, 1, FaultCheck},	 // 故障检测任务
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccanPYQF.s 			page 2
+
+
+  32:App/task.c    **** 
+  33:App/task.c    **** // 		/* 添加业务功能模块 */
+  34:App/task.c    **** // };
+  35:App/task.c    **** 
+  36:App/task.c    **** // #define TASK_NUM_MAX (sizeof(g_taskComps) / sizeof(g_taskComps[0])) /**< 静态任务表中的�
+  37:App/task.c    **** 
+  38:App/task.c    **** // /**
+  39:App/task.c    **** //  * @brief 扫描任务表并执行所有已经到期的后台任务。
+  40:App/task.c    **** //  *
+  41:App/task.c    **** //  * 执行前先清除 run 标志，因此同一任务在一次扫描中最多执行一次。如�
+  42:App/task.c    **** //  * 直接跳过该项。业务执行时间若超过任务周期，调度器不会补跑丢失的
+  43:App/task.c    **** //  * @note 由 task_loop() 在主循环上下文调用。
+  44:App/task.c    **** //  */
+  45:App/task.c    **** // static void TaskHandler(void)
+  46:App/task.c    **** // {
+  47:App/task.c    **** // 	for (uint8_t i = 0; i < TASK_NUM_MAX; i++)
+  48:App/task.c    **** // 	{
+  49:App/task.c    **** // 		if (g_taskComps[i].run) // 判断时间片标志
+  50:App/task.c    **** // 		{
+  51:App/task.c    **** // 			g_taskComps[i].run = 0; // 标志清零
+  52:App/task.c    **** // 			if (g_taskComps[i].pTaskFuncCb == NULL)
+  53:App/task.c    **** // 			{
+  54:App/task.c    **** // 				continue;
+  55:App/task.c    **** // 			}
+  56:App/task.c    **** // 			g_taskComps[i].pTaskFuncCb(); // 执行调度业务功能模块
+  57:App/task.c    **** // 		}
+  58:App/task.c    **** // 	}
+  59:App/task.c    **** // }
+  60:App/task.c    **** 
+  61:App/task.c    **** // /**
+  62:App/task.c    **** //  * @brief 更新所有后台任务的毫秒倒计时并设置就绪标志。
+  63:App/task.c    **** //  *
+  64:App/task.c    **** //  * 每次调用将非零 timCount 减一；减到零时置 run=1，并装回 timRload，形成�
+  65:App/task.c    **** //  * @note 该回调由 SysTick_Handler() 间接调用，默认调用周期为 1 ms；函数只修
+  66:App/task.c    **** //  *       标志和计数，不直接执行任务，以缩短中断占用时间。
+  67:App/task.c    **** //  */
+  68:App/task.c    **** // static void TaskScheduleCb(void)
+  69:App/task.c    **** // {
+  70:App/task.c    **** // 	for (uint8_t i = 0; i < TASK_NUM_MAX; i++)
+  71:App/task.c    **** // 	{
+  72:App/task.c    **** // 		if (g_taskComps[i].timCount)
+  73:App/task.c    **** // 		{
+  74:App/task.c    **** // 			g_taskComps[i].timCount--;
+  75:App/task.c    **** // 			if (g_taskComps[i].timCount == 0)
+  76:App/task.c    **** // 			{
+  77:App/task.c    **** // 				g_taskComps[i].run = 1;
+  78:App/task.c    **** // 				g_taskComps[i].timCount = g_taskComps[i].timRload;
+  79:App/task.c    **** // 			}
+  80:App/task.c    **** // 		}
+  81:App/task.c    **** // 	}
+  82:App/task.c    **** // }
+  83:App/task.c    **** 
+  84:App/task.c    **** /**
+  85:App/task.c    ****  * @brief 初始化应用直接使用的按键、串口接收和 TIM1 更新中断。
+  86:App/task.c    ****  * @note CubeMX 已完成 GPIO、UART 和定时器底层配置，本函数只启动运行时功能�
+  87:App/task.c    ****  */
+  88:App/task.c    **** static void DrvInit()
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccanPYQF.s 			page 3
+
+
+  89:App/task.c    **** {
+  28              		.loc 1 89 1 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 08B5     		push	{r3, lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 3, -8
+  36              		.cfi_offset 14, -4
+  90:App/task.c    **** 	// DelayInit();
+  91:App/task.c    **** 	// KeyDrvInit();
+  92:App/task.c    **** 	__HAL_UART_ENABLE_IT(&huart1, UART_IT_RXNE); // receive interrrupt，空闲时间开启中断
+  37              		.loc 1 92 2 view .LVU1
+  38 0002 074B     		ldr	r3, .L3
+  39 0004 1A68     		ldr	r2, [r3]
+  40 0006 D368     		ldr	r3, [r2, #12]
+  41 0008 43F02003 		orr	r3, r3, #32
+  42 000c D360     		str	r3, [r2, #12]
+  93:App/task.c    **** 	__HAL_TIM_CLEAR_IT(&htim1, TIM_IT_UPDATE);	 // 避免中断已开启就进入中断
+  43              		.loc 1 93 2 view .LVU2
+  44 000e 0548     		ldr	r0, .L3+4
+  45 0010 0368     		ldr	r3, [r0]
+  46 0012 6FF00102 		mvn	r2, #1
+  47 0016 1A61     		str	r2, [r3, #16]
+  94:App/task.c    **** 	HAL_TIM_Base_Start_IT(&htim1);				 // 开启定时器1中断
+  48              		.loc 1 94 2 view .LVU3
+  49 0018 FFF7FEFF 		bl	HAL_TIM_Base_Start_IT
+  50              	.LVL0:
+  95:App/task.c    **** }
+  51              		.loc 1 95 1 is_stmt 0 view .LVU4
+  52 001c 08BD     		pop	{r3, pc}
+  53              	.L4:
+  54 001e 00BF     		.align	2
+  55              	.L3:
+  56 0020 00000000 		.word	huart1
+  57 0024 00000000 		.word	htim1
+  58              		.cfi_endproc
+  59              	.LFE272:
+  61              		.section	.text.task_init,"ax",%progbits
+  62              		.align	1
+  63              		.global	task_init
+  64              		.syntax unified
+  65              		.thumb
+  66              		.thumb_func
+  68              	task_init:
+  69              	.LFB273:
+  96:App/task.c    **** 
+  97:App/task.c    **** // /**
+  98:App/task.c    **** //  * @brief 将 1 ms 任务节拍回调注册到 SysTick 中断模块。
+  99:App/task.c    **** //  * @note 注册完成前，SysTick_Handler() 检测到空指针会直接返回。
+ 100:App/task.c    **** //  */
+ 101:App/task.c    **** // static void AppInit()
+ 102:App/task.c    **** // {
+ 103:App/task.c    **** // 	TaskScheduleCbReg(TaskScheduleCb);
+ 104:App/task.c    **** // }
+ 105:App/task.c    **** 
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccanPYQF.s 			page 4
+
+
+ 106:App/task.c    **** /**
+ 107:App/task.c    ****  * @brief 完成应用层和电机控制系统的上电初始化。
+ 108:App/task.c    ****  *
+ 109:App/task.c    ****  * 顺序为：启动驱动与调度器、装载电机和控制参数、启动 ADC DMA、启动编�
+ 110:App/task.c    ****  * 在无电流条件下校准相电流零点，最后执行机械零位校准。Init_Over 在 ADC 
+ 111:App/task.c    ****  * 后置位，用于允许故障检测逻辑开始工作。
+ 112:App/task.c    ****  * @warning 调零过程可能驱动电机，调用前必须保证功率级和机构处于可运行
+ 113:App/task.c    ****  */
+ 114:App/task.c    **** void task_init(void)
+ 115:App/task.c    **** {
+  70              		.loc 1 115 1 is_stmt 1 view -0
+  71              		.cfi_startproc
+  72              		@ args = 0, pretend = 0, frame = 0
+  73              		@ frame_needed = 0, uses_anonymous_args = 0
+  74 0000 08B5     		push	{r3, lr}
+  75              	.LCFI1:
+  76              		.cfi_def_cfa_offset 8
+  77              		.cfi_offset 3, -8
+  78              		.cfi_offset 14, -4
+ 116:App/task.c    **** 	DrvInit();
+  79              		.loc 1 116 2 view .LVU6
+  80 0002 FFF7FEFF 		bl	DrvInit
+  81              	.LVL1:
+ 117:App/task.c    **** 	// AppInit();
+ 118:App/task.c    **** 
+ 119:App/task.c    **** 	MotorInit(); // 电机参数初始化
+  82              		.loc 1 119 2 view .LVU7
+  83 0006 FFF7FEFF 		bl	MotorInit
+  84              	.LVL2:
+ 120:App/task.c    **** 
+ 121:App/task.c    **** 	HAL_Delay(100);
+  85              		.loc 1 121 2 view .LVU8
+  86 000a 6420     		movs	r0, #100
+  87 000c FFF7FEFF 		bl	HAL_Delay
+  88              	.LVL3:
+ 122:App/task.c    **** 	HAL_ADC_Start_DMA(&hadc1, (uint32_t *)&ADC_Value, 5);		  // 开启ADC-DMA转换
+  89              		.loc 1 122 2 view .LVU9
+  90 0010 0522     		movs	r2, #5
+  91 0012 0749     		ldr	r1, .L9
+  92 0014 0748     		ldr	r0, .L9+4
+  93 0016 FFF7FEFF 		bl	HAL_ADC_Start_DMA
+  94              	.LVL4:
+ 123:App/task.c    **** 	/* 启动 A/B 硬件计数 */
+ 124:App/task.c    **** if (HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL) != HAL_OK)
+  95              		.loc 1 124 1 view .LVU10
+  96              		.loc 1 124 5 is_stmt 0 view .LVU11
+  97 001a 3C21     		movs	r1, #60
+  98 001c 0648     		ldr	r0, .L9+8
+  99 001e FFF7FEFF 		bl	HAL_TIM_Encoder_Start
+ 100              	.LVL5:
+ 101              		.loc 1 124 4 discriminator 1 view .LVU12
+ 102 0022 10B9     		cbnz	r0, .L8
+ 103              	.L6:
+ 125:App/task.c    **** {
+ 126:App/task.c    ****     Error_Handler();
+ 127:App/task.c    **** }
+ 128:App/task.c    **** 	AdcSampleOffset(); // 零点校准
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccanPYQF.s 			page 5
+
+
+ 104              		.loc 1 128 2 is_stmt 1 view .LVU13
+ 105 0024 FFF7FEFF 		bl	AdcSampleOffset
+ 106              	.LVL6:
+ 129:App/task.c    **** 
+ 130:App/task.c    **** 	// Init_Over = 1;
+ 131:App/task.c    **** 
+ 132:App/task.c    **** 	// Motor.CtrlMode = TO_ZERO;
+ 133:App/task.c    **** 	// PostionToZeroDouble(); // 调零
+ 134:App/task.c    **** 	// Motor.CtrlMode = STOP;
+ 135:App/task.c    **** }
+ 107              		.loc 1 135 1 is_stmt 0 view .LVU14
+ 108 0028 08BD     		pop	{r3, pc}
+ 109              	.L8:
+ 126:App/task.c    **** }
+ 110              		.loc 1 126 5 is_stmt 1 view .LVU15
+ 111 002a FFF7FEFF 		bl	Error_Handler
+ 112              	.LVL7:
+ 113 002e F9E7     		b	.L6
+ 114              	.L10:
+ 115              		.align	2
+ 116              	.L9:
+ 117 0030 00000000 		.word	ADC_Value
+ 118 0034 00000000 		.word	hadc1
+ 119 0038 00000000 		.word	htim3
+ 120              		.cfi_endproc
+ 121              	.LFE273:
+ 123              		.text
+ 124              	.Letext0:
+ 125              		.file 2 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 126              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 127              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 128              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h"
+ 129              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 130              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 131              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h"
+ 132              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 133              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h"
+ 134              		.file 11 "Sdrive/adc_drv.h"
+ 135              		.file 12 "App/task.h"
+ 136              		.file 13 "Core/Inc/main.h"
+ 137              		.file 14 "MotorFoc/motor_ctrl.h"
+ 138              		.file 15 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccanPYQF.s 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 task.c
+C:\Users\sunhao\AppData\Local\Temp\ccanPYQF.s:21     .text.DrvInit:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccanPYQF.s:26     .text.DrvInit:00000000 DrvInit
+C:\Users\sunhao\AppData\Local\Temp\ccanPYQF.s:56     .text.DrvInit:00000020 $d
+C:\Users\sunhao\AppData\Local\Temp\ccanPYQF.s:62     .text.task_init:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccanPYQF.s:68     .text.task_init:00000000 task_init
+C:\Users\sunhao\AppData\Local\Temp\ccanPYQF.s:117    .text.task_init:00000030 $d
+
+UNDEFINED SYMBOLS
+HAL_TIM_Base_Start_IT
+huart1
+htim1
+MotorInit
+HAL_Delay
+HAL_ADC_Start_DMA
+HAL_TIM_Encoder_Start
+AdcSampleOffset
+Error_Handler
+ADC_Value
+hadc1
+htim3

@@ -1,0 +1,821 @@
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"motor_ctrl.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "MotorFoc/motor_ctrl.c"
+  20              		.section	.text.GradXieLv,"ax",%progbits
+  21              		.align	1
+  22              		.global	GradXieLv
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	GradXieLv:
+  28              	.LVL0:
+  29              	.LFB272:
+   1:MotorFoc/motor_ctrl.c **** /**
+   2:MotorFoc/motor_ctrl.c ****  * @file motor_ctrl.c
+   3:MotorFoc/motor_ctrl.c ****  * @brief 电机控制顶层状态机、IF 启动和多观测器全速域融合实现。
+   4:MotorFoc/motor_ctrl.c ****  *
+   5:MotorFoc/motor_ctrl.c ****  * 每个 TIM1 控制周期先在 AxisDq() 更新电流坐标和观测器，再由 MotorModeSel()
+   6:MotorFoc/motor_ctrl.c ****  * 执行当前闭环并更新 SVPWM。无感模式在低速 HFI 或 IF 与高速 SMO/磁链之间
+   7:MotorFoc/motor_ctrl.c ****  * 采用迟滞阈值、角度同步和 PI 状态复位，降低切换时的电流与转矩冲击�
+   8:MotorFoc/motor_ctrl.c ****  */
+   9:MotorFoc/motor_ctrl.c **** 
+  10:MotorFoc/motor_ctrl.c **** #include "motor_ctrl.h"
+  11:MotorFoc/motor_ctrl.c **** 
+  12:MotorFoc/motor_ctrl.c **** // FOC 坐标变换与电机运行状态对象
+  13:MotorFoc/motor_ctrl.c **** CLARKE /******************/ Clarke = CLARKE_DEFAULTS;
+  14:MotorFoc/motor_ctrl.c **** PARK /********************/ Park = PARK_DEFAULTS;
+  15:MotorFoc/motor_ctrl.c **** IPARK /*******************/ Ipark = IPARK_DEFAULTS;
+  16:MotorFoc/motor_ctrl.c **** motor_p /*****************/ Motor = MOTOR_DEFAULTS;
+  17:MotorFoc/motor_ctrl.c **** 
+  18:MotorFoc/motor_ctrl.c **** // 频率、速度、电流给定的斜率规划对象
+  19:MotorFoc/motor_ctrl.c **** GXieLv /******************/ IfFreqGXieLv = GXieLv_DEFAULTS;
+  20:MotorFoc/motor_ctrl.c **** GXieLv /******************/ SpdRefGXieLv = GXieLv_DEFAULTS;
+  21:MotorFoc/motor_ctrl.c **** GXieLv /******************/ IdqRefGXieLv = GXieLv_DEFAULTS;
+  22:MotorFoc/motor_ctrl.c **** 
+  23:MotorFoc/motor_ctrl.c **** // 无感观测器、运行参数与位置控制对象
+  24:MotorFoc/motor_ctrl.c **** Sensorless_Control /******/ SensorLess = Sensorless_DEFAULTS;
+  25:MotorFoc/motor_ctrl.c **** IPARK /*******************/ IparkSmoPv = IPARK_DEFAULTS;
+  26:MotorFoc/motor_ctrl.c **** PARA /********************/ Para;
+  27:MotorFoc/motor_ctrl.c **** POS_DRV /*****************/ Pos;
+  28:MotorFoc/motor_ctrl.c **** 
+  29:MotorFoc/motor_ctrl.c **** // FLUX_DRV                 flux = FLUX_DEFAULTS;
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s 			page 2
+
+
+  30:MotorFoc/motor_ctrl.c **** 
+  31:MotorFoc/motor_ctrl.c **** bool Init_Over = 0;
+  32:MotorFoc/motor_ctrl.c **** bool HFI_Init_Angle_flag = 0;
+  33:MotorFoc/motor_ctrl.c **** 
+  34:MotorFoc/motor_ctrl.c **** /**
+  35:MotorFoc/motor_ctrl.c ****  * @brief 让当前斜坡输出以固定步长逼近目标值。
+  36:MotorFoc/motor_ctrl.c ****  * @param pv 斜坡对象，XieLv_X 为目标、XieLv_Y 为当前输出、XieLv_Grad 为步长。
+  37:MotorFoc/motor_ctrl.c ****  *
+  38:MotorFoc/motor_ctrl.c ****  * 当误差绝对值大于一步时只增减一个步长；进入一步范围后直接赋目标，
+  39:MotorFoc/motor_ctrl.c ****  * 在目标两侧往复振荡。调用间隔由上层 Timer_Count/Grad_Timer 决定。
+  40:MotorFoc/motor_ctrl.c ****  */
+  41:MotorFoc/motor_ctrl.c **** void GradXieLv(p_GXieLv pv)
+  42:MotorFoc/motor_ctrl.c **** {
+  30              		.loc 1 42 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+  43:MotorFoc/motor_ctrl.c **** 	if (pv->XieLv_X < (pv->XieLv_Y - pv->XieLv_Grad)) // XieLv_Grad 减梯度值时候
+  35              		.loc 1 43 2 view .LVU1
+  36              		.loc 1 43 8 is_stmt 0 view .LVU2
+  37 0000 90ED007A 		vldr.32	s14, [r0]
+  38              		.loc 1 43 23 view .LVU3
+  39 0004 D0ED017A 		vldr.32	s15, [r0, #4]
+  40              		.loc 1 43 37 view .LVU4
+  41 0008 D0ED026A 		vldr.32	s13, [r0, #8]
+  42              		.loc 1 43 33 view .LVU5
+  43 000c 37EEE66A 		vsub.f32	s12, s15, s13
+  44              		.loc 1 43 5 view .LVU6
+  45 0010 B4EEC67A 		vcmpe.f32	s14, s12
+  46 0014 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  47 0018 02D5     		bpl	.L9
+  44:MotorFoc/motor_ctrl.c **** 	{
+  45:MotorFoc/motor_ctrl.c **** 		pv->XieLv_Y = pv->XieLv_Y - pv->XieLv_Grad;
+  48              		.loc 1 45 3 is_stmt 1 view .LVU7
+  49              		.loc 1 45 15 is_stmt 0 view .LVU8
+  50 001a 80ED016A 		vstr.32	s12, [r0, #4]
+  51 001e 7047     		bx	lr
+  52              	.L9:
+  46:MotorFoc/motor_ctrl.c **** 	}
+  47:MotorFoc/motor_ctrl.c **** 	else if (pv->XieLv_X > (pv->XieLv_Y + pv->XieLv_Grad)) // 加梯度值时候
+  53              		.loc 1 47 7 is_stmt 1 view .LVU9
+  54              		.loc 1 47 38 is_stmt 0 view .LVU10
+  55 0020 77EEA67A 		vadd.f32	s15, s15, s13
+  56              		.loc 1 47 10 view .LVU11
+  57 0024 B4EEE77A 		vcmpe.f32	s14, s15
+  58 0028 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  59 002c 02DD     		ble	.L10
+  48:MotorFoc/motor_ctrl.c **** 	{
+  49:MotorFoc/motor_ctrl.c **** 		pv->XieLv_Y = pv->XieLv_Y + pv->XieLv_Grad;
+  60              		.loc 1 49 3 is_stmt 1 view .LVU12
+  61              		.loc 1 49 15 is_stmt 0 view .LVU13
+  62 002e C0ED017A 		vstr.32	s15, [r0, #4]
+  63 0032 7047     		bx	lr
+  64              	.L10:
+  50:MotorFoc/motor_ctrl.c **** 	}
+  51:MotorFoc/motor_ctrl.c **** 	else
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s 			page 3
+
+
+  52:MotorFoc/motor_ctrl.c **** 	{
+  53:MotorFoc/motor_ctrl.c **** 		pv->XieLv_Y = pv->XieLv_X;
+  65              		.loc 1 53 3 is_stmt 1 view .LVU14
+  66              		.loc 1 53 15 is_stmt 0 view .LVU15
+  67 0034 80ED017A 		vstr.32	s14, [r0, #4]
+  54:MotorFoc/motor_ctrl.c **** 	}
+  55:MotorFoc/motor_ctrl.c **** }
+  68              		.loc 1 55 1 view .LVU16
+  69 0038 7047     		bx	lr
+  70              		.cfi_endproc
+  71              	.LFE272:
+  73              		.section	.text.MotorStop,"ax",%progbits
+  74              		.align	1
+  75              		.global	MotorStop
+  76              		.syntax unified
+  77              		.thumb
+  78              		.thumb_func
+  80              	MotorStop:
+  81              	.LFB273:
+  56:MotorFoc/motor_ctrl.c **** 
+  57:MotorFoc/motor_ctrl.c **** /**
+  58:MotorFoc/motor_ctrl.c ****  * @brief 立即禁止 TIM1 三相主/互补 PWM、清零比较值并复位控制动态状态。
+  59:MotorFoc/motor_ctrl.c ****  *
+  60:MotorFoc/motor_ctrl.c ****  * CCER 与 0xAAAA 相与会清除各通道输出使能位；CCR1..3 置零后调用
+  61:MotorFoc/motor_ctrl.c ****  * VariableClear()，确保下一次启动不继承 PI 积分或观测器历史。
+  62:MotorFoc/motor_ctrl.c ****  */
+  63:MotorFoc/motor_ctrl.c **** void MotorStop(void)
+  64:MotorFoc/motor_ctrl.c **** {
+  82              		.loc 1 64 1 is_stmt 1 view -0
+  83              		.cfi_startproc
+  84              		@ args = 0, pretend = 0, frame = 0
+  85              		@ frame_needed = 0, uses_anonymous_args = 0
+  86 0000 08B5     		push	{r3, lr}
+  87              	.LCFI0:
+  88              		.cfi_def_cfa_offset 8
+  89              		.cfi_offset 3, -8
+  90              		.cfi_offset 14, -4
+  65:MotorFoc/motor_ctrl.c **** 	// 关闭三相互补 PWM 输出，防止停机后继续驱动功率管
+  66:MotorFoc/motor_ctrl.c **** 	TIM1->CCER &= 0xAAAA; // 不使能PWM输出通道OC1/OC1N/OC2/OC2N/OC3/OC3N
+  91              		.loc 1 66 2 view .LVU18
+  92              		.loc 1 66 6 is_stmt 0 view .LVU19
+  93 0002 084B     		ldr	r3, .L13
+  94 0004 1A6A     		ldr	r2, [r3, #32]
+  95              		.loc 1 66 13 view .LVU20
+  96 0006 22F4AA42 		bic	r2, r2, #21760
+  97 000a 22F05502 		bic	r2, r2, #85
+  98 000e 1204     		lsls	r2, r2, #16
+  99 0010 120C     		lsrs	r2, r2, #16
+ 100 0012 1A62     		str	r2, [r3, #32]
+  67:MotorFoc/motor_ctrl.c **** 
+  68:MotorFoc/motor_ctrl.c **** 	TIM1->CCR1 = 0;
+ 101              		.loc 1 68 2 is_stmt 1 view .LVU21
+ 102              		.loc 1 68 13 is_stmt 0 view .LVU22
+ 103 0014 0022     		movs	r2, #0
+ 104 0016 5A63     		str	r2, [r3, #52]
+  69:MotorFoc/motor_ctrl.c **** 	TIM1->CCR2 = 0;
+ 105              		.loc 1 69 2 is_stmt 1 view .LVU23
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s 			page 4
+
+
+ 106              		.loc 1 69 13 is_stmt 0 view .LVU24
+ 107 0018 9A63     		str	r2, [r3, #56]
+  70:MotorFoc/motor_ctrl.c **** 	TIM1->CCR3 = 0;
+ 108              		.loc 1 70 2 is_stmt 1 view .LVU25
+ 109              		.loc 1 70 13 is_stmt 0 view .LVU26
+ 110 001a DA63     		str	r2, [r3, #60]
+  71:MotorFoc/motor_ctrl.c **** 
+  72:MotorFoc/motor_ctrl.c **** 	VariableClear(); // 变量清零
+ 111              		.loc 1 72 2 is_stmt 1 view .LVU27
+ 112 001c FFF7FEFF 		bl	VariableClear
+ 113              	.LVL1:
+  73:MotorFoc/motor_ctrl.c **** }
+ 114              		.loc 1 73 1 is_stmt 0 view .LVU28
+ 115 0020 08BD     		pop	{r3, pc}
+ 116              	.L14:
+ 117 0022 00BF     		.align	2
+ 118              	.L13:
+ 119 0024 00000140 		.word	1073807360
+ 120              		.cfi_endproc
+ 121              	.LFE273:
+ 123              		.section	.text.MotorRun,"ax",%progbits
+ 124              		.align	1
+ 125              		.global	MotorRun
+ 126              		.syntax unified
+ 127              		.thumb
+ 128              		.thumb_func
+ 130              	MotorRun:
+ 131              	.LFB274:
+  74:MotorFoc/motor_ctrl.c **** 
+  75:MotorFoc/motor_ctrl.c **** /**
+  76:MotorFoc/motor_ctrl.c ****  * @brief 使能 TIM1 三相主通道和互补通道 PWM 输出。
+  77:MotorFoc/motor_ctrl.c ****  * @note 本函数只开放功率输出，不选择控制模式，也不校验故障状态。
+  78:MotorFoc/motor_ctrl.c ****  */
+  79:MotorFoc/motor_ctrl.c **** void MotorRun(void)
+  80:MotorFoc/motor_ctrl.c **** {
+ 132              		.loc 1 80 1 is_stmt 1 view -0
+ 133              		.cfi_startproc
+ 134              		@ args = 0, pretend = 0, frame = 0
+ 135              		@ frame_needed = 0, uses_anonymous_args = 0
+ 136 0000 10B5     		push	{r4, lr}
+ 137              	.LCFI1:
+ 138              		.cfi_def_cfa_offset 8
+ 139              		.cfi_offset 4, -8
+ 140              		.cfi_offset 14, -4
+  81:MotorFoc/motor_ctrl.c **** 	// Fault_Detection();				//启动前先进行故障检测
+  82:MotorFoc/motor_ctrl.c **** 	// 使能三相上下桥 PWM 输出，后续占空比由 SVPWM 更新
+  83:MotorFoc/motor_ctrl.c **** 	TIM1->CCER |= 0x5555;
+ 141              		.loc 1 83 2 view .LVU30
+ 142              		.loc 1 83 6 is_stmt 0 view .LVU31
+ 143 0002 104A     		ldr	r2, .L17
+ 144 0004 136A     		ldr	r3, [r2, #32]
+ 145              		.loc 1 83 13 view .LVU32
+ 146 0006 43F4AA43 		orr	r3, r3, #21760
+ 147 000a 43F05503 		orr	r3, r3, #85
+ 148 000e 1362     		str	r3, [r2, #32]
+  84:MotorFoc/motor_ctrl.c **** 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+ 149              		.loc 1 84 2 is_stmt 1 view .LVU33
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s 			page 5
+
+
+ 150 0010 0D4C     		ldr	r4, .L17+4
+ 151 0012 0021     		movs	r1, #0
+ 152 0014 2046     		mov	r0, r4
+ 153 0016 FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 154              	.LVL2:
+  85:MotorFoc/motor_ctrl.c **** 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+ 155              		.loc 1 85 2 view .LVU34
+ 156 001a 0421     		movs	r1, #4
+ 157 001c 2046     		mov	r0, r4
+ 158 001e FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 159              	.LVL3:
+  86:MotorFoc/motor_ctrl.c **** 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+ 160              		.loc 1 86 2 view .LVU35
+ 161 0022 0821     		movs	r1, #8
+ 162 0024 2046     		mov	r0, r4
+ 163 0026 FFF7FEFF 		bl	HAL_TIM_PWM_Start
+ 164              	.LVL4:
+  87:MotorFoc/motor_ctrl.c **** 	HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
+ 165              		.loc 1 87 2 view .LVU36
+ 166 002a 0021     		movs	r1, #0
+ 167 002c 2046     		mov	r0, r4
+ 168 002e FFF7FEFF 		bl	HAL_TIMEx_PWMN_Start
+ 169              	.LVL5:
+  88:MotorFoc/motor_ctrl.c **** 	HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
+ 170              		.loc 1 88 2 view .LVU37
+ 171 0032 0421     		movs	r1, #4
+ 172 0034 2046     		mov	r0, r4
+ 173 0036 FFF7FEFF 		bl	HAL_TIMEx_PWMN_Start
+ 174              	.LVL6:
+  89:MotorFoc/motor_ctrl.c **** 	HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
+ 175              		.loc 1 89 2 view .LVU38
+ 176 003a 0821     		movs	r1, #8
+ 177 003c 2046     		mov	r0, r4
+ 178 003e FFF7FEFF 		bl	HAL_TIMEx_PWMN_Start
+ 179              	.LVL7:
+  90:MotorFoc/motor_ctrl.c **** }
+ 180              		.loc 1 90 1 is_stmt 0 view .LVU39
+ 181 0042 10BD     		pop	{r4, pc}
+ 182              	.L18:
+ 183              		.align	2
+ 184              	.L17:
+ 185 0044 00000140 		.word	1073807360
+ 186 0048 00000000 		.word	htim1
+ 187              		.cfi_endproc
+ 188              	.LFE274:
+ 190              		.section	.text.QtMotor,"ax",%progbits
+ 191              		.align	1
+ 192              		.global	QtMotor
+ 193              		.syntax unified
+ 194              		.thumb
+ 195              		.thumb_func
+ 197              	QtMotor:
+ 198              	.LFB275:
+  91:MotorFoc/motor_ctrl.c **** 
+  92:MotorFoc/motor_ctrl.c **** /**
+  93:MotorFoc/motor_ctrl.c ****  * @brief 按 360 点正余弦表产生幅值 0.5 V 的开环旋转电压矢量。
+  94:MotorFoc/motor_ctrl.c ****  *
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s 			page 6
+
+
+  95:MotorFoc/motor_ctrl.c ****  * 每 QT_FRQ 个 20 kHz 周期角度索引增加 1 度，因此电角频率约为
+  96:MotorFoc/motor_ctrl.c ****  * PWM_FRQ/(QT_FRQ*360)。该模式没有电流闭环，只适合受控调试或预定位。
+  97:MotorFoc/motor_ctrl.c ****  */
+  98:MotorFoc/motor_ctrl.c **** void QtMotor(void)
+  99:MotorFoc/motor_ctrl.c **** {
+ 199              		.loc 1 99 1 is_stmt 1 view -0
+ 200              		.cfi_startproc
+ 201              		@ args = 0, pretend = 0, frame = 0
+ 202              		@ frame_needed = 0, uses_anonymous_args = 0
+ 203              		@ link register save eliminated.
+ 100:MotorFoc/motor_ctrl.c **** 	Para.IfFrq++;
+ 204              		.loc 1 100 2 view .LVU41
+ 205              		.loc 1 100 6 is_stmt 0 view .LVU42
+ 206 0000 0F4A     		ldr	r2, .L22
+ 207 0002 1388     		ldrh	r3, [r2]
+ 208              		.loc 1 100 12 view .LVU43
+ 209 0004 0133     		adds	r3, r3, #1
+ 210 0006 9BB2     		uxth	r3, r3
+ 211 0008 1380     		strh	r3, [r2]	@ movhi
+ 101:MotorFoc/motor_ctrl.c **** 	if (Para.IfFrq == QT_FRQ) // 强拖频率
+ 212              		.loc 1 101 2 is_stmt 1 view .LVU44
+ 213              		.loc 1 101 5 is_stmt 0 view .LVU45
+ 214 000a 142B     		cmp	r3, #20
+ 215 000c 00D0     		beq	.L21
+ 216              	.L19:
+ 102:MotorFoc/motor_ctrl.c **** 	{
+ 103:MotorFoc/motor_ctrl.c **** 		Para.IfFrq = 0;
+ 104:MotorFoc/motor_ctrl.c **** 		Ipark.Alpha = ualpha_tab[Para.IfAngle];
+ 105:MotorFoc/motor_ctrl.c **** 		Ipark.Beta = ubeta_tab[Para.IfAngle];
+ 106:MotorFoc/motor_ctrl.c **** 		Para.IfAngle++;
+ 107:MotorFoc/motor_ctrl.c **** 		if (Para.IfAngle > 359)
+ 108:MotorFoc/motor_ctrl.c **** 			Para.IfAngle = 0;
+ 109:MotorFoc/motor_ctrl.c **** 	}
+ 110:MotorFoc/motor_ctrl.c **** }
+ 217              		.loc 1 110 1 view .LVU46
+ 218 000e 7047     		bx	lr
+ 219              	.L21:
+ 103:MotorFoc/motor_ctrl.c **** 		Ipark.Alpha = ualpha_tab[Para.IfAngle];
+ 220              		.loc 1 103 3 is_stmt 1 view .LVU47
+ 103:MotorFoc/motor_ctrl.c **** 		Ipark.Alpha = ualpha_tab[Para.IfAngle];
+ 221              		.loc 1 103 14 is_stmt 0 view .LVU48
+ 222 0010 0023     		movs	r3, #0
+ 223 0012 1380     		strh	r3, [r2]	@ movhi
+ 104:MotorFoc/motor_ctrl.c **** 		Ipark.Beta = ubeta_tab[Para.IfAngle];
+ 224              		.loc 1 104 3 is_stmt 1 view .LVU49
+ 104:MotorFoc/motor_ctrl.c **** 		Ipark.Beta = ubeta_tab[Para.IfAngle];
+ 225              		.loc 1 104 32 is_stmt 0 view .LVU50
+ 226 0014 5388     		ldrh	r3, [r2, #2]
+ 104:MotorFoc/motor_ctrl.c **** 		Ipark.Beta = ubeta_tab[Para.IfAngle];
+ 227              		.loc 1 104 27 view .LVU51
+ 228 0016 0B49     		ldr	r1, .L22+4
+ 229 0018 01EB8301 		add	r1, r1, r3, lsl #2
+ 230 001c 0968     		ldr	r1, [r1]	@ float
+ 104:MotorFoc/motor_ctrl.c **** 		Ipark.Beta = ubeta_tab[Para.IfAngle];
+ 231              		.loc 1 104 15 view .LVU52
+ 232 001e 0A48     		ldr	r0, .L22+8
+ 233 0020 0160     		str	r1, [r0]	@ float
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s 			page 7
+
+
+ 105:MotorFoc/motor_ctrl.c **** 		Para.IfAngle++;
+ 234              		.loc 1 105 3 is_stmt 1 view .LVU53
+ 105:MotorFoc/motor_ctrl.c **** 		Para.IfAngle++;
+ 235              		.loc 1 105 25 is_stmt 0 view .LVU54
+ 236 0022 0A49     		ldr	r1, .L22+12
+ 237 0024 01EB8301 		add	r1, r1, r3, lsl #2
+ 238 0028 0968     		ldr	r1, [r1]	@ float
+ 105:MotorFoc/motor_ctrl.c **** 		Para.IfAngle++;
+ 239              		.loc 1 105 14 view .LVU55
+ 240 002a 4160     		str	r1, [r0, #4]	@ float
+ 106:MotorFoc/motor_ctrl.c **** 		if (Para.IfAngle > 359)
+ 241              		.loc 1 106 3 is_stmt 1 view .LVU56
+ 106:MotorFoc/motor_ctrl.c **** 		if (Para.IfAngle > 359)
+ 242              		.loc 1 106 15 is_stmt 0 view .LVU57
+ 243 002c 0133     		adds	r3, r3, #1
+ 244 002e 9BB2     		uxth	r3, r3
+ 245 0030 5380     		strh	r3, [r2, #2]	@ movhi
+ 107:MotorFoc/motor_ctrl.c **** 			Para.IfAngle = 0;
+ 246              		.loc 1 107 3 is_stmt 1 view .LVU58
+ 107:MotorFoc/motor_ctrl.c **** 			Para.IfAngle = 0;
+ 247              		.loc 1 107 6 is_stmt 0 view .LVU59
+ 248 0032 B3F5B47F 		cmp	r3, #360
+ 249 0036 EAD3     		bcc	.L19
+ 108:MotorFoc/motor_ctrl.c **** 	}
+ 250              		.loc 1 108 4 is_stmt 1 view .LVU60
+ 108:MotorFoc/motor_ctrl.c **** 	}
+ 251              		.loc 1 108 17 is_stmt 0 view .LVU61
+ 252 0038 1346     		mov	r3, r2
+ 253 003a 0022     		movs	r2, #0
+ 254 003c 5A80     		strh	r2, [r3, #2]	@ movhi
+ 255              		.loc 1 110 1 view .LVU62
+ 256 003e E6E7     		b	.L19
+ 257              	.L23:
+ 258              		.align	2
+ 259              	.L22:
+ 260 0040 00000000 		.word	Para
+ 261 0044 00000000 		.word	ualpha_tab
+ 262 0048 00000000 		.word	Ipark
+ 263 004c 00000000 		.word	ubeta_tab
+ 264              		.cfi_endproc
+ 265              	.LFE275:
+ 267              		.section	.text.FocSvpwm,"ax",%progbits
+ 268              		.align	1
+ 269              		.global	FocSvpwm
+ 270              		.syntax unified
+ 271              		.thumb
+ 272              		.thumb_func
+ 274              	FocSvpwm:
+ 275              	.LFB276:
+ 111:MotorFoc/motor_ctrl.c **** 
+ 112:MotorFoc/motor_ctrl.c **** /**
+ 113:MotorFoc/motor_ctrl.c ****  * @brief 把电流 PI 经反 Park 得到的 alpha/beta 电压送入 SVPWM。
+ 114:MotorFoc/motor_ctrl.c ****  *
+ 115:MotorFoc/motor_ctrl.c ****  * SvpwmCal() 最终直接更新 TIM1 CCR1/2/3，因此本函数应在每个运行控制模式
+ 116:MotorFoc/motor_ctrl.c ****  * 完成电流环后调用一次。
+ 117:MotorFoc/motor_ctrl.c ****  */
+ 118:MotorFoc/motor_ctrl.c **** void FocSvpwm(void)
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s 			page 8
+
+
+ 119:MotorFoc/motor_ctrl.c **** {
+ 276              		.loc 1 119 1 is_stmt 1 view -0
+ 277              		.cfi_startproc
+ 278              		@ args = 0, pretend = 0, frame = 0
+ 279              		@ frame_needed = 0, uses_anonymous_args = 0
+ 280 0000 08B5     		push	{r3, lr}
+ 281              	.LCFI2:
+ 282              		.cfi_def_cfa_offset 8
+ 283              		.cfi_offset 3, -8
+ 284              		.cfi_offset 14, -4
+ 120:MotorFoc/motor_ctrl.c **** 	// 电流环输出的 d/q 电压经 IPark 后送入 SVPWM 更新三相占空比
+ 121:MotorFoc/motor_ctrl.c **** 	Svpwm.Ualpha = Ipark.Alpha; // IPARK的数据传入SVPWM
+ 285              		.loc 1 121 2 view .LVU64
+ 286              		.loc 1 121 22 is_stmt 0 view .LVU65
+ 287 0002 044B     		ldr	r3, .L26
+ 288 0004 1A68     		ldr	r2, [r3]	@ float
+ 289              		.loc 1 121 15 view .LVU66
+ 290 0006 0448     		ldr	r0, .L26+4
+ 291 0008 0260     		str	r2, [r0]	@ float
+ 122:MotorFoc/motor_ctrl.c **** 	Svpwm.Ubeta = Ipark.Beta;
+ 292              		.loc 1 122 2 is_stmt 1 view .LVU67
+ 293              		.loc 1 122 21 is_stmt 0 view .LVU68
+ 294 000a 5B68     		ldr	r3, [r3, #4]	@ float
+ 295              		.loc 1 122 14 view .LVU69
+ 296 000c 4360     		str	r3, [r0, #4]	@ float
+ 123:MotorFoc/motor_ctrl.c **** 	SvpwmCal((M_SVPWM)&Svpwm); // 将Alpha和Beta电压带入计算SVPWM的占空比
+ 297              		.loc 1 123 2 is_stmt 1 view .LVU70
+ 298 000e FFF7FEFF 		bl	SvpwmCal
+ 299              	.LVL8:
+ 124:MotorFoc/motor_ctrl.c **** }
+ 300              		.loc 1 124 1 is_stmt 0 view .LVU71
+ 301 0012 08BD     		pop	{r3, pc}
+ 302              	.L27:
+ 303              		.align	2
+ 304              	.L26:
+ 305 0014 00000000 		.word	Ipark
+ 306 0018 00000000 		.word	Svpwm
+ 307              		.cfi_endproc
+ 308              	.LFE276:
+ 310              		.section	.text.AxisDq,"ax",%progbits
+ 311              		.align	1
+ 312              		.global	AxisDq
+ 313              		.syntax unified
+ 314              		.thumb
+ 315              		.thumb_func
+ 317              	AxisDq:
+ 318              	.LFB277:
+ 125:MotorFoc/motor_ctrl.c **** 
+ 126:MotorFoc/motor_ctrl.c **** 
+ 127:MotorFoc/motor_ctrl.c **** /**
+ 128:MotorFoc/motor_ctrl.c ****  * @brief 更新一个高速周期的电流坐标、编码器角度和全部相关观测器状态�
+ 129:MotorFoc/motor_ctrl.c ****  *
+ 130:MotorFoc/motor_ctrl.c ****  * 数据流为 ADC 三相电流 -> Clarke -> 观测器/编码器角度选择 -> Park。磁链模�
+ 131:MotorFoc/motor_ctrl.c ****  * 每拍后台更新，融合模式再执行相应 HFI/SMO/IF 切换逻辑。最终 Park.Theta
+ 132:MotorFoc/motor_ctrl.c ****  * 严格按当前模式选择，得到供内层电流 PI 使用的 Park.Ds/Park.Qs。
+ 133:MotorFoc/motor_ctrl.c ****  * @note 由 TIM1 更新中断在 GetAdc() 后每 50 us 调用。
+ 134:MotorFoc/motor_ctrl.c ****  */
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s 			page 9
+
+
+ 135:MotorFoc/motor_ctrl.c **** void AxisDq(void)
+ 136:MotorFoc/motor_ctrl.c **** {
+ 319              		.loc 1 136 1 is_stmt 1 view -0
+ 320              		.cfi_startproc
+ 321              		@ args = 0, pretend = 0, frame = 0
+ 322              		@ frame_needed = 0, uses_anonymous_args = 0
+ 323 0000 10B5     		push	{r4, lr}
+ 324              	.LCFI3:
+ 325              		.cfi_def_cfa_offset 8
+ 326              		.cfi_offset 4, -8
+ 327              		.cfi_offset 14, -4
+ 137:MotorFoc/motor_ctrl.c **** 	// FOC 主采样链路：三相电流 -> Clarke -> 角度选择 -> Park
+ 138:MotorFoc/motor_ctrl.c **** 	Para.SpeedCalTime++;
+ 328              		.loc 1 138 2 view .LVU73
+ 329              		.loc 1 138 6 is_stmt 0 view .LVU74
+ 330 0002 0E4A     		ldr	r2, .L30
+ 331 0004 9379     		ldrb	r3, [r2, #6]	@ zero_extendqisi2
+ 332              		.loc 1 138 19 view .LVU75
+ 333 0006 0133     		adds	r3, r3, #1
+ 334 0008 9371     		strb	r3, [r2, #6]
+ 139:MotorFoc/motor_ctrl.c **** 
+ 140:MotorFoc/motor_ctrl.c **** 	// 1. 采样三相电流并做 Clarke 变换
+ 141:MotorFoc/motor_ctrl.c **** 	Clarke.Iu = AdcPara.CurU;
+ 335              		.loc 1 141 2 is_stmt 1 view .LVU76
+ 336              		.loc 1 141 21 is_stmt 0 view .LVU77
+ 337 000a 0D4B     		ldr	r3, .L30+4
+ 338 000c DA68     		ldr	r2, [r3, #12]	@ float
+ 339              		.loc 1 141 12 view .LVU78
+ 340 000e 0D4C     		ldr	r4, .L30+8
+ 341 0010 2260     		str	r2, [r4]	@ float
+ 142:MotorFoc/motor_ctrl.c **** 	Clarke.Iv = AdcPara.CurV;
+ 342              		.loc 1 142 2 is_stmt 1 view .LVU79
+ 343              		.loc 1 142 21 is_stmt 0 view .LVU80
+ 344 0012 1A69     		ldr	r2, [r3, #16]	@ float
+ 345              		.loc 1 142 12 view .LVU81
+ 346 0014 6260     		str	r2, [r4, #4]	@ float
+ 143:MotorFoc/motor_ctrl.c **** 	Clarke.Iw = AdcPara.CurW;
+ 347              		.loc 1 143 2 is_stmt 1 view .LVU82
+ 348              		.loc 1 143 21 is_stmt 0 view .LVU83
+ 349 0016 5B69     		ldr	r3, [r3, #20]	@ float
+ 350              		.loc 1 143 12 view .LVU84
+ 351 0018 A360     		str	r3, [r4, #8]	@ float
+ 144:MotorFoc/motor_ctrl.c **** 	ClarkeCale((M_CLARKE)&Clarke);
+ 352              		.loc 1 144 2 is_stmt 1 view .LVU85
+ 353 001a 2046     		mov	r0, r4
+ 354 001c FFF7FEFF 		bl	ClarkeCale
+ 355              	.LVL9:
+ 145:MotorFoc/motor_ctrl.c **** 
+ 146:MotorFoc/motor_ctrl.c **** 	MotorAngleGet(); // 获取编码器角度
+ 356              		.loc 1 146 2 view .LVU86
+ 357 0020 FFF7FEFF 		bl	MotorAngleGet
+ 358              	.LVL10:
+ 147:MotorFoc/motor_ctrl.c **** 
+ 148:MotorFoc/motor_ctrl.c **** 	// // 2. 运行磁链观测器，供 Flux 控制模式或切换过程使用
+ 149:MotorFoc/motor_ctrl.c **** 	// FluxCale(&flux, Clarke.Alpha, Clarke.Beta, Ipark.Alpha, Ipark.Beta);
+ 150:MotorFoc/motor_ctrl.c **** 
+ 151:MotorFoc/motor_ctrl.c **** 	// // 3. 根据控制模式更新无感角度或切换状态
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s 			page 10
+
+
+ 152:MotorFoc/motor_ctrl.c **** 	// if (Motor.CtrlMode == HFI_CTRL)
+ 153:MotorFoc/motor_ctrl.c **** 	// {
+ 154:MotorFoc/motor_ctrl.c **** 	// 	HfiAngleCale((p_HFI)&HFI);
+ 155:MotorFoc/motor_ctrl.c **** 	// }
+ 156:MotorFoc/motor_ctrl.c **** 	// else if (Motor.CtrlMode == HFI_SMO)
+ 157:MotorFoc/motor_ctrl.c **** 	// {
+ 158:MotorFoc/motor_ctrl.c **** 	// 	Process_HFI_SMO(); // HFI+SMO 处理
+ 159:MotorFoc/motor_ctrl.c **** 	// }
+ 160:MotorFoc/motor_ctrl.c **** 	// else if (Motor.CtrlMode == HFI_FLUX)
+ 161:MotorFoc/motor_ctrl.c **** 	// {
+ 162:MotorFoc/motor_ctrl.c **** 	// 	Process_HFI_FLUX(); // HFI+Flux 处理
+ 163:MotorFoc/motor_ctrl.c **** 	// }
+ 164:MotorFoc/motor_ctrl.c **** 	// else if (Motor.CtrlMode == IF_SMO)
+ 165:MotorFoc/motor_ctrl.c **** 	// {
+ 166:MotorFoc/motor_ctrl.c **** 	// 	Process_IF_SMO();
+ 167:MotorFoc/motor_ctrl.c **** 	// }
+ 168:MotorFoc/motor_ctrl.c **** 	// else if (Motor.CtrlMode == IF_FLUX)
+ 169:MotorFoc/motor_ctrl.c **** 	// {
+ 170:MotorFoc/motor_ctrl.c **** 	// 	Process_IF_FLUX();
+ 171:MotorFoc/motor_ctrl.c **** 	// }
+ 172:MotorFoc/motor_ctrl.c **** 
+ 173:MotorFoc/motor_ctrl.c **** 	// // 4. 选择 Park 变换使用的电角度来源
+ 174:MotorFoc/motor_ctrl.c **** 	// if ((QT_IF_MODE == 3) && ((Motor.CtrlMode == IF_CTRL) || ((Motor.CtrlMode == IF_SMO || Motor.Ct
+ 175:MotorFoc/motor_ctrl.c **** 	// {
+ 176:MotorFoc/motor_ctrl.c **** 	// 	Park.Theta = Para.FocAngle;
+ 177:MotorFoc/motor_ctrl.c **** 	// }
+ 178:MotorFoc/motor_ctrl.c **** 	// else if (Motor.CtrlMode == HFI_CTRL)
+ 179:MotorFoc/motor_ctrl.c **** 	// {
+ 180:MotorFoc/motor_ctrl.c **** 	// 	Park.Theta = PllHfiPara.Theta; // 高频注入角度
+ 181:MotorFoc/motor_ctrl.c **** 	// }
+ 182:MotorFoc/motor_ctrl.c **** 	// else if (Para.SmoSwFlag)
+ 183:MotorFoc/motor_ctrl.c **** 	// {
+ 184:MotorFoc/motor_ctrl.c **** 	// 	Park.Theta = PllSmoPara.Angle; // 滑膜观测角度
+ 185:MotorFoc/motor_ctrl.c **** 	// }
+ 186:MotorFoc/motor_ctrl.c **** 	// else if (Motor.CtrlMode == HFI_SMO || Motor.CtrlMode == HFI_FLUX || Motor.CtrlMode == IF_SMO ||
+ 187:MotorFoc/motor_ctrl.c **** 	// {
+ 188:MotorFoc/motor_ctrl.c **** 	// 	Park.Theta = SensorLess.theta; // 观测角度
+ 189:MotorFoc/motor_ctrl.c **** 	// }
+ 190:MotorFoc/motor_ctrl.c **** 	// else
+ 191:MotorFoc/motor_ctrl.c **** 	// {
+ 192:MotorFoc/motor_ctrl.c **** 	// 	Park.Theta = Motor.E_theta; // 编码器角度
+ 193:MotorFoc/motor_ctrl.c **** 	// }
+ 194:MotorFoc/motor_ctrl.c ****     Park.Theta = Motor.E_theta; // 编码器角度
+ 359              		.loc 1 194 5 view .LVU87
+ 360              		.loc 1 194 23 is_stmt 0 view .LVU88
+ 361 0024 084B     		ldr	r3, .L30+12
+ 362 0026 5B68     		ldr	r3, [r3, #4]	@ float
+ 363              		.loc 1 194 16 view .LVU89
+ 364 0028 0848     		ldr	r0, .L30+16
+ 365 002a 8360     		str	r3, [r0, #8]	@ float
+ 195:MotorFoc/motor_ctrl.c **** 	// 5. Park 变换，得到 d/q 轴电流反馈
+ 196:MotorFoc/motor_ctrl.c **** 	Park.Alpha = Clarke.Alpha;
+ 366              		.loc 1 196 2 is_stmt 1 view .LVU90
+ 367              		.loc 1 196 21 is_stmt 0 view .LVU91
+ 368 002c E368     		ldr	r3, [r4, #12]	@ float
+ 369              		.loc 1 196 13 view .LVU92
+ 370 002e 0360     		str	r3, [r0]	@ float
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s 			page 11
+
+
+ 197:MotorFoc/motor_ctrl.c **** 	Park.Beta = Clarke.Beta;
+ 371              		.loc 1 197 2 is_stmt 1 view .LVU93
+ 372              		.loc 1 197 20 is_stmt 0 view .LVU94
+ 373 0030 2369     		ldr	r3, [r4, #16]	@ float
+ 374              		.loc 1 197 12 view .LVU95
+ 375 0032 4360     		str	r3, [r0, #4]	@ float
+ 198:MotorFoc/motor_ctrl.c **** 	ParkCale((M_PARK)&Park);
+ 376              		.loc 1 198 2 is_stmt 1 view .LVU96
+ 377 0034 FFF7FEFF 		bl	ParkCale
+ 378              	.LVL11:
+ 199:MotorFoc/motor_ctrl.c **** }...
+ 379              		.loc 1 199 1 is_stmt 0 view .LVU97
+ 380 0038 10BD     		pop	{r4, pc}
+ 381              	.L31:
+ 382 003a 00BF     		.align	2
+ 383              	.L30:
+ 384 003c 00000000 		.word	Para
+ 385 0040 00000000 		.word	AdcPara
+ 386 0044 00000000 		.word	Clarke
+ 387 0048 00000000 		.word	Motor
+ 388 004c 00000000 		.word	Park
+ 389              		.cfi_endproc
+ 390              	.LFE277:
+ 392              		.global	HFI_Init_Angle_flag
+ 393              		.section	.bss.HFI_Init_Angle_flag,"aw",%nobits
+ 396              	HFI_Init_Angle_flag:
+ 397 0000 00       		.space	1
+ 398              		.global	Init_Over
+ 399              		.section	.bss.Init_Over,"aw",%nobits
+ 402              	Init_Over:
+ 403 0000 00       		.space	1
+ 404              		.global	Pos
+ 405              		.section	.bss.Pos,"aw",%nobits
+ 406              		.align	2
+ 409              	Pos:
+ 410 0000 00000000 		.space	36
+ 410      00000000 
+ 410      00000000 
+ 410      00000000 
+ 410      00000000 
+ 411              		.global	Para
+ 412              		.section	.bss.Para,"aw",%nobits
+ 413              		.align	3
+ 416              	Para:
+ 417 0000 00000000 		.space	80
+ 417      00000000 
+ 417      00000000 
+ 417      00000000 
+ 417      00000000 
+ 418              		.global	IparkSmoPv
+ 419              		.section	.bss.IparkSmoPv,"aw",%nobits
+ 420              		.align	2
+ 423              	IparkSmoPv:
+ 424 0000 00000000 		.space	20
+ 424      00000000 
+ 424      00000000 
+ 424      00000000 
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s 			page 12
+
+
+ 424      00000000 
+ 425              		.global	SensorLess
+ 426              		.section	.data.SensorLess,"aw"
+ 427              		.align	2
+ 430              	SensorLess:
+ 431 0000 01       		.byte	1
+ 432 0001 01       		.byte	1
+ 433 0002 0000     		.space	2
+ 434 0004 00000000 		.word	0
+ 435 0008 00000000 		.word	0
+ 436 000c 00000000 		.word	0
+ 437 0010 00000000 		.word	0
+ 438 0014 0000     		.short	0
+ 439 0016 0000     		.short	0
+ 440 0018 0000     		.short	0
+ 441 001a 0000     		.space	2
+ 442              		.global	IdqRefGXieLv
+ 443              		.section	.bss.IdqRefGXieLv,"aw",%nobits
+ 444              		.align	2
+ 447              	IdqRefGXieLv:
+ 448 0000 00000000 		.space	16
+ 448      00000000 
+ 448      00000000 
+ 448      00000000 
+ 449              		.global	SpdRefGXieLv
+ 450              		.section	.bss.SpdRefGXieLv,"aw",%nobits
+ 451              		.align	2
+ 454              	SpdRefGXieLv:
+ 455 0000 00000000 		.space	16
+ 455      00000000 
+ 455      00000000 
+ 455      00000000 
+ 456              		.global	IfFreqGXieLv
+ 457              		.section	.bss.IfFreqGXieLv,"aw",%nobits
+ 458              		.align	2
+ 461              	IfFreqGXieLv:
+ 462 0000 00000000 		.space	16
+ 462      00000000 
+ 462      00000000 
+ 462      00000000 
+ 463              		.global	Motor
+ 464              		.section	.bss.Motor,"aw",%nobits
+ 465              		.align	2
+ 468              	Motor:
+ 469 0000 00000000 		.space	40
+ 469      00000000 
+ 469      00000000 
+ 469      00000000 
+ 469      00000000 
+ 470              		.global	Ipark
+ 471              		.section	.bss.Ipark,"aw",%nobits
+ 472              		.align	2
+ 475              	Ipark:
+ 476 0000 00000000 		.space	20
+ 476      00000000 
+ 476      00000000 
+ 476      00000000 
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s 			page 13
+
+
+ 476      00000000 
+ 477              		.global	Park
+ 478              		.section	.bss.Park,"aw",%nobits
+ 479              		.align	2
+ 482              	Park:
+ 483 0000 00000000 		.space	20
+ 483      00000000 
+ 483      00000000 
+ 483      00000000 
+ 483      00000000 
+ 484              		.global	Clarke
+ 485              		.section	.bss.Clarke,"aw",%nobits
+ 486              		.align	2
+ 489              	Clarke:
+ 490 0000 00000000 		.space	20
+ 490      00000000 
+ 490      00000000 
+ 490      00000000 
+ 490      00000000 
+ 491              		.text
+ 492              	.Letext0:
+ 493              		.file 2 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 494              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 495              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 496              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 497              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 498              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 499              		.file 8 "Sdrive/adc_drv.h"
+ 500              		.file 9 "App/task.h"
+ 501              		.file 10 "MotorFoc/foc.h"
+ 502              		.file 11 "MotorFoc/motor_ctrl.h"
+ 503              		.file 12 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h"
+ 504              		.file 13 "Sdrive/tim_drv.h"
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s 			page 14
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 motor_ctrl.c
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:21     .text.GradXieLv:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:27     .text.GradXieLv:00000000 GradXieLv
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:74     .text.MotorStop:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:80     .text.MotorStop:00000000 MotorStop
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:119    .text.MotorStop:00000024 $d
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:124    .text.MotorRun:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:130    .text.MotorRun:00000000 MotorRun
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:185    .text.MotorRun:00000044 $d
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:191    .text.QtMotor:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:197    .text.QtMotor:00000000 QtMotor
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:260    .text.QtMotor:00000040 $d
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:416    .bss.Para:00000000 Para
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:475    .bss.Ipark:00000000 Ipark
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:268    .text.FocSvpwm:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:274    .text.FocSvpwm:00000000 FocSvpwm
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:305    .text.FocSvpwm:00000014 $d
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:311    .text.AxisDq:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:317    .text.AxisDq:00000000 AxisDq
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:384    .text.AxisDq:0000003c $d
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:489    .bss.Clarke:00000000 Clarke
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:468    .bss.Motor:00000000 Motor
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:482    .bss.Park:00000000 Park
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:396    .bss.HFI_Init_Angle_flag:00000000 HFI_Init_Angle_flag
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:397    .bss.HFI_Init_Angle_flag:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:402    .bss.Init_Over:00000000 Init_Over
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:403    .bss.Init_Over:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:409    .bss.Pos:00000000 Pos
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:406    .bss.Pos:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:413    .bss.Para:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:423    .bss.IparkSmoPv:00000000 IparkSmoPv
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:420    .bss.IparkSmoPv:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:430    .data.SensorLess:00000000 SensorLess
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:427    .data.SensorLess:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:447    .bss.IdqRefGXieLv:00000000 IdqRefGXieLv
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:444    .bss.IdqRefGXieLv:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:454    .bss.SpdRefGXieLv:00000000 SpdRefGXieLv
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:451    .bss.SpdRefGXieLv:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:461    .bss.IfFreqGXieLv:00000000 IfFreqGXieLv
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:458    .bss.IfFreqGXieLv:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:465    .bss.Motor:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:472    .bss.Ipark:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:479    .bss.Park:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s:486    .bss.Clarke:00000000 $d
+
+UNDEFINED SYMBOLS
+VariableClear
+HAL_TIM_PWM_Start
+HAL_TIMEx_PWMN_Start
+htim1
+ualpha_tab
+ubeta_tab
+SvpwmCal
+Svpwm
+ClarkeCale
+MotorAngleGet
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccI3W1gz.s 			page 15
+
+
+ParkCale
+AdcPara

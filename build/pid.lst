@@ -1,0 +1,428 @@
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"pid.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "MotorFoc/pid.c"
+  20              		.section	.text.Limit_Sat,"ax",%progbits
+  21              		.align	1
+  22              		.global	Limit_Sat
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	Limit_Sat:
+  28              	.LVL0:
+  29              	.LFB272:
+   1:MotorFoc/pid.c **** /**
+   2:MotorFoc/pid.c ****  * @file pid.c
+   3:MotorFoc/pid.c ****  * @brief 实现各级闭环共用的 PI 算法、饱和函数和默认参数初始化。
+   4:MotorFoc/pid.c ****  *
+   5:MotorFoc/pid.c ****  * pi_id/pi_iq 输出电压指令，pi_spd 输出 q 轴电流指令，pi_pos 预留给位置环。
+   6:MotorFoc/pid.c ****  * 所有实例使用同一个 TS 更新积分，因此调用频率改变时必须同步审查 Ki �
+   7:MotorFoc/pid.c ****  */
+   8:MotorFoc/pid.c **** 
+   9:MotorFoc/pid.c **** #include "motor_ctrl.h"
+  10:MotorFoc/pid.c **** 
+  11:MotorFoc/pid.c **** PI_Control pi_spd = PI_Control_DEFAULTS;
+  12:MotorFoc/pid.c **** PI_Control pi_id = PI_Control_DEFAULTS;
+  13:MotorFoc/pid.c **** PI_Control pi_iq = PI_Control_DEFAULTS;
+  14:MotorFoc/pid.c **** PI_Control pi_pos = PI_Control_DEFAULTS;
+  15:MotorFoc/pid.c **** 
+  16:MotorFoc/pid.c **** /**
+  17:MotorFoc/pid.c ****  * @brief 将输入限制在指定上下限之间。
+  18:MotorFoc/pid.c ****  * @param Uint 输入值。
+  19:MotorFoc/pid.c ****  * @param U_max 最大允许值。
+  20:MotorFoc/pid.c ****  * @param U_min 最小允许值。
+  21:MotorFoc/pid.c ****  * @return Uint 位于区间内时原样返回，否则返回相应边界。
+  22:MotorFoc/pid.c ****  */
+  23:MotorFoc/pid.c **** float Limit_Sat(float Uint, float U_max, float U_min)
+  24:MotorFoc/pid.c **** {
+  30              		.loc 1 24 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s 			page 2
+
+
+  35              		.loc 1 24 1 is_stmt 0 view .LVU1
+  36 0000 F0EE407A 		vmov.f32	s15, s0
+  37 0004 B0EE410A 		vmov.f32	s0, s2
+  38              	.LVL1:
+  25:MotorFoc/pid.c **** 	float Uout;
+  39              		.loc 1 25 2 is_stmt 1 view .LVU2
+  26:MotorFoc/pid.c **** 
+  27:MotorFoc/pid.c **** 	if (Uint <= U_min)
+  40              		.loc 1 27 2 view .LVU3
+  41              		.loc 1 27 5 is_stmt 0 view .LVU4
+  42 0008 F4EEC17A 		vcmpe.f32	s15, s2
+  43 000c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  44 0010 09D9     		bls	.L2
+  28:MotorFoc/pid.c **** 		Uout = U_min;
+  29:MotorFoc/pid.c **** 	else if (Uint >= U_max)
+  45              		.loc 1 29 7 is_stmt 1 view .LVU5
+  46              		.loc 1 29 10 is_stmt 0 view .LVU6
+  47 0012 F4EEE07A 		vcmpe.f32	s15, s1
+  48 0016 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  49 001a 02DB     		blt	.L6
+  30:MotorFoc/pid.c **** 		Uout = U_max;
+  50              		.loc 1 30 8 view .LVU7
+  51 001c B0EE600A 		vmov.f32	s0, s1
+  52 0020 7047     		bx	lr
+  53              	.LVL2:
+  54              	.L6:
+  31:MotorFoc/pid.c **** 	else
+  32:MotorFoc/pid.c **** 		Uout = Uint;
+  55              		.loc 1 32 8 view .LVU8
+  56 0022 B0EE670A 		vmov.f32	s0, s15
+  57              	.LVL3:
+  58              	.L2:
+  33:MotorFoc/pid.c **** 	return Uout;
+  59              		.loc 1 33 2 is_stmt 1 view .LVU9
+  34:MotorFoc/pid.c **** }
+  60              		.loc 1 34 1 is_stmt 0 view .LVU10
+  61 0026 7047     		bx	lr
+  62              		.cfi_endproc
+  63              	.LFE272:
+  65              		.section	.text.PiController,"ax",%progbits
+  66              		.align	1
+  67              		.global	PiController
+  68              		.syntax unified
+  69              		.thumb
+  70              		.thumb_func
+  72              	PiController:
+  73              	.LVL4:
+  74              	.LFB273:
+  35:MotorFoc/pid.c **** 
+  36:MotorFoc/pid.c **** /**
+  37:MotorFoc/pid.c ****  * @brief 执行一拍位置式并联 PI 控制并限制积分项与总输出。
+  38:MotorFoc/pid.c ****  * @param pv PI 控制器实例指针。
+  39:MotorFoc/pid.c ****  *
+  40:MotorFoc/pid.c ****  * e=Ref-Fbk；I[n]=sat(I[n-1]+Ki*e*TS)；Out=sat(Kp*e+I[n])。
+  41:MotorFoc/pid.c ****  * 对积分状态先限幅可减轻输出饱和时的积分饱和，但不包含反算抗饱和环
+  42:MotorFoc/pid.c ****  */
+  43:MotorFoc/pid.c **** void PiController(M_PI_Control pv)
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s 			page 3
+
+
+  44:MotorFoc/pid.c **** {
+  75              		.loc 1 44 1 is_stmt 1 view -0
+  76              		.cfi_startproc
+  77              		@ args = 0, pretend = 0, frame = 0
+  78              		@ frame_needed = 0, uses_anonymous_args = 0
+  79              		.loc 1 44 1 is_stmt 0 view .LVU12
+  80 0000 10B5     		push	{r4, lr}
+  81              	.LCFI0:
+  82              		.cfi_def_cfa_offset 8
+  83              		.cfi_offset 4, -8
+  84              		.cfi_offset 14, -4
+  85 0002 0446     		mov	r4, r0
+  45:MotorFoc/pid.c **** 	pv->err = pv->Ref - pv->Fbk;
+  86              		.loc 1 45 2 is_stmt 1 view .LVU13
+  87              		.loc 1 45 14 is_stmt 0 view .LVU14
+  88 0004 90ED000A 		vldr.32	s0, [r0]
+  89              		.loc 1 45 24 view .LVU15
+  90 0008 D0ED017A 		vldr.32	s15, [r0, #4]
+  91              		.loc 1 45 20 view .LVU16
+  92 000c 30EE670A 		vsub.f32	s0, s0, s15
+  93              		.loc 1 45 10 view .LVU17
+  94 0010 80ED080A 		vstr.32	s0, [r0, #32]
+  46:MotorFoc/pid.c **** 	// 离散积分：连续积分 Ki*integral(e dt) 用前向欧拉近似。
+  47:MotorFoc/pid.c **** 	pv->integrator += pv->Ki * pv->err * TS;
+  95              		.loc 1 47 2 is_stmt 1 view .LVU18
+  96              		.loc 1 47 4 is_stmt 0 view .LVU19
+  97 0014 90ED0A7A 		vldr.32	s14, [r0, #40]
+  98              		.loc 1 47 22 view .LVU20
+  99 0018 D0ED057A 		vldr.32	s15, [r0, #20]
+ 100              		.loc 1 47 27 view .LVU21
+ 101 001c 60EE277A 		vmul.f32	s15, s0, s15
+ 102              		.loc 1 47 37 view .LVU22
+ 103 0020 DFED146A 		vldr.32	s13, .L15
+ 104 0024 67EEA67A 		vmul.f32	s15, s15, s13
+ 105              		.loc 1 47 17 view .LVU23
+ 106 0028 77EE277A 		vadd.f32	s15, s14, s15
+ 107 002c C0ED0A7A 		vstr.32	s15, [r0, #40]
+  48:MotorFoc/pid.c **** 	// 限制积分状态，防止执行器饱和时积分项无限增长。
+  49:MotorFoc/pid.c **** 	if (pv->integrator > pv->Umax)
+ 108              		.loc 1 49 2 is_stmt 1 view .LVU24
+ 109              		.loc 1 49 25 is_stmt 0 view .LVU25
+ 110 0030 D0ED060A 		vldr.32	s1, [r0, #24]
+ 111              		.loc 1 49 5 view .LVU26
+ 112 0034 F4EEE07A 		vcmpe.f32	s15, s1
+ 113 0038 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 114 003c 01DD     		ble	.L8
+  50:MotorFoc/pid.c **** 		pv->integrator = pv->Umax;
+ 115              		.loc 1 50 3 is_stmt 1 view .LVU27
+ 116              		.loc 1 50 18 is_stmt 0 view .LVU28
+ 117 003e C0ED0A0A 		vstr.32	s1, [r0, #40]
+ 118              	.L8:
+  51:MotorFoc/pid.c **** 	if (pv->integrator < pv->Umin)
+ 119              		.loc 1 51 2 is_stmt 1 view .LVU29
+ 120              		.loc 1 51 8 is_stmt 0 view .LVU30
+ 121 0042 D4ED0A7A 		vldr.32	s15, [r4, #40]
+ 122              		.loc 1 51 25 view .LVU31
+ 123 0046 94ED071A 		vldr.32	s2, [r4, #28]
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s 			page 4
+
+
+ 124              		.loc 1 51 5 view .LVU32
+ 125 004a F4EEC17A 		vcmpe.f32	s15, s2
+ 126 004e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 127 0052 01D5     		bpl	.L10
+  52:MotorFoc/pid.c **** 		pv->integrator = pv->Umin;
+ 128              		.loc 1 52 3 is_stmt 1 view .LVU33
+ 129              		.loc 1 52 18 is_stmt 0 view .LVU34
+ 130 0054 84ED0A1A 		vstr.32	s2, [r4, #40]
+ 131              	.L10:
+  53:MotorFoc/pid.c **** 	// PI 总输出 = 比例项 + 积分项，并限制到执行器允许范围。
+  54:MotorFoc/pid.c **** 	float u = pv->Kp * pv->err + pv->integrator;
+ 132              		.loc 1 54 2 is_stmt 1 view .LVU35
+ 133              		.loc 1 54 14 is_stmt 0 view .LVU36
+ 134 0058 D4ED047A 		vldr.32	s15, [r4, #16]
+ 135              		.loc 1 54 19 view .LVU37
+ 136 005c 20EE270A 		vmul.f32	s0, s0, s15
+ 137              		.loc 1 54 33 view .LVU38
+ 138 0060 D4ED0A7A 		vldr.32	s15, [r4, #40]
+ 139              	.LVL5:
+  55:MotorFoc/pid.c **** 	pv->Out = Limit_Sat(u, pv->Umax, pv->Umin);
+ 140              		.loc 1 55 2 is_stmt 1 view .LVU39
+ 141              		.loc 1 55 12 is_stmt 0 view .LVU40
+ 142 0064 30EE270A 		vadd.f32	s0, s0, s15
+ 143              	.LVL6:
+ 144              		.loc 1 55 12 view .LVU41
+ 145 0068 FFF7FEFF 		bl	Limit_Sat
+ 146              	.LVL7:
+ 147              		.loc 1 55 10 discriminator 1 view .LVU42
+ 148 006c 84ED020A 		vstr.32	s0, [r4, #8]
+  56:MotorFoc/pid.c **** }
+ 149              		.loc 1 56 1 view .LVU43
+ 150 0070 10BD     		pop	{r4, pc}
+ 151              	.LVL8:
+ 152              	.L16:
+ 153              		.loc 1 56 1 view .LVU44
+ 154 0072 00BF     		.align	2
+ 155              	.L15:
+ 156 0074 17B75138 		.word	944879383
+ 157              		.cfi_endproc
+ 158              	.LFE273:
+ 160              		.section	.text.PiParaInit,"ax",%progbits
+ 161              		.align	1
+ 162              		.global	PiParaInit
+ 163              		.syntax unified
+ 164              		.thumb
+ 165              		.thumb_func
+ 167              	PiParaInit:
+ 168              	.LFB274:
+  57:MotorFoc/pid.c **** 
+  58:MotorFoc/pid.c **** /**
+  59:MotorFoc/pid.c ****  * @brief 初始化速度环、d/q 电流环和位置环 PI 参数。
+  60:MotorFoc/pid.c ****  *
+  61:MotorFoc/pid.c ****  * 速度环参数来自 Para，输出限制为允许的 q 轴电流；电流环输出限制为 d/q
+  62:MotorFoc/pid.c ****  * 电压能力；位置环输出限制为速度给定。这里只装载参数，不清除动态状
+  63:MotorFoc/pid.c ****  */
+  64:MotorFoc/pid.c **** void PiParaInit(void)
+  65:MotorFoc/pid.c **** {
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s 			page 5
+
+
+ 169              		.loc 1 65 1 is_stmt 1 view -0
+ 170              		.cfi_startproc
+ 171              		@ args = 0, pretend = 0, frame = 0
+ 172              		@ frame_needed = 0, uses_anonymous_args = 0
+ 173              		@ link register save eliminated.
+  66:MotorFoc/pid.c **** 	pi_spd.Kp = Para.SpdLessKp;
+ 174              		.loc 1 66 2 view .LVU46
+ 175              		.loc 1 66 18 is_stmt 0 view .LVU47
+ 176 0000 124A     		ldr	r2, .L18
+ 177 0002 916C     		ldr	r1, [r2, #72]	@ float
+ 178              		.loc 1 66 12 view .LVU48
+ 179 0004 124B     		ldr	r3, .L18+4
+ 180 0006 1961     		str	r1, [r3, #16]	@ float
+  67:MotorFoc/pid.c **** 	pi_spd.Ki =Para.SpdLessKi;
+ 181              		.loc 1 67 2 is_stmt 1 view .LVU49
+ 182              		.loc 1 67 17 is_stmt 0 view .LVU50
+ 183 0008 D26C     		ldr	r2, [r2, #76]	@ float
+ 184              		.loc 1 67 12 view .LVU51
+ 185 000a 5A61     		str	r2, [r3, #20]	@ float
+  68:MotorFoc/pid.c **** 	pi_spd.Umax = PI_MAX_SPD;
+ 186              		.loc 1 68 2 is_stmt 1 view .LVU52
+ 187              		.loc 1 68 14 is_stmt 0 view .LVU53
+ 188 000c 114A     		ldr	r2, .L18+8
+ 189 000e 9A61     		str	r2, [r3, #24]	@ float
+  69:MotorFoc/pid.c **** 	pi_spd.Umin = -PI_MAX_SPD;
+ 190              		.loc 1 69 2 is_stmt 1 view .LVU54
+ 191              		.loc 1 69 14 is_stmt 0 view .LVU55
+ 192 0010 114A     		ldr	r2, .L18+12
+ 193 0012 DA61     		str	r2, [r3, #28]	@ float
+  70:MotorFoc/pid.c **** 
+  71:MotorFoc/pid.c **** 	pi_id.Kp = 0.3f;
+ 194              		.loc 1 71 2 is_stmt 1 view .LVU56
+ 195              		.loc 1 71 11 is_stmt 0 view .LVU57
+ 196 0014 114B     		ldr	r3, .L18+16
+ 197 0016 DFF868C0 		ldr	ip, .L18+52
+ 198 001a C3F810C0 		str	ip, [r3, #16]	@ float
+  72:MotorFoc/pid.c **** 	pi_id.Ki = 1000.0f;
+ 199              		.loc 1 72 2 is_stmt 1 view .LVU58
+ 200              		.loc 1 72 11 is_stmt 0 view .LVU59
+ 201 001e 1048     		ldr	r0, .L18+20
+ 202 0020 5861     		str	r0, [r3, #20]	@ float
+  73:MotorFoc/pid.c **** 	pi_id.Umax = PI_MAX_Ud;
+ 203              		.loc 1 73 2 is_stmt 1 view .LVU60
+ 204              		.loc 1 73 13 is_stmt 0 view .LVU61
+ 205 0022 1049     		ldr	r1, .L18+24
+ 206 0024 9961     		str	r1, [r3, #24]	@ float
+  74:MotorFoc/pid.c **** 	pi_id.Umin = -PI_MAX_Ud;
+ 207              		.loc 1 74 2 is_stmt 1 view .LVU62
+ 208              		.loc 1 74 13 is_stmt 0 view .LVU63
+ 209 0026 104A     		ldr	r2, .L18+28
+ 210 0028 DA61     		str	r2, [r3, #28]	@ float
+  75:MotorFoc/pid.c **** 
+  76:MotorFoc/pid.c **** 	pi_iq.Kp = 0.3f;
+ 211              		.loc 1 76 2 is_stmt 1 view .LVU64
+ 212              		.loc 1 76 11 is_stmt 0 view .LVU65
+ 213 002a 104B     		ldr	r3, .L18+32
+ 214 002c C3F810C0 		str	ip, [r3, #16]	@ float
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s 			page 6
+
+
+  77:MotorFoc/pid.c **** 	pi_iq.Ki = 1000.0f;
+ 215              		.loc 1 77 2 is_stmt 1 view .LVU66
+ 216              		.loc 1 77 11 is_stmt 0 view .LVU67
+ 217 0030 5861     		str	r0, [r3, #20]	@ float
+  78:MotorFoc/pid.c **** 	pi_iq.Umax = PI_MAX_Uq;
+ 218              		.loc 1 78 2 is_stmt 1 view .LVU68
+ 219              		.loc 1 78 13 is_stmt 0 view .LVU69
+ 220 0032 9961     		str	r1, [r3, #24]	@ float
+  79:MotorFoc/pid.c **** 	pi_iq.Umin = -PI_MAX_Uq;
+ 221              		.loc 1 79 2 is_stmt 1 view .LVU70
+ 222              		.loc 1 79 13 is_stmt 0 view .LVU71
+ 223 0034 DA61     		str	r2, [r3, #28]	@ float
+  80:MotorFoc/pid.c **** 
+  81:MotorFoc/pid.c **** 	pi_pos.Kp = 0.02f;
+ 224              		.loc 1 81 2 is_stmt 1 view .LVU72
+ 225              		.loc 1 81 12 is_stmt 0 view .LVU73
+ 226 0036 0E4B     		ldr	r3, .L18+36
+ 227 0038 0E4A     		ldr	r2, .L18+40
+ 228 003a 1A61     		str	r2, [r3, #16]	@ float
+  82:MotorFoc/pid.c **** 	pi_pos.Ki = 0.0f;
+ 229              		.loc 1 82 2 is_stmt 1 view .LVU74
+ 230              		.loc 1 82 12 is_stmt 0 view .LVU75
+ 231 003c 0022     		movs	r2, #0
+ 232 003e 5A61     		str	r2, [r3, #20]	@ float
+  83:MotorFoc/pid.c **** 	pi_pos.Umax = SPD_REF_MAX;
+ 233              		.loc 1 83 2 is_stmt 1 view .LVU76
+ 234              		.loc 1 83 14 is_stmt 0 view .LVU77
+ 235 0040 0D4A     		ldr	r2, .L18+44
+ 236 0042 9A61     		str	r2, [r3, #24]	@ float
+  84:MotorFoc/pid.c **** 	pi_pos.Umin = -SPD_REF_MAX;
+ 237              		.loc 1 84 2 is_stmt 1 view .LVU78
+ 238              		.loc 1 84 14 is_stmt 0 view .LVU79
+ 239 0044 0D4A     		ldr	r2, .L18+48
+ 240 0046 DA61     		str	r2, [r3, #28]	@ float
+  85:MotorFoc/pid.c **** }
+ 241              		.loc 1 85 1 view .LVU80
+ 242 0048 7047     		bx	lr
+ 243              	.L19:
+ 244 004a 00BF     		.align	2
+ 245              	.L18:
+ 246 004c 00000000 		.word	Para
+ 247 0050 00000000 		.word	pi_spd
+ 248 0054 00002041 		.word	1092616192
+ 249 0058 000020C1 		.word	-1054867456
+ 250 005c 00000000 		.word	pi_id
+ 251 0060 00007A44 		.word	1148846080
+ 252 0064 0000C040 		.word	1086324736
+ 253 0068 0000C0C0 		.word	-1061158912
+ 254 006c 00000000 		.word	pi_iq
+ 255 0070 00000000 		.word	pi_pos
+ 256 0074 0AD7A33C 		.word	1017370378
+ 257 0078 00007A45 		.word	1165623296
+ 258 007c 00007AC5 		.word	-981860352
+ 259 0080 9A99993E 		.word	1050253722
+ 260              		.cfi_endproc
+ 261              	.LFE274:
+ 263              		.global	pi_pos
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s 			page 7
+
+
+ 264              		.section	.bss.pi_pos,"aw",%nobits
+ 265              		.align	2
+ 268              	pi_pos:
+ 269 0000 00000000 		.space	52
+ 269      00000000 
+ 269      00000000 
+ 269      00000000 
+ 269      00000000 
+ 270              		.global	pi_iq
+ 271              		.section	.bss.pi_iq,"aw",%nobits
+ 272              		.align	2
+ 275              	pi_iq:
+ 276 0000 00000000 		.space	52
+ 276      00000000 
+ 276      00000000 
+ 276      00000000 
+ 276      00000000 
+ 277              		.global	pi_id
+ 278              		.section	.bss.pi_id,"aw",%nobits
+ 279              		.align	2
+ 282              	pi_id:
+ 283 0000 00000000 		.space	52
+ 283      00000000 
+ 283      00000000 
+ 283      00000000 
+ 283      00000000 
+ 284              		.global	pi_spd
+ 285              		.section	.bss.pi_spd,"aw",%nobits
+ 286              		.align	2
+ 289              	pi_spd:
+ 290 0000 00000000 		.space	52
+ 290      00000000 
+ 290      00000000 
+ 290      00000000 
+ 290      00000000 
+ 291              		.text
+ 292              	.Letext0:
+ 293              		.file 2 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 294              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 295              		.file 4 "MotorFoc/pid.h"
+ 296              		.file 5 "MotorFoc/motor_ctrl.h"
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s 			page 8
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 pid.c
+C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s:21     .text.Limit_Sat:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s:27     .text.Limit_Sat:00000000 Limit_Sat
+C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s:66     .text.PiController:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s:72     .text.PiController:00000000 PiController
+C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s:156    .text.PiController:00000074 $d
+C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s:161    .text.PiParaInit:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s:167    .text.PiParaInit:00000000 PiParaInit
+C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s:246    .text.PiParaInit:0000004c $d
+C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s:289    .bss.pi_spd:00000000 pi_spd
+C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s:282    .bss.pi_id:00000000 pi_id
+C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s:275    .bss.pi_iq:00000000 pi_iq
+C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s:268    .bss.pi_pos:00000000 pi_pos
+C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s:265    .bss.pi_pos:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s:272    .bss.pi_iq:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s:279    .bss.pi_id:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccbcGjsa.s:286    .bss.pi_spd:00000000 $d
+
+UNDEFINED SYMBOLS
+Para
