@@ -69,7 +69,7 @@ void MotorStop(void)
 	TIM1->CCR2 = 0;
 	TIM1->CCR3 = 0;
 
-	VariableClear(); // 变量清零
+	// VariableClear(); // 变量清零
 }
 
 /**

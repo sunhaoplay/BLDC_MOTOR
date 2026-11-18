@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 1
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 1
   28:Core/Src/adc.c **** DMA_HandleTypeDef hdma_adc1;
   29:Core/Src/adc.c **** 
   30:Core/Src/adc.c **** /* ADC1 init function */
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 2
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s 			page 2
 
 
   31:Core/Src/adc.c **** void MX_ADC1_Init(void)
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 1
   63              		.loc 1 50 3 is_stmt 1 view .LVU11
   64              		.loc 1 50 33 is_stmt 0 view .LVU12
   65 0020 0276     		strb	r2, [r0, #24]
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 3
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s 			page 3
 
 
   51:Core/Src/adc.c ****   hadc1.Init.DiscontinuousConvMode = DISABLE;
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 1
  104 0046 0193     		str	r3, [sp, #4]
   67:Core/Src/adc.c ****   sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
  105              		.loc 1 67 3 is_stmt 1 view .LVU34
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 4
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s 			page 4
 
 
  106              		.loc 1 67 24 is_stmt 0 view .LVU35
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 1
  142 006e 0193     		str	r3, [sp, #4]
   86:Core/Src/adc.c ****   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
  143              		.loc 1 86 3 is_stmt 1 view .LVU50
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 5
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s 			page 5
 
 
  144              		.loc 1 86 7 is_stmt 0 view .LVU51
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 1
  180 0096 0C48     		ldr	r0, .L15
  181 0098 FFF7FEFF 		bl	HAL_ADC_ConfigChannel
  182              	.LVL5:
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 6
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s 			page 6
 
 
  183              		.loc 1 104 6 discriminator 1 view .LVU66
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 1
  223              	.LVL11:
  224              		.loc 1 112 1 is_stmt 0 view .LVU74
  225 00c4 EBE7     		b	.L1
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 7
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s 			page 7
 
 
  226              	.L16:
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 1
  276 001c 01D0     		beq	.L21
  277              	.LVL13:
  278              	.L17:
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 8
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s 			page 8
 
 
  119:Core/Src/adc.c ****   {
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 1
  173:Core/Src/adc.c ****   }
  174:Core/Src/adc.c **** }
  279              		.loc 1 174 1 view .LVU82
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 9
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s 			page 9
 
 
  280 001e 0BB0     		add	sp, sp, #44
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 1
  323 0050 029A     		ldr	r2, [sp, #8]
  324              	.LBE3:
  126:Core/Src/adc.c ****     __HAL_RCC_GPIOA_CLK_ENABLE();
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 10
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s 			page 10
 
 
  325              		.loc 1 126 5 view .LVU95
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 1
  363              		.loc 1 137 26 is_stmt 0 view .LVU111
  364 007e 0327     		movs	r7, #3
  365 0080 0697     		str	r7, [sp, #24]
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 11
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s 			page 11
 
 
  138:Core/Src/adc.c ****     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 1
  403 00a8 FFF7FEFF 		bl	HAL_GPIO_Init
  404              	.LVL18:
  153:Core/Src/adc.c ****     hdma_adc1.Init.Channel = DMA_CHANNEL_0;
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 12
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s 			page 12
 
 
  405              		.loc 1 153 5 view .LVU129
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 1
  440              		.loc 1 162 29 is_stmt 0 view .LVU148
  441 00d6 4562     		str	r5, [r0, #36]
  163:Core/Src/adc.c ****     {
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 13
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s 			page 13
 
 
  442              		.loc 1 163 5 is_stmt 1 view .LVU149
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 1
  178:Core/Src/adc.c **** 
  179:Core/Src/adc.c ****   if(adcHandle->Instance==ADC1)
  488              		.loc 1 179 3 view .LVU159
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 14
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s 			page 14
 
 
  489              		.loc 1 179 15 is_stmt 0 view .LVU160
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 1
  523 002a 0748     		ldr	r0, .L32+16
  524 002c FFF7FEFF 		bl	HAL_GPIO_DeInit
  525              	.LVL25:
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 15
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s 			page 15
 
 
  199:Core/Src/adc.c **** 
@@ -897,24 +897,24 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 1
  568              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h"
  569              		.file 10 "Core/Inc/adc.h"
  570              		.file 11 "Core/Inc/main.h"
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s 			page 16
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s 			page 16
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 adc.c
-C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s:21     .text.MX_ADC1_Init:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s:27     .text.MX_ADC1_Init:00000000 MX_ADC1_Init
-C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s:229    .text.MX_ADC1_Init:000000c8 $d
-C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s:557    .bss.hadc1:00000000 hadc1
-C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s:236    .text.HAL_ADC_MspInit:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s:242    .text.HAL_ADC_MspInit:00000000 HAL_ADC_MspInit
-C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s:466    .text.HAL_ADC_MspInit:000000ec $d
-C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s:550    .bss.hdma_adc1:00000000 hdma_adc1
-C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s:475    .text.HAL_ADC_MspDeInit:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s:481    .text.HAL_ADC_MspDeInit:00000000 HAL_ADC_MspDeInit
-C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s:537    .text.HAL_ADC_MspDeInit:00000038 $d
-C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s:547    .bss.hdma_adc1:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccyR3LQg.s:554    .bss.hadc1:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s:21     .text.MX_ADC1_Init:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s:27     .text.MX_ADC1_Init:00000000 MX_ADC1_Init
+C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s:229    .text.MX_ADC1_Init:000000c8 $d
+C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s:557    .bss.hadc1:00000000 hadc1
+C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s:236    .text.HAL_ADC_MspInit:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s:242    .text.HAL_ADC_MspInit:00000000 HAL_ADC_MspInit
+C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s:466    .text.HAL_ADC_MspInit:000000ec $d
+C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s:550    .bss.hdma_adc1:00000000 hdma_adc1
+C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s:475    .text.HAL_ADC_MspDeInit:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s:481    .text.HAL_ADC_MspDeInit:00000000 HAL_ADC_MspDeInit
+C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s:537    .text.HAL_ADC_MspDeInit:00000038 $d
+C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s:547    .bss.hdma_adc1:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\cc9hAAWF.s:554    .bss.hadc1:00000000 $d
 
 UNDEFINED SYMBOLS
 HAL_ADC_Init

@@ -105,8 +105,10 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    ToggleLed(LED_G);
-    shell_send("%.3f,%.3f,%.3f,%u\r\n",AdcFilPara.CurU,AdcFilPara.CurV,AdcFilPara.CurW,AdcPara.OffsetCurU);
+    ToggleLed(LED_B);
+    // shell_send("%.3f,%.3f,%.3f,%u\r\n",AdcFilPara.CurU,AdcFilPara.CurV,AdcFilPara.CurW,AdcPara.OffsetCurU);
+    shell_send("%u,%u,%d,%d\r\n",ADC_Value[0],ADC_Value[3],AdcPara.OffsetCurU,AdcPara.OffsetCurW);
+    HAL_Delay(100);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

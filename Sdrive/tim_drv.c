@@ -83,7 +83,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		// }
 		// MotorModeSel(); // 控制模式选择
 
-		// QtMotor(); // 强拖模式
-		// FocSvpwm(); // SVPWM计算
+		QtMotor(); // 强拖模式
+		FocSvpwm(); // SVPWM计算
 	}
 }
