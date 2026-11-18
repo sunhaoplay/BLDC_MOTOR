@@ -10,6 +10,7 @@
 #include "motor_para.h"
 #include "tim_drv.h"
 #include "motor_ctrl.h"
+#include "sen.h"
 ENCOSPEED EnCoSpeed;
 
 /**
@@ -82,8 +83,13 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		// 	MotorSpeedGet(); // 速度获取
 		// }
 		// MotorModeSel(); // 控制模式选择
-
+      if(Init_Over==0)
+	  {
+		return;
+	  }
+	 
 		QtMotor(); // 强拖模式
 		FocSvpwm(); // SVPWM计算
+	
 	}
 }

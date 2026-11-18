@@ -131,6 +131,7 @@ if (HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL) != HAL_OK)
 
 	// Motor.CtrlMode = TO_ZERO;
 	PostionToZeroDouble(); // 调零
+    Init_Over=1;
     MotorRun();	// Motor.CtrlMode = STOP;
 }
 

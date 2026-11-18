@@ -8,9 +8,7 @@
 
 #ifndef __SEN_H
 #define __SEN_H
-
 #include "main.h"
-
 /** @brief 使用编码器角度完成 d/q 电流闭环。 */
 void CurCloseloop(float IqRef, float Theta);
 /** @brief 运行有感速度环，并可选择斜坡给定。 */
