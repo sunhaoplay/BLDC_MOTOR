@@ -75,7 +75,7 @@ MotorFoc/pid.c \
 MotorFoc/sen.c \
 MotorFoc/foc.c
 # ASM sources
-# ASM sources# ASM sourcesASM_SOURCES =  \
+ASM_SOURCES =  \
 startup_stm32f407xx.s
 
 # ASMM sources
