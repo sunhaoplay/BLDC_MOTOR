@@ -98,6 +98,7 @@ int main(void)
   MX_ADC1_Init();
   MX_TIM3_Init();
   MX_TIM1_Init();
+  MX_ADC2_Init();
   /* USER CODE BEGIN 2 */
    task_init();
   /* USER CODE END 2 */
@@ -107,11 +108,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    ToggleLed(LED_B);
-    // shell_send("%.3f,%.3f,%.3f,%u\r\n",AdcFilPara.CurU,AdcFilPara.CurV,AdcFilPara.CurW,AdcPara.OffsetCurU);
-    shell_send("%.3f,%.3f,%.3f,%.3f,%.3f\r\n",Park.Alpha,Park.Beta,Park.Ds,Park.Qs,Park.Theta);
-      // shell_send("%.3f,%u\r\n",Motor.E_theta,TIM3->CNT);
-    HAL_Delay(100);
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
