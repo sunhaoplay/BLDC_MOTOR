@@ -2,8 +2,8 @@
  * @file motor_ctrl.c
  * @brief 电机控制顶层状态机、IF 启动和多观测器全速域融合实现。
  *
- * 每个 TIM1 控制周期先在 AxisDq() 更新电流坐标和观测器，再由 MotorModeSel()
- * 执行当前闭环并更新 SVPWM。无感模式在低速 HFI 或 IF 与高速 SMO/磁链之间
+ * 每个 ADC1 注入采样周期先在 AxisDq() 更新电流坐标，再执行电流闭环和 SVPWM。
+ * 无感模式的扩展接口在低速 HFI 或 IF 与高速 SMO/磁链之间
  * 采用迟滞阈值、角度同步和 PI 状态复位，降低切换时的电流与转矩冲击。
  */
 
@@ -28,7 +28,7 @@ POS_DRV /*****************/ Pos;
 
 // FLUX_DRV                 flux = FLUX_DEFAULTS;
 
-bool Init_Over = 0;
+volatile bool Init_Over = 0;
 bool HFI_Init_Angle_flag = 0;
 
 /**
@@ -55,38 +55,34 @@ void GradXieLv(p_GXieLv pv)
 }
 
 /**
- * @brief 立即禁止 TIM1 三相主/互补 PWM、清零比较值并复位控制动态状态。
- *
- * CCER 与 0xAAAA 相与会清除各通道输出使能位；CCR1..3 置零后调用
- * VariableClear()，确保下一次启动不继承 PI 积分或观测器历史。
+ * @brief 禁止电流闭环和三相功率输出，保留 TIM1 计数及 CH4 内部采样触发。
  */
 void MotorStop(void)
 {
-	// 关闭三相互补 PWM 输出，防止停机后继续驱动功率管
-	TIM1->CCER &= 0xAAAA; // 不使能PWM输出通道OC1/OC1N/OC2/OC2N/OC3/OC3N
-
-	TIM1->CCR1 = 0;
-	TIM1->CCR2 = 0;
-	TIM1->CCR3 = 0;
-
-	// VariableClear(); // 变量清零
+	Init_Over = false;
+	TIM1->CCER &= ~MOTOR_PWM_CHANNEL_MASK;
+	TIM1->CCR1 = TIM1_PERIOD_HALF;
+	TIM1->CCR2 = TIM1_PERIOD_HALF;
+	TIM1->CCR3 = TIM1_PERIOD_HALF;
 }
 
 /**
  * @brief 使能 TIM1 三相主通道和互补通道 PWM 输出。
- * @note 本函数只开放功率输出，不选择控制模式，也不校验故障状态。
+ * @note 只在没有采样故障时开放功率输出，不选择控制模式。
  */
 void MotorRun(void)
 {
-	// Fault_Detection();				//启动前先进行故障检测
-	// 使能三相上下桥 PWM 输出，后续占空比由 SVPWM 更新
-	TIM1->CCER |= 0x5555;
-	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
-	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
-	HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
-	HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
-	HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
+	const uint32_t primask = __get_PRIMASK();
+	__disable_irq();
+	if (AdcFault != 0U)
+	{
+		__set_PRIMASK(primask);
+		return;
+	}
+	/* TIM1 已由采样驱动启动；直接切换使能位，避免反复 Start 导致 HAL_BUSY。 */
+	TIM1->CCER |= MOTOR_PWM_CHANNEL_MASK;
+	__HAL_TIM_MOE_ENABLE(&htim1);
+	__set_PRIMASK(primask);
 }
 
 /**
@@ -130,7 +126,7 @@ void FocSvpwm(void)
  * 数据流为 ADC 三相电流 -> Clarke -> 观测器/编码器角度选择 -> Park。磁链模型
  * 每拍后台更新，融合模式再执行相应 HFI/SMO/IF 切换逻辑。最终 Park.Theta
  * 严格按当前模式选择，得到供内层电流 PI 使用的 Park.Ds/Park.Qs。
- * @note 由 TIM1 更新中断在 GetAdc() 后每 50 us 调用。
+ * @note 由 ADC1 注入完成回调在 GetAdc() 后每 50 us 调用。
  */
 void AxisDq(void)
 {

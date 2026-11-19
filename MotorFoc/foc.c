@@ -8,6 +8,7 @@
 
 #include "motor_ctrl.h"
 #include "arm_math.h"
+#include <math.h>
 SVPWM Svpwm = SVPWM_DEFAULTS;
 
 /**
@@ -56,8 +57,8 @@ void IPARK_Cale(M_IPARK pv)
  *
  * 三个投影 u1/u2/u3 的符号组合确定六个 60 度扇区。每个扇区使用同一对
  * 有效空间矢量的对称七段式排列，简化后得到 Ta/Tb/Tc。最后先乘
- * SVPWM_KM_BACKW 归一化到约 [-1,1]，再按 CCR=(modulation+1)*PERIOD/2
- * 映射为 0..TIM1_PERIOD 的中心对齐比较值。
+ * SVPWM_KM_BACKW 归一化，再按实际 ARR 映射比较值；饱和时统一缩放三相，
+ * 保持电压矢量方向并在峰顶附近保留固定采样窗口。
  */
 void SvpwmCal(M_SVPWM pv)
 {
@@ -98,8 +99,30 @@ void SvpwmCal(M_SVPWM pv)
         pv->Tc = 0;
     }
 
-    // 归一化调制量乘半周期并加中点偏置，将 [-1,1] 映射到 [0,PERIOD]。
-    TIM1->CCR1 = (uint16_t)((pv->Ta * SVPWM_KM_BACKW * TIM1_PERIOD_HALF) + TIM1_PERIOD_HALF);
-    TIM1->CCR2 = (uint16_t)((pv->Tb * SVPWM_KM_BACKW * TIM1_PERIOD_HALF) + TIM1_PERIOD_HALF);
-    TIM1->CCR3 = (uint16_t)((pv->Tc * SVPWM_KM_BACKW * TIM1_PERIOD_HALF) + TIM1_PERIOD_HALF);
+    /* 按实际 ARR 映射，统一缩放三相以保持矢量方向并保留峰顶采样窗口。
+     * 预留的窗口会降低最大可用电压；不能逐相硬截断，否则会改变电压矢量。
+     */
+    const float midpoint = (float)TIM1->ARR * 0.5f;
+    const float guard = (float)(TIM1_SAMPLE_LEAD_TICKS + TIM1_SAMPLE_GUARD_TICKS);
+    const float available = midpoint - guard;
+    float da = pv->Ta * SVPWM_KM_BACKW * midpoint;
+    float db = pv->Tb * SVPWM_KM_BACKW * midpoint;
+    float dc = pv->Tc * SVPWM_KM_BACKW * midpoint;
+    float peak = fmaxf(fabsf(da), fmaxf(fabsf(db), fabsf(dc)));
+
+    if (!isfinite(peak) || !isfinite(da) || !isfinite(db) || !isfinite(dc) || available <= 0.0f)
+    {
+        da = db = dc = 0.0f;
+    }
+    else if (peak > available)
+    {
+        const float scale = available / peak;
+        da *= scale;
+        db *= scale;
+        dc *= scale;
+    }
+    /* 四舍五入避免浮点误差把窗口边界的 588 计数截成 587。 */
+    TIM1->CCR1 = (uint16_t)(midpoint + da + 0.5f);
+    TIM1->CCR2 = (uint16_t)(midpoint + db + 0.5f);
+    TIM1->CCR3 = (uint16_t)(midpoint + dc + 0.5f);
 }

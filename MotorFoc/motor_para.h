@@ -13,8 +13,11 @@
 #include "arm_math.h"
 
 /* PWM 和控制周期。TIM1 为中心对齐计数，TS=1/PWM_FRQ=50 us。 */
-#define TIM1_PERIOD /*******************/ 8400
+#define TIM1_PERIOD /*******************/ 4200
 #define TIM1_PERIOD_HALF /**************/ (TIM1_PERIOD / 2)
+#define TIM1_SAMPLE_LEAD_TICKS /********/ 84U  /**< 168 MHz 下在峰顶前 0.5 us 触发，OC4REF 高电平约 1 us。 */
+#define TIM1_SAMPLE_GUARD_TICKS /*******/ 504U /**< 最近三相比较沿到采样触发至少 3 us；功率管死区会占用其中一部分。 */
+#define MOTOR_PWM_CHANNEL_MASK (TIM_CCER_CC1E | TIM_CCER_CC1NE | TIM_CCER_CC2E | TIM_CCER_CC2NE | TIM_CCER_CC3E | TIM_CCER_CC3NE)
 #define PWM_FRQ /***********************/ 20000
 #define TS /****************************/ 0.00005f
 #define SPEED_CNT /*********************/ 2                          /**< 有感测速/速度环分频系数。 */

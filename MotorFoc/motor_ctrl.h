@@ -3,8 +3,8 @@
  * @brief 电机控制顶层数据模型、模块汇总依赖和高速控制接口。
  *
  * 本头文件连接采样、FOC、PI、有感控制、HFI、SMO、磁链观测和故障保护。
- * motor_ctrl.c 根据 CtrlMode 在 20 kHz TIM1 中断中选择控制链，并维护不同
- * 无感观测器之间的角度、速度和 PI 状态连续性。
+ * 当前由约 20 kHz ADC1 注入完成中断执行编码器电流闭环，头文件同时保留
+ * 不同控制模式和无感观测器所需的状态与扩展接口。
  */
 
 #ifndef __MOTOR_CTRL_H
@@ -127,7 +127,7 @@ extern IPARK IparkSmoPv;              /**< SMO 切换时的备用反 Park 对象
 extern bool SMO_flag;
 extern bool SMO_Switch_flag;
 extern bool HFI_Init_Angle_flag;      /**< HFI 初始角度及极性识别完成标志。 */
-extern bool Init_Over;                /**< 整机初始化完成、允许故障检测标志。 */
+extern volatile bool Init_Over;       /**< 初始化完成并允许 ADC 中断执行电流闭环。 */
 
 extern bool HFI_Init_Angle_flag;
 extern motor_p Motor;

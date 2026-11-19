@@ -53,11 +53,6 @@ static volatile uint8_t shell_printf_busy;
 
 static HAL_StatusTypeDef UART_DMA_StartReceive(UART_DMA_RxContext *context);
 static void UART_DMA_HandleRxEvent(UART_DMA_RxContext *context, uint16_t length);
-static HAL_StatusTypeDef UART_DMA_Transmit(UART_HandleTypeDef *uart,
-                                           const uint8_t *data,
-                                           uint16_t length,
-                                           GPIO_TypeDef *direction_port,
-                                           uint16_t direction_pin);
 static HAL_StatusTypeDef Shell_TxStartLocked(void);
 static void Shell_TxComplete(void);
 /* USER CODE END 0 */

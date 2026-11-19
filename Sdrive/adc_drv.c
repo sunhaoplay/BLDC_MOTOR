@@ -1,87 +1,208 @@
 /**
  * @file adc_drv.c
- * @brief 实现 ADC 零点校准、物理量换算和一阶低通滤波。
- *
- * DMA 通道顺序由 CubeMX 配置决定：代码使用索引 0/3 采 U/W 相电流，索引 2
- * 采母线电压，索引 1 采温度，索引 4 采电位器。GetAdc() 在 TIM1 20 kHz
- * 更新中断中调用，因此换算和滤波必须保持短小、确定且不可阻塞。
+ * @brief TIM1 OC4REF -> 双 ADC 同步注入 -> 电流闭环；1 kHz 规则组 DMA 采慢信号。
  */
+#include "adc_drv.h"
+#include "adc.h"
+#include "tim.h"
+#include "motor_ctrl.h"
+#include "sen.h"
+#include "foc_trace.h"
 
-#include "task.h"
-#include "motor_para.h"
-ADC_Sample AdcPara = ADC_Sample_DEFAULTS;       /**< 当前一拍未经低通的采样物理量。 */
-ADC_Sample_F AdcFilPara = ADC_Sample_F_DEFAULTS; /**< 当前一拍低通后的采样物理量。 */
+ADC_Sample AdcPara = ADC_Sample_DEFAULTS;
+ADC_Sample_F AdcFilPara = ADC_Sample_F_DEFAULTS;
+uint16_t ADC_Slow[ADC_SLOW_CHANNELS];
+volatile uint16_t AdcRawU, AdcRawW;
+volatile uint32_t AdcCurrentSamples;
+volatile uint32_t AdcSlowSamples;
+volatile uint32_t AdcFault;
+volatile uint32_t AdcControlCyclesMax;
+volatile uint32_t AdcControlDeadlineMisses;
 
-uint16_t ADC_Value[5];
+static volatile uint32_t offset_count;
+static volatile uint8_t offset_active;
+static volatile uint8_t offset_ready;
+static uint32_t offset_sum_u, offset_sum_w;
+static volatile uint8_t slow_busy;
+static uint16_t slow_divider;
 
-/**
- * @brief 在零电流条件下估计 U、W 两相电流采样的 ADC 偏置。
- *
- * 外层执行 10 次，每次等待并读取约 100 ms 后把该次末值累加，最终取 10 次平均。
- * 后续相电流换算使用 I=(Offset-ADC)*I_GAIN 消除运放和 ADC 的静态零漂。
- * @warning 校准期间功率级必须没有相电流，否则该电流会被误认为零点并带入控制环。
- */
+#define ADC_SLOW_DIVIDER (PWM_FRQ / 1000U)
+#define ADC_FAULT_SYNC       0x10000U
+#define ADC_FAULT_CALIBRATE  0x20000U
+#define ADC_FAULT_SLOW       0x40000U
+
+static void AdcFail(uint32_t fault)
+{
+    AdcFault |= fault;
+    MotorStop();
+}
+
+HAL_StatusTypeDef AdcSamplingStart(void)
+{
+    MotorStop();
+    __HAL_TIM_DISABLE_IT(&htim1, TIM_IT_UPDATE);
+    __HAL_TIM_DISABLE(&htim1);
+    if (TIM1->ARR != TIM1_PERIOD - 1U)
+        return HAL_ERROR;
+
+    /* CH4 无引脚输出。峰顶前 0.5 us 上升，避免 ARR-1 产生过窄的 TRGO 脉冲。 */
+    CLEAR_BIT(TIM1->CCER, TIM_CCER_CC4E);
+    TIM1->CCR4 = TIM1->ARR - TIM1_SAMPLE_LEAD_TICKS;
+    TIM1->EGR = TIM_EGR_UG;
+    __HAL_TIM_SET_COUNTER(&htim1, 0U);
+    __HAL_TIM_CLEAR_FLAG(&htim1, TIM_FLAG_UPDATE);
+
+    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+    DWT->CYCCNT = 0U;
+    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+
+    if (HAL_ADCEx_InjectedStart(&hadc2) != HAL_OK)
+        return HAL_ERROR;
+    if (HAL_ADCEx_InjectedStart_IT(&hadc1) != HAL_OK)
+        return HAL_ERROR;
+    return HAL_TIM_Base_Start(&htim1);
+}
+
 void AdcSampleOffset(void)
 {
-	uint8_t i = 0;
-	uint8_t j = 0;
-	uint16_t Sum1 = 0;
-	uint16_t Sum2 = 0;
+    const uint32_t primask = __get_PRIMASK();
+    const uint32_t start = HAL_GetTick();
+    __disable_irq();
+    offset_active = 0U;
+    offset_ready = 0U;
+    offset_count = 0U;
+    offset_sum_u = offset_sum_w = 0U;
+    __DMB();
+    offset_active = 1U;
+    __set_PRIMASK(primask);
 
-	for (i = 0; i < 10; i++)
-	{
-		for (j = 0; j < 100; j++)
-		{
-			AdcPara.OffsetCurU = ADC_Value[0];
-			AdcPara.OffsetCurW = ADC_Value[3];
-
-			HAL_Delay(1);
-		}
-		Sum1 += AdcPara.OffsetCurU;
-		Sum2 += AdcPara.OffsetCurW;
-	}
-	AdcFilPara.OffsetCurU = Sum1 / 10;
-	AdcFilPara.OffsetCurW = Sum2 / 10;
+    while (offset_ready == 0U)
+    {
+        if (AdcFault != 0U || (uint32_t)(HAL_GetTick() - start) >= 250U)
+        {
+            AdcFail(ADC_FAULT_CALIBRATE);
+            Error_Handler();
+        }
+        HAL_Delay(1);
+    }
 }
 
-/**
- * @brief 将 ADC DMA 原始码值换算为三相电流、母线电压和辅助通道值。
- *
- * U/W 相：I=(Offset-ADC)*I_GAIN；V 相由星形电机无中性线条件
- * Iu+Iv+Iw=0 重构，即 Iv=-Iu-Iw。母线电压使用 Vbus=ADC*VBUS_GAIN。
- */
-static void AdcSample(void)
-{
-	AdcPara.CurU = (float)(AdcFilPara.OffsetCurU - ADC_Value[0]) * I_GAIN;
-	AdcPara.CurW = (float)(AdcFilPara.OffsetCurW - ADC_Value[3]) * I_GAIN;
-	AdcPara.CurV = -AdcPara.CurU - AdcPara.CurW;
-
-	AdcPara.Vbus = (float)ADC_Value[2] * VBUS_GAIN;
-	AdcPara.Temp = (float)ADC_Value[1];
-	AdcPara.Vr = (float)ADC_Value[4];
-}
-
-/**
- * @brief 对电流、母线电压和温度执行一阶离散低通滤波。
- *
- * 通用形式为 y[n]=B*y[n-1]+A*x[n]。电流采用较高截止频率的 RUN 系数以保留
- * 控制带宽；母线电压和温度采用较低截止频率的 STOP 系数以抑制慢变量噪声。
- */
-static void AdcSampleDeal(void)
-{
-	AdcFilPara.CurU = LPF_I_RUN_B * AdcFilPara.CurU + LPF_I_RUN_A * AdcPara.CurU;
-	AdcFilPara.CurV = LPF_I_RUN_B * AdcFilPara.CurV + LPF_I_RUN_A * AdcPara.CurV;
-	AdcFilPara.CurW = LPF_I_RUN_B * AdcFilPara.CurW + LPF_I_RUN_A * AdcPara.CurW;
-	AdcFilPara.Vbus = AdcFilPara.Vbus * LPF_I_STOP_B + AdcPara.Vbus * LPF_I_STOP_A;
-	AdcFilPara.Temp = AdcFilPara.Temp * LPF_I_STOP_B + AdcPara.Temp * LPF_I_STOP_A;
-}
-
-/**
- * @brief 更新本控制周期的原始采样量和滤波采样量。
- * @note 由 TIM1 更新中断每 50 us 调用一次；不得在此函数中加入延时或阻塞操作。
- */
 void GetAdc(void)
 {
-	AdcSample();
-	AdcSampleDeal();
+    const uint16_t raw_u = (uint16_t)HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_1);
+    const uint16_t raw_w = (uint16_t)HAL_ADCEx_InjectedGetValue(&hadc2, ADC_INJECTED_RANK_1);
+    AdcRawU = raw_u;
+    AdcRawW = raw_w;
+    ++AdcCurrentSamples;
+    __HAL_ADC_CLEAR_FLAG(&hadc2, ADC_FLAG_JSTRT | ADC_FLAG_JEOC);
+
+    if (offset_active != 0U)
+    {
+        offset_sum_u += raw_u;
+        offset_sum_w += raw_w;
+        if (++offset_count == ADC_OFFSET_SAMPLES)
+        {
+            const int16_t u = (int16_t)((offset_sum_u + ADC_OFFSET_SAMPLES / 2U) / ADC_OFFSET_SAMPLES);
+            const int16_t w = (int16_t)((offset_sum_w + ADC_OFFSET_SAMPLES / 2U) / ADC_OFFSET_SAMPLES);
+            AdcPara.OffsetCurU = AdcFilPara.OffsetCurU = u;
+            AdcPara.OffsetCurW = AdcFilPara.OffsetCurW = w;
+            AdcFilPara.CurU = AdcFilPara.CurV = AdcFilPara.CurW = 0.0f;
+            offset_active = 0U;
+            __DMB();
+            offset_ready = 1U;
+        }
+    }
+
+    if (offset_ready == 0U)
+        return;
+    /* 保留原有电流符号定义，传感器增益及极性仍须通过实测确认。 */
+    AdcPara.CurU = (float)((int32_t)AdcFilPara.OffsetCurU - raw_u) * I_GAIN;
+    AdcPara.CurW = (float)((int32_t)AdcFilPara.OffsetCurW - raw_w) * I_GAIN;
+    AdcPara.CurV = -AdcPara.CurU - AdcPara.CurW;
+    AdcFilPara.CurU = LPF_I_RUN_B * AdcFilPara.CurU + LPF_I_RUN_A * AdcPara.CurU;
+    AdcFilPara.CurW = LPF_I_RUN_B * AdcFilPara.CurW + LPF_I_RUN_A * AdcPara.CurW;
+    AdcFilPara.CurV = -AdcFilPara.CurU - AdcFilPara.CurW;
+}
+
+static void AdcSlowStart(void)
+{
+    if (++slow_divider < ADC_SLOW_DIVIDER)
+        return;
+    slow_divider = 0U;
+    if (slow_busy != 0U)
+    {
+        AdcFail(ADC_FAULT_SLOW);
+        return;
+    }
+    slow_busy = 1U;
+    /* 仅启动 ADC1 规则组；不调用会同时关闭注入采样的 HAL_ADC_Stop_DMA。 */
+    if (HAL_ADC_Start_DMA(&hadc1, (uint32_t *)ADC_Slow, ADC_SLOW_CHANNELS) != HAL_OK)
+    {
+        AdcFail(ADC_FAULT_SLOW);
+        return;
+    }
+    __HAL_DMA_DISABLE_IT(hadc1.DMA_Handle, DMA_IT_HT);
+}
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
+{
+    if (hadc->Instance != ADC1)
+        return;
+    AdcPara.Vbus = (float)ADC_Slow[0] * VBUS_GAIN;
+    AdcPara.Temp = ADC_Slow[1];
+    AdcPara.Vr = (float)ADC_Slow[2];
+    /* 更新频率从 20 kHz 改为 1 kHz，保持约 10 Hz 的慢信号低通。 */
+    if (AdcSlowSamples == 0U)
+    {
+        AdcFilPara.Vbus = AdcPara.Vbus;
+        AdcFilPara.Temp = (float)AdcPara.Temp;
+    }
+    else
+    {
+        AdcFilPara.Vbus += 0.06089863f * (AdcPara.Vbus - AdcFilPara.Vbus);
+        AdcFilPara.Temp += 0.06089863f * ((float)AdcPara.Temp - AdcFilPara.Temp);
+    }
+    ++AdcSlowSamples;
+    __DMB();
+    slow_busy = 0U;
+}
+
+void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef *hadc)
+{
+    if (hadc->Instance != ADC1 || AdcFault != 0U)
+        return;
+    const uint32_t start_cycles = DWT->CYCCNT;
+    const uint32_t entry_count = TIM1->CNT;
+    const uint32_t entry_down = TIM1->CR1 & TIM_CR1_DIR;
+    if (__HAL_ADC_GET_FLAG(&hadc2, ADC_FLAG_JEOC) == RESET)
+    {
+        AdcFail(ADC_FAULT_SYNC);
+        return;
+    }
+    GetAdc();
+    if (offset_ready != 0U)
+        AxisDq();
+
+    if (Init_Over)
+    {
+        CurCloseloop(0.3f, Motor.E_theta);
+        FocSvpwm();
+        /* 采样完成时应处于下数，新的三相 CCR 应在随后的谷底前写完。 */
+        const uint32_t count = TIM1->CNT;
+        const uint32_t elapsed = DWT->CYCCNT - start_cycles;
+        if (entry_down == 0U || (TIM1->CR1 & TIM_CR1_DIR) == 0U || count > entry_count || elapsed >= entry_count)
+            ++AdcControlDeadlineMisses;
+        FocTraceRecord();
+    }
+    if (AdcFault == 0U)
+        AdcSlowStart();
+    const uint32_t cycles = DWT->CYCCNT - start_cycles;
+    if (cycles > AdcControlCyclesMax)
+        AdcControlCyclesMax = cycles;
+}
+
+void HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
+{
+    if (hadc->Instance == ADC1 || hadc->Instance == ADC2)
+        AdcFail(HAL_ADC_GetError(hadc) | ADC_FAULT_SLOW);
 }

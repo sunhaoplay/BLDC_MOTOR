@@ -18,13 +18,7 @@
  */
 void PositionToZero(void)
 {
-    TIM1->CCER |= 0x5555;
-    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
-    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
-    HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
-    HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
-    HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
+    MotorRun();
     HAL_Delay(100);
 
     Svpwm.Ualpha = 1; // 固定定子电压矢量，使转子磁极对齐 alpha 轴。
@@ -35,7 +29,7 @@ void PositionToZero(void)
     Motor.E_theta = 0;
     HAL_Delay(500);
 
-    TIM1->CCER &= 0xAAAA;
+    MotorStop();
     HAL_Delay(500);
 }
 
@@ -48,13 +42,7 @@ void PositionToZero(void)
  */
 void PostionToZeroDouble(void)
 {
-    TIM1->CCER |= 0x5555;
-    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
-    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
-    HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
-    HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
-    HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
+    MotorRun();
 
     HAL_Delay(100);
 
@@ -68,16 +56,11 @@ void PostionToZeroDouble(void)
     SvpwmCal((M_SVPWM)&Svpwm);
     HAL_Delay(1000);
 
-  
-
-    HAL_Delay(1000);
-
-    TIM1->CCER &= 0xAAAA;
-    HAL_Delay(1000);
-
-    MotorStop();
+    /* 在保持 alpha 轴吸合时定义零位，避免断电回弹后才清零。 */
     TIM3->CNT = 0;
     Motor.E_theta = 0;
+    MotorStop();
+    HAL_Delay(100);
 }
 
 /**

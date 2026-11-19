@@ -70,6 +70,7 @@ Drivers/CMSIS/DSP/Source/FastMathFunctions/arm_cos_f32.c \
 Drivers/CMSIS/DSP/Source/CommonTables/arm_common_tables.c \
 Sdrive/tim_drv.c \
 Sdrive/adc_drv.c \
+Sdrive/foc_trace.c \
 Sdrive/led_drv.c \
 App/task.c \
 MotorFoc/motor_ctrl.c \
@@ -78,7 +79,7 @@ MotorFoc/pid.c \
 MotorFoc/sen.c \
 MotorFoc/foc.c
 # ASM sources
-# ASM sourcesASM_SOURCES =  \
+ASM_SOURCES =  \
 startup_stm32f407xx.s
 
 # ASMM sources
