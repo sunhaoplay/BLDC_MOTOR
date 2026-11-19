@@ -68,8 +68,7 @@ void PostionToZeroDouble(void)
     SvpwmCal((M_SVPWM)&Svpwm);
     HAL_Delay(1000);
 
-    TIM3->CNT = 0;
-    Motor.E_theta = 0;
+  
 
     HAL_Delay(1000);
 
@@ -77,6 +76,8 @@ void PostionToZeroDouble(void)
     HAL_Delay(1000);
 
     MotorStop();
+    TIM3->CNT = 0;
+    Motor.E_theta = 0;
 }
 
 /**

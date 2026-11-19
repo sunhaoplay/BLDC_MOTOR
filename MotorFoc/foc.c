@@ -7,7 +7,7 @@
  */
 
 #include "motor_ctrl.h"
-
+#include "arm_math.h"
 SVPWM Svpwm = SVPWM_DEFAULTS;
 
 /**

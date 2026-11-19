@@ -53,11 +53,11 @@ void MotorSpeedGet(void)
  */
 void MotorAngleGet(void)
 {
-	Motor.E_theta = (float)TIM3->CNT / ENCODE_PULSE * PIX2 * Motor.P; // CNT/16384(编码器转一圈计数值)*2PI*极对数
+	Motor.E_theta = (float)TIM3->CNT / ENCODE_PULSE * PIX2 * Motor.P; // CNT/4096(编码器转一圈计数值)*2PI*极对数
 
 	while (Motor.E_theta >= PIX2)
 		Motor.E_theta -= PIX2;
-	while (Motor.E_theta <= 0.0f)
+	while (Motor.E_theta < 0.0f)
 		Motor.E_theta += PIX2;
 }
 
@@ -74,7 +74,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	if (htim == (&htim1)) // FOC控制		20KHz
 	{
 		GetAdc(); // 获取电流
-		// AxisDq(); // 坐标轴变换
+		AxisDq(); // 坐标轴变换
 
 		// EnCoSpeed.SpeedClock++;
 		// if (EnCoSpeed.SpeedClock == SPEED_CNT) // 计算一次电机转速
@@ -87,9 +87,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	  {
 		return;
 	  }
-	 
-		QtMotor(); // 强拖模式
+	 //1.开环强托
+		// QtMotor(); // 强拖模式
+		// FocSvpwm(); // SVPWM计算
+	// 2.有感电流环
+	    CurCloseloop(0.3, Motor.E_theta);
 		FocSvpwm(); // SVPWM计算
-	
 	}
 }

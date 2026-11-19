@@ -33,4 +33,6 @@ void TurnOffLed(uint8_t ledNo);
  * @param ledNo LED 逻辑编号，有效范围 0..2；越界时函数直接返回。
  */
 void ToggleLed(uint8_t ledNo);
+
+void LedTask(uint8_t r, uint8_t g, uint8_t b);
 #endif

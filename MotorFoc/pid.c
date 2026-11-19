@@ -69,7 +69,9 @@ void PiParaInit(void)
 	pi_spd.Umin = -PI_MAX_SPD;
 
 	pi_id.Kp = 0.3f;
-	pi_id.Ki = 1000.0f;
+	// pi_id.Ki = 1000.0f;
+	pi_id.Ki = 0.0f;
+
 	pi_id.Umax = PI_MAX_Ud;
 	pi_id.Umin = -PI_MAX_Ud;
 

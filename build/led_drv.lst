@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccQnD5Aa.s 			page 1
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHIQgYV.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccQnD5Aa.s 			page 1
   27:Sdrive/led_drv.c ****  * @brief 把指定 LED 引脚拉低以点亮通道。
   28:Sdrive/led_drv.c ****  * @param ledNo g_gpioList[] 索引，越界时不访问 GPIO。
   29:Sdrive/led_drv.c ****  */
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccQnD5Aa.s 			page 2
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHIQgYV.s 			page 2
 
 
   30:Sdrive/led_drv.c **** void TurnOnLed(uint8_t ledNo)
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccQnD5Aa.s 			page 1
   38:Sdrive/led_drv.c **** 
   39:Sdrive/led_drv.c **** /**
   40:Sdrive/led_drv.c ****  * @brief 把指定 LED 引脚拉高以熄灭通道。
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccQnD5Aa.s 			page 3
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHIQgYV.s 			page 3
 
 
   41:Sdrive/led_drv.c ****  * @param ledNo g_gpioList[] 索引，越界时不访问 GPIO。
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccQnD5Aa.s 			page 1
  122              	.LVL6:
  123              	.LFB241:
   51:Sdrive/led_drv.c **** 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccQnD5Aa.s 			page 4
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHIQgYV.s 			page 4
 
 
   52:Sdrive/led_drv.c **** /**
@@ -229,40 +229,157 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccQnD5Aa.s 			page 1
  156 001c 00000000 		.word	g_gpioList
  157              		.cfi_endproc
  158              	.LFE241:
- 160              		.section	.rodata.g_gpioList,"a"
- 161              		.align	2
- 164              	g_gpioList:
- 165 0000 000C0240 		.word	1073875968
- 166 0004 00080000 		.word	2048
- 167 0008 000C0240 		.word	1073875968
- 168 000c 00100000 		.word	4096
- 169 0010 000C0240 		.word	1073875968
- 170 0014 00200000 		.word	8192
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccQnD5Aa.s 			page 5
+ 160              		.section	.text.LedTask,"ax",%progbits
+ 161              		.align	1
+ 162              		.global	LedTask
+ 163              		.syntax unified
+ 164              		.thumb
+ 165              		.thumb_func
+ 167              	LedTask:
+ 168              	.LVL9:
+ 169              	.LFB242:
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHIQgYV.s 			page 5
 
 
- 171              		.text
- 172              	.Letext0:
- 173              		.file 2 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
- 174              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
- 175              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
- 176              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccQnD5Aa.s 			page 6
+  64:Sdrive/led_drv.c **** 
+  65:Sdrive/led_drv.c **** /**
+  66:Sdrive/led_drv.c ****  * @brief 根据三个布尔量控制 RGB LED。
+  67:Sdrive/led_drv.c ****  * @param r 红色通道使能，非零点亮。
+  68:Sdrive/led_drv.c ****  * @param g 绿色通道使能，非零点亮。
+  69:Sdrive/led_drv.c ****  * @param b 蓝色通道使能，非零点亮。
+  70:Sdrive/led_drv.c ****  * @note 底层 LED 为低电平点亮，极性由 led_drv.c 封装。
+  71:Sdrive/led_drv.c ****  */
+  72:Sdrive/led_drv.c **** void LedTask(uint8_t r, uint8_t g, uint8_t b)
+  73:Sdrive/led_drv.c **** {
+ 170              		.loc 1 73 1 is_stmt 1 view -0
+ 171              		.cfi_startproc
+ 172              		@ args = 0, pretend = 0, frame = 0
+ 173              		@ frame_needed = 0, uses_anonymous_args = 0
+ 174              		.loc 1 73 1 is_stmt 0 view .LVU28
+ 175 0000 38B5     		push	{r3, r4, r5, lr}
+ 176              	.LCFI3:
+ 177              		.cfi_def_cfa_offset 16
+ 178              		.cfi_offset 3, -16
+ 179              		.cfi_offset 4, -12
+ 180              		.cfi_offset 5, -8
+ 181              		.cfi_offset 14, -4
+ 182 0002 0D46     		mov	r5, r1
+ 183 0004 1446     		mov	r4, r2
+  74:Sdrive/led_drv.c **** 	/* 红 */
+  75:Sdrive/led_drv.c **** 	if (r)
+ 184              		.loc 1 75 2 is_stmt 1 view .LVU29
+ 185              		.loc 1 75 5 is_stmt 0 view .LVU30
+ 186 0006 58B1     		cbz	r0, .L29
+  76:Sdrive/led_drv.c **** 		TurnOnLed(LED_R);
+ 187              		.loc 1 76 3 is_stmt 1 view .LVU31
+ 188 0008 0220     		movs	r0, #2
+ 189              	.LVL10:
+ 190              		.loc 1 76 3 is_stmt 0 view .LVU32
+ 191 000a FFF7FEFF 		bl	TurnOnLed
+ 192              	.LVL11:
+ 193              	.L30:
+  77:Sdrive/led_drv.c **** 	else
+  78:Sdrive/led_drv.c **** 		TurnOffLed(LED_R);
+  79:Sdrive/led_drv.c **** 
+  80:Sdrive/led_drv.c **** 	/* 绿 */
+  81:Sdrive/led_drv.c **** 	if (g)
+ 194              		.loc 1 81 2 is_stmt 1 view .LVU33
+ 195              		.loc 1 81 5 is_stmt 0 view .LVU34
+ 196 000e 5DB1     		cbz	r5, .L31
+  82:Sdrive/led_drv.c **** 		TurnOnLed(LED_G);
+ 197              		.loc 1 82 3 is_stmt 1 view .LVU35
+ 198 0010 0120     		movs	r0, #1
+ 199 0012 FFF7FEFF 		bl	TurnOnLed
+ 200              	.LVL12:
+ 201              	.L32:
+  83:Sdrive/led_drv.c **** 	else
+  84:Sdrive/led_drv.c **** 		TurnOffLed(LED_G);
+  85:Sdrive/led_drv.c **** 
+  86:Sdrive/led_drv.c **** 	/* 蓝 */
+  87:Sdrive/led_drv.c **** 	if (b)
+ 202              		.loc 1 87 2 view .LVU36
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHIQgYV.s 			page 6
+
+
+ 203              		.loc 1 87 5 is_stmt 0 view .LVU37
+ 204 0016 5CB1     		cbz	r4, .L33
+  88:Sdrive/led_drv.c **** 		TurnOnLed(LED_B);
+ 205              		.loc 1 88 3 is_stmt 1 view .LVU38
+ 206 0018 0020     		movs	r0, #0
+ 207 001a FFF7FEFF 		bl	TurnOnLed
+ 208              	.LVL13:
+ 209              	.L28:
+  89:Sdrive/led_drv.c **** 	else
+  90:Sdrive/led_drv.c **** 		TurnOffLed(LED_B);
+  91:Sdrive/led_drv.c **** }
+ 210              		.loc 1 91 1 is_stmt 0 view .LVU39
+ 211 001e 38BD     		pop	{r3, r4, r5, pc}
+ 212              	.LVL14:
+ 213              	.L29:
+  78:Sdrive/led_drv.c **** 
+ 214              		.loc 1 78 3 is_stmt 1 view .LVU40
+ 215 0020 0220     		movs	r0, #2
+ 216              	.LVL15:
+  78:Sdrive/led_drv.c **** 
+ 217              		.loc 1 78 3 is_stmt 0 view .LVU41
+ 218 0022 FFF7FEFF 		bl	TurnOffLed
+ 219              	.LVL16:
+  78:Sdrive/led_drv.c **** 
+ 220              		.loc 1 78 3 view .LVU42
+ 221 0026 F2E7     		b	.L30
+ 222              	.L31:
+  84:Sdrive/led_drv.c **** 
+ 223              		.loc 1 84 3 is_stmt 1 view .LVU43
+ 224 0028 0120     		movs	r0, #1
+ 225 002a FFF7FEFF 		bl	TurnOffLed
+ 226              	.LVL17:
+ 227 002e F2E7     		b	.L32
+ 228              	.L33:
+  90:Sdrive/led_drv.c **** }
+ 229              		.loc 1 90 3 view .LVU44
+ 230 0030 0020     		movs	r0, #0
+ 231 0032 FFF7FEFF 		bl	TurnOffLed
+ 232              	.LVL18:
+ 233              		.loc 1 91 1 is_stmt 0 view .LVU45
+ 234 0036 F2E7     		b	.L28
+ 235              		.cfi_endproc
+ 236              	.LFE242:
+ 238              		.section	.rodata.g_gpioList,"a"
+ 239              		.align	2
+ 242              	g_gpioList:
+ 243 0000 000C0240 		.word	1073875968
+ 244 0004 00080000 		.word	2048
+ 245 0008 000C0240 		.word	1073875968
+ 246 000c 00100000 		.word	4096
+ 247 0010 000C0240 		.word	1073875968
+ 248 0014 00200000 		.word	8192
+ 249              		.text
+ 250              	.Letext0:
+ 251              		.file 2 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 252              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 253              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHIQgYV.s 			page 7
+
+
+ 254              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHIQgYV.s 			page 8
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 led_drv.c
-C:\Users\sunhao\AppData\Local\Temp\ccQnD5Aa.s:21     .text.TurnOnLed:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccQnD5Aa.s:27     .text.TurnOnLed:00000000 TurnOnLed
-C:\Users\sunhao\AppData\Local\Temp\ccQnD5Aa.s:63     .text.TurnOnLed:0000001c $d
-C:\Users\sunhao\AppData\Local\Temp\ccQnD5Aa.s:164    .rodata.g_gpioList:00000000 g_gpioList
-C:\Users\sunhao\AppData\Local\Temp\ccQnD5Aa.s:68     .text.TurnOffLed:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccQnD5Aa.s:74     .text.TurnOffLed:00000000 TurnOffLed
-C:\Users\sunhao\AppData\Local\Temp\ccQnD5Aa.s:110    .text.TurnOffLed:0000001c $d
-C:\Users\sunhao\AppData\Local\Temp\ccQnD5Aa.s:115    .text.ToggleLed:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccQnD5Aa.s:121    .text.ToggleLed:00000000 ToggleLed
-C:\Users\sunhao\AppData\Local\Temp\ccQnD5Aa.s:156    .text.ToggleLed:0000001c $d
-C:\Users\sunhao\AppData\Local\Temp\ccQnD5Aa.s:161    .rodata.g_gpioList:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccHIQgYV.s:21     .text.TurnOnLed:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccHIQgYV.s:27     .text.TurnOnLed:00000000 TurnOnLed
+C:\Users\sunhao\AppData\Local\Temp\ccHIQgYV.s:63     .text.TurnOnLed:0000001c $d
+C:\Users\sunhao\AppData\Local\Temp\ccHIQgYV.s:242    .rodata.g_gpioList:00000000 g_gpioList
+C:\Users\sunhao\AppData\Local\Temp\ccHIQgYV.s:68     .text.TurnOffLed:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccHIQgYV.s:74     .text.TurnOffLed:00000000 TurnOffLed
+C:\Users\sunhao\AppData\Local\Temp\ccHIQgYV.s:110    .text.TurnOffLed:0000001c $d
+C:\Users\sunhao\AppData\Local\Temp\ccHIQgYV.s:115    .text.ToggleLed:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccHIQgYV.s:121    .text.ToggleLed:00000000 ToggleLed
+C:\Users\sunhao\AppData\Local\Temp\ccHIQgYV.s:156    .text.ToggleLed:0000001c $d
+C:\Users\sunhao\AppData\Local\Temp\ccHIQgYV.s:161    .text.LedTask:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccHIQgYV.s:167    .text.LedTask:00000000 LedTask
+C:\Users\sunhao\AppData\Local\Temp\ccHIQgYV.s:239    .rodata.g_gpioList:00000000 $d
 
 UNDEFINED SYMBOLS
 HAL_GPIO_WritePin

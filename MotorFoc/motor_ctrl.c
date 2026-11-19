@@ -138,9 +138,9 @@ void AxisDq(void)
 	Para.SpeedCalTime++;
 
 	// 1. 采样三相电流并做 Clarke 变换
-	Clarke.Iu = AdcPara.CurU;
-	Clarke.Iv = AdcPara.CurV;
-	Clarke.Iw = AdcPara.CurW;
+	Clarke.Iu = AdcFilPara.CurU;
+	Clarke.Iv = AdcFilPara.CurV;
+	Clarke.Iw = AdcFilPara.CurW;
 	ClarkeCale((M_CLARKE)&Clarke);
 
 	MotorAngleGet(); // 获取编码器角度
@@ -196,4 +196,136 @@ void AxisDq(void)
 	Park.Alpha = Clarke.Alpha;
 	Park.Beta = Clarke.Beta;
 	ParkCale((M_PARK)&Park);
+}
+
+/**
+ * @brief 清除停机后不应保留的 PI、斜坡、观测器和切换动态状态。
+ *
+ * 该函数不修改 Motor.CtrlMode 和静态配置增益，只清除运行历史。包括四个 PI
+ * 积分、IF/速度斜坡、反 Park/SVPWM 缓存、HFI/SMO PLL、电流观测状态、磁链
+ * 积分以及全速域切换计数，确保下一次启动从确定的低速默认状态开始。
+ */
+void VariableClear(void)
+{
+	// 停机或重新启动前清除运行状态，避免旧积分和旧角度影响下次启动
+	// FluxFlag = 0;
+	Para.FluxSpeedCnt = 0;
+	Para.RpmCmd = 0;
+	Para.FocAngle = 0;
+
+	Motor.speed_M_rpm = 0; // 电机机械角速度清零
+	Motor.speed_E_rpm = 0; // 电机电角速度清零
+
+	// Motor.CtrlMode = 0;	   // 电机控制模式清零
+
+	Para.IfFrq = 0; // 强拖频率计数清零
+
+	// 速度、电流、位置 PI 控制器状态清零
+	pi_spd.Ref = 0;
+	pi_spd.Fbk = 0;
+	pi_spd.err = 0;
+	pi_spd.err_l = 0;
+	pi_spd.Out = 0;
+	pi_spd.OutF = 0;
+	pi_spd.integrator = 0;
+
+	pi_id.Ref = 0;
+	pi_id.Fbk = 0;
+	pi_id.err = 0;
+	pi_id.Out = 0;
+	pi_id.OutF = 0;
+	pi_id.err_l = 0;
+	pi_id.integrator = 0;
+
+	pi_iq.Ref = 0;
+	pi_iq.Fbk = 0;
+	pi_iq.err = 0;
+	pi_iq.Out = 0;
+	pi_iq.OutF = 0;
+	pi_iq.err_l = 0;
+	pi_iq.integrator = 0;
+
+	pi_pos.Ref = 0;
+	pi_pos.Fbk = 0;
+	pi_pos.err = 0;
+	pi_pos.Out = 0;
+	pi_pos.OutF = 0;
+	pi_pos.err_l = 0;
+	pi_pos.integrator = 0;
+
+	// IF、速度、电流给定斜率规划状态清零
+	IfFreqGXieLv.Timer_Count = 0;
+	Para.IfTheta = 0;
+	IfFreqGXieLv.XieLv_Y = 0;
+
+	SpdRefGXieLv.Timer_Count = 0;
+	SpdRefGXieLv.XieLv_Y = 0;
+
+	IdqRefGXieLv.Timer_Count = 0;
+	IdqRefGXieLv.XieLv_Y = 0;
+
+	Ipark.Alpha = 0;
+	Ipark.Beta = 0;
+	Ipark.Ds = 0;
+	Ipark.Qs = 0;
+
+	// 逆 Park 与 SVPWM 输出缓存清零
+	Svpwm.Ualpha = 0;
+	Svpwm.Ubeta = 0;
+
+	// SMO/HFI PLL 状态清零
+	// PllSmoPara.Theta = 0;
+	// PllSmoPara.Angle = 0;
+	// PllSmoPara.Theta_Err = 0;
+	// PllSmoPara.Theta_Err_last = 0;
+	// PllSmoPara.Omega = 0;
+	// PllSmoPara.Omega_F = 0;
+	// PllSmoPara.Omega2 = 0;
+	// PllSmoPara.Omega2_F = 0;
+	// PllSmoPara.Theta_last = 0;
+
+	// PllHfiPara.Theta = 0;
+	// PllHfiPara.Theta_Err = 0;
+	// PllHfiPara.Theta_Err_last = 0;
+	// PllHfiPara.Omega = 0;
+	// PllHfiPara.Omega_F = 0;
+	// PllHfiPara.Omega2 = 0;
+	// PllHfiPara.Omega2_F = 0;
+	// PllHfiPara.Theta_last = 0;
+	// PllHfiPara.Angle = 0;
+
+	// HFI 与 SMO 内部采样/估算状态清零
+	// HFI_Init_Angle_flag = 0;
+	// HFI.Ialpha_last = 0;
+	// HFI.Ibeta_last = 0;
+	// HFI.Id_last = 0;
+	// HFI.Iq_last = 0;
+	// HFI.Uin = 0;
+	// AngleSmoPara.Est_Ialpha = 0;
+	// AngleSmoPara.Est_Ibeta = 0;
+	// AngleSmoPara.Ialpha_Err = 0;
+	// AngleSmoPara.Ibeta_Err = 0;
+	// AngleSmoPara.Zalpha = 0;
+	// AngleSmoPara.Zbeta = 0;
+	// AngleSmoPara.Ealpha = 0;
+	// AngleSmoPara.Ebeta = 0;
+	// HfiUinFlag = 0;
+
+	// 无感观测器状态回到低速默认状态
+	SensorLess.Observer = 1;
+	SensorLess.Observer_last = 1;
+	SensorLess.theta = 0;
+	SensorLess.Omega = 0;
+	SensorLess.Speed_Fbk = 0;
+	SensorLess.Speed_Ref = 0;
+
+	// FluxReset(&flux);
+
+	// 观测器切换计数与标志清零
+	Para.SpeedCalTime = 0;
+	Para.UpTime = 0;
+	Para.DownTime = 0;
+	Para.CalTime = 0;
+	Para.ObsSwFlag = 0;
+	Para.SmoSwFlag = 0;
 }

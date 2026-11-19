@@ -65,6 +65,9 @@ Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c \
 Core/Src/system_stm32f4xx.c \
 Core/Src/sysmem.c \
 Core/Src/syscalls.c \
+Drivers/CMSIS/DSP/Source/FastMathFunctions/arm_sin_f32.c \
+Drivers/CMSIS/DSP/Source/FastMathFunctions/arm_cos_f32.c \
+Drivers/CMSIS/DSP/Source/CommonTables/arm_common_tables.c \
 Sdrive/tim_drv.c \
 Sdrive/adc_drv.c \
 Sdrive/led_drv.c \

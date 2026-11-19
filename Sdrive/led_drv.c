@@ -62,6 +62,32 @@ void ToggleLed(uint8_t ledNo)
 	HAL_GPIO_TogglePin(g_gpioList[ledNo].gpio, g_gpioList[ledNo].pin);
 }
 
+/**
+ * @brief 根据三个布尔量控制 RGB LED。
+ * @param r 红色通道使能，非零点亮。
+ * @param g 绿色通道使能，非零点亮。
+ * @param b 蓝色通道使能，非零点亮。
+ * @note 底层 LED 为低电平点亮，极性由 led_drv.c 封装。
+ */
+void LedTask(uint8_t r, uint8_t g, uint8_t b)
+{
+	/* 红 */
+	if (r)
+		TurnOnLed(LED_R);
+	else
+		TurnOffLed(LED_R);
 
+	/* 绿 */
+	if (g)
+		TurnOnLed(LED_G);
+	else
+		TurnOffLed(LED_G);
+
+	/* 蓝 */
+	if (b)
+		TurnOnLed(LED_B);
+	else
+		TurnOffLed(LED_B);
+}
 
 
