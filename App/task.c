@@ -8,7 +8,6 @@
 #include "usart.h"
 #include "motor_ctrl.h"
 #include "sen.h"
-#include "foc_trace.h"
 
 void task_init(void)
 {
@@ -48,7 +47,6 @@ void task_init(void)
         Error_Handler();
     }
     MotorRun();
-    (void)FocTraceArm(1U);
     __DMB();
     Init_Over = true;
     __set_PRIMASK(primask);
@@ -57,7 +55,6 @@ void task_init(void)
 void task_loop(void)
 {
     static uint32_t last_led;
-    FocTraceService();
     const uint32_t now = HAL_GetTick();
     if ((uint32_t)(now - last_led) >= 500U)
     {

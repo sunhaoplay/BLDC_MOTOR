@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s 			page 1
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKxoJBa.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -30,143 +30,142 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s 			page 1
   28              	.LFB272:
    1:Sdrive/tim_drv.c **** /**
    2:Sdrive/tim_drv.c ****  * @file tim_drv.c
-   3:Sdrive/tim_drv.c ****  * @brief 实现编码器角度/速度估算和 20 kHz FOC 控制中断调度。
+   3:Sdrive/tim_drv.c ****  * @brief 实现编码器角度/速度估算。
    4:Sdrive/tim_drv.c ****  *
    5:Sdrive/tim_drv.c ****  * TIM3 提供正交编码器位置。测速时利用无符号模减法得到相邻计数差，再�
-   6:Sdrive/tim_drv.c ****  * 正反向回绕；TIM1 更新回调依次完成 ADC 采样、坐标变换、分频测速和模�
+   6:Sdrive/tim_drv.c ****  * 正反向回绕。20 kHz 电流环由 adc_drv.c 的注入转换完成回调执行。
    7:Sdrive/tim_drv.c ****  */
    8:Sdrive/tim_drv.c **** 
    9:Sdrive/tim_drv.c **** #include "task.h"
   10:Sdrive/tim_drv.c **** #include "motor_para.h"
   11:Sdrive/tim_drv.c **** #include "tim_drv.h"
   12:Sdrive/tim_drv.c **** #include "motor_ctrl.h"
-  13:Sdrive/tim_drv.c **** #include "sen.h"
-  14:Sdrive/tim_drv.c **** ENCOSPEED EnCoSpeed;
-  15:Sdrive/tim_drv.c **** 
-  16:Sdrive/tim_drv.c **** /**
-  17:Sdrive/tim_drv.c ****  * @brief 根据编码器计数增量计算机械转速和电气转速。
-  18:Sdrive/tim_drv.c ****  *
-  19:Sdrive/tim_drv.c ****  * 计数差 Diff 先修正到 [-TIM3_PULSE/2, TIM3_PULSE/2]，避免计数器跨零时产生
-  20:Sdrive/tim_drv.c ****  * 巨大速度尖峰。机械转速公式为 rpm=Diff*(ENCODER_FRQ/ENCODE_PULSE)，其中
-  21:Sdrive/tim_drv.c ****  * ENCODER_FRQ 已包含每分钟 60 秒及测速调用频率；随后用一阶低通抑制量化�
-  22:Sdrive/tim_drv.c ****  * 电气转速等于机械转速乘极对数 Motor.P。
-  23:Sdrive/tim_drv.c ****  */
-  24:Sdrive/tim_drv.c **** void MotorSpeedGet(void)
-  25:Sdrive/tim_drv.c **** {
-  29              		.loc 1 25 1 view -0
+  13:Sdrive/tim_drv.c **** ENCOSPEED EnCoSpeed;
+  14:Sdrive/tim_drv.c **** 
+  15:Sdrive/tim_drv.c **** /**
+  16:Sdrive/tim_drv.c ****  * @brief 根据编码器计数增量计算机械转速和电气转速。
+  17:Sdrive/tim_drv.c ****  *
+  18:Sdrive/tim_drv.c ****  * 计数差 Diff 先修正到 [-TIM3_PULSE/2, TIM3_PULSE/2]，避免计数器跨零时产生
+  19:Sdrive/tim_drv.c ****  * 巨大速度尖峰。机械转速公式为 rpm=Diff*(ENCODER_FRQ/ENCODE_PULSE)，其中
+  20:Sdrive/tim_drv.c ****  * ENCODER_FRQ 已包含每分钟 60 秒及测速调用频率；随后用一阶低通抑制量化�
+  21:Sdrive/tim_drv.c ****  * 电气转速等于机械转速乘极对数 Motor.P。
+  22:Sdrive/tim_drv.c ****  */
+  23:Sdrive/tim_drv.c **** void MotorSpeedGet(void)
+  24:Sdrive/tim_drv.c **** {
+  29              		.loc 1 24 1 view -0
   30              		.cfi_startproc
   31              		@ args = 0, pretend = 0, frame = 0
   32              		@ frame_needed = 0, uses_anonymous_args = 0
   33              		@ link register save eliminated.
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s 			page 2
+  25:Sdrive/tim_drv.c **** 	static float SpeedMrpmFil = 0.0f;
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKxoJBa.s 			page 2
 
 
-  26:Sdrive/tim_drv.c **** 	static float SpeedMrpmFil = 0.0f;
-  34              		.loc 1 26 2 view .LVU1
-  27:Sdrive/tim_drv.c **** 
-  28:Sdrive/tim_drv.c **** 	EnCoSpeed.EncoderCnt = TIM3->CNT; // 当前CNT的值+溢出次数*定时器的脉冲触发数
-  35              		.loc 1 28 2 view .LVU2
-  36              		.loc 1 28 29 is_stmt 0 view .LVU3
+  34              		.loc 1 25 2 view .LVU1
+  26:Sdrive/tim_drv.c **** 
+  27:Sdrive/tim_drv.c **** 	EnCoSpeed.EncoderCnt = TIM3->CNT; // 当前CNT的值+溢出次数*定时器的脉冲触发数
+  35              		.loc 1 27 2 view .LVU2
+  36              		.loc 1 27 29 is_stmt 0 view .LVU3
   37 0000 1B4B     		ldr	r3, .L4
   38 0002 5A6A     		ldr	r2, [r3, #36]
-  39              		.loc 1 28 23 view .LVU4
+  39              		.loc 1 27 23 view .LVU4
   40 0004 1B4B     		ldr	r3, .L4+4
   41 0006 1A60     		str	r2, [r3]
-  29:Sdrive/tim_drv.c **** 
-  30:Sdrive/tim_drv.c **** 	int32_t Diff = (int32_t)((uint32_t)EnCoSpeed.EncoderCnt - (uint32_t)EnCoSpeed.EncoLastCnt); // 利
-  42              		.loc 1 30 2 is_stmt 1 view .LVU5
-  43              		.loc 1 30 79 is_stmt 0 view .LVU6
+  28:Sdrive/tim_drv.c **** 
+  29:Sdrive/tim_drv.c **** 	int32_t Diff = (int32_t)((uint32_t)EnCoSpeed.EncoderCnt - (uint32_t)EnCoSpeed.EncoLastCnt); // 利
+  42              		.loc 1 29 2 is_stmt 1 view .LVU5
+  43              		.loc 1 29 79 is_stmt 0 view .LVU6
   44 0008 5B68     		ldr	r3, [r3, #4]
-  45              		.loc 1 30 58 view .LVU7
+  45              		.loc 1 29 58 view .LVU7
   46 000a D31A     		subs	r3, r2, r3
   47              	.LVL0:
-  31:Sdrive/tim_drv.c **** 
-  32:Sdrive/tim_drv.c **** 	// 通用回绕处理（适用于上溢或下溢）
-  33:Sdrive/tim_drv.c **** 	if (Diff > (int32_t)(TIM3_PULSE / 2))
-  48              		.loc 1 33 2 is_stmt 1 view .LVU8
-  49              		.loc 1 33 5 is_stmt 0 view .LVU9
+  30:Sdrive/tim_drv.c **** 
+  31:Sdrive/tim_drv.c **** 	// 通用回绕处理（适用于上溢或下溢）
+  32:Sdrive/tim_drv.c **** 	if (Diff > (int32_t)(TIM3_PULSE / 2))
+  48              		.loc 1 32 2 is_stmt 1 view .LVU8
+  49              		.loc 1 32 5 is_stmt 0 view .LVU9
   50 000c B3F5006F 		cmp	r3, #2048
   51 0010 28DD     		ble	.L2
-  34:Sdrive/tim_drv.c **** 		Diff -= (int32_t)TIM3_PULSE;
-  52              		.loc 1 34 3 is_stmt 1 view .LVU10
-  53              		.loc 1 34 8 is_stmt 0 view .LVU11
+  33:Sdrive/tim_drv.c **** 		Diff -= (int32_t)TIM3_PULSE;
+  52              		.loc 1 33 3 is_stmt 1 view .LVU10
+  53              		.loc 1 33 8 is_stmt 0 view .LVU11
   54 0012 A3F58053 		sub	r3, r3, #4096
   55              	.LVL1:
   56              	.L3:
-  35:Sdrive/tim_drv.c **** 	else if (Diff < -(int32_t)(TIM3_PULSE / 2))
-  36:Sdrive/tim_drv.c **** 		Diff += (int32_t)TIM3_PULSE;
-  37:Sdrive/tim_drv.c **** 
-  38:Sdrive/tim_drv.c **** 	float SpeedMrpmTemp = ((float)Diff * ((float)ENCODER_FRQ / (float)ENCODE_PULSE));
-  57              		.loc 1 38 2 is_stmt 1 view .LVU12
-  58              		.loc 1 38 25 is_stmt 0 view .LVU13
+  34:Sdrive/tim_drv.c **** 	else if (Diff < -(int32_t)(TIM3_PULSE / 2))
+  35:Sdrive/tim_drv.c **** 		Diff += (int32_t)TIM3_PULSE;
+  36:Sdrive/tim_drv.c **** 
+  37:Sdrive/tim_drv.c **** 	float SpeedMrpmTemp = ((float)Diff * ((float)ENCODER_FRQ / (float)ENCODE_PULSE));
+  57              		.loc 1 37 2 is_stmt 1 view .LVU12
+  58              		.loc 1 37 25 is_stmt 0 view .LVU13
   59 0016 07EE903A 		vmov	s15, r3	@ int
   60 001a F8EEE77A 		vcvt.f32.s32	s15, s15
-  61              		.loc 1 38 8 view .LVU14
+  61              		.loc 1 37 8 view .LVU14
   62 001e 9FED167A 		vldr.32	s14, .L4+8
   63 0022 67EE877A 		vmul.f32	s15, s15, s14
   64              	.LVL2:
-  39:Sdrive/tim_drv.c **** 
-  40:Sdrive/tim_drv.c **** 	SpeedMrpmFil = (LPF_U_A * SpeedMrpmTemp) + (LPF_U_B * SpeedMrpmFil);
-  65              		.loc 1 40 2 is_stmt 1 view .LVU15
-  66              		.loc 1 40 26 is_stmt 0 view .LVU16
+  38:Sdrive/tim_drv.c **** 
+  39:Sdrive/tim_drv.c **** 	SpeedMrpmFil = (LPF_U_A * SpeedMrpmTemp) + (LPF_U_B * SpeedMrpmFil);
+  65              		.loc 1 39 2 is_stmt 1 view .LVU15
+  66              		.loc 1 39 26 is_stmt 0 view .LVU16
   67 0026 9FED157A 		vldr.32	s14, .L4+12
   68 002a 67EE877A 		vmul.f32	s15, s15, s14
   69              	.LVL3:
-  70              		.loc 1 40 54 view .LVU17
+  70              		.loc 1 39 54 view .LVU17
   71 002e 144B     		ldr	r3, .L4+16
   72              	.LVL4:
-  73              		.loc 1 40 54 view .LVU18
+  73              		.loc 1 39 54 view .LVU18
   74 0030 93ED007A 		vldr.32	s14, [r3]
   75 0034 DFED136A 		vldr.32	s13, .L4+20
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s 			page 3
-
-
   76 0038 27EE267A 		vmul.f32	s14, s14, s13
-  77              		.loc 1 40 43 view .LVU19
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKxoJBa.s 			page 3
+
+
+  77              		.loc 1 39 43 view .LVU19
   78 003c 77EE877A 		vadd.f32	s15, s15, s14
-  79              		.loc 1 40 15 view .LVU20
+  79              		.loc 1 39 15 view .LVU20
   80 0040 C3ED007A 		vstr.32	s15, [r3]
-  41:Sdrive/tim_drv.c **** 
-  42:Sdrive/tim_drv.c **** 	Motor.speed_M_rpm = SpeedMrpmFil;
-  81              		.loc 1 42 2 is_stmt 1 view .LVU21
-  82              		.loc 1 42 20 is_stmt 0 view .LVU22
+  40:Sdrive/tim_drv.c **** 
+  41:Sdrive/tim_drv.c **** 	Motor.speed_M_rpm = SpeedMrpmFil;
+  81              		.loc 1 41 2 is_stmt 1 view .LVU21
+  82              		.loc 1 41 20 is_stmt 0 view .LVU22
   83 0044 104B     		ldr	r3, .L4+24
   84 0046 C3ED027A 		vstr.32	s15, [r3, #8]
-  43:Sdrive/tim_drv.c **** 
-  44:Sdrive/tim_drv.c **** 	Motor.speed_E_rpm = Motor.speed_M_rpm * Motor.P; // 电角速度 = 机械角速度 * 极对数
-  85              		.loc 1 44 2 is_stmt 1 view .LVU23
-  86              		.loc 1 44 47 is_stmt 0 view .LVU24
+  42:Sdrive/tim_drv.c **** 
+  43:Sdrive/tim_drv.c **** 	Motor.speed_E_rpm = Motor.speed_M_rpm * Motor.P; // 电角速度 = 机械角速度 * 极对数
+  85              		.loc 1 43 2 is_stmt 1 view .LVU23
+  86              		.loc 1 43 47 is_stmt 0 view .LVU24
   87 004a 93F82410 		ldrb	r1, [r3, #36]	@ zero_extendqisi2
   88 004e 07EE101A 		vmov	s14, r1	@ int
-  89              		.loc 1 44 40 view .LVU25
+  89              		.loc 1 43 40 view .LVU25
   90 0052 B8EEC77A 		vcvt.f32.s32	s14, s14
   91 0056 67EE277A 		vmul.f32	s15, s14, s15
-  92              		.loc 1 44 20 view .LVU26
+  92              		.loc 1 43 20 view .LVU26
   93 005a C3ED037A 		vstr.32	s15, [r3, #12]
-  45:Sdrive/tim_drv.c **** 	EnCoSpeed.EncoLastCnt = EnCoSpeed.EncoderCnt;
-  94              		.loc 1 45 2 is_stmt 1 view .LVU27
-  95              		.loc 1 45 24 is_stmt 0 view .LVU28
+  44:Sdrive/tim_drv.c **** 	EnCoSpeed.EncoLastCnt = EnCoSpeed.EncoderCnt;
+  94              		.loc 1 44 2 is_stmt 1 view .LVU27
+  95              		.loc 1 44 24 is_stmt 0 view .LVU28
   96 005e 054B     		ldr	r3, .L4+4
   97 0060 5A60     		str	r2, [r3, #4]
-  46:Sdrive/tim_drv.c **** }
-  98              		.loc 1 46 1 view .LVU29
+  45:Sdrive/tim_drv.c **** }
+  98              		.loc 1 45 1 view .LVU29
   99 0062 7047     		bx	lr
  100              	.LVL5:
  101              	.L2:
-  35:Sdrive/tim_drv.c **** 		Diff += (int32_t)TIM3_PULSE;
- 102              		.loc 1 35 7 is_stmt 1 view .LVU30
-  35:Sdrive/tim_drv.c **** 		Diff += (int32_t)TIM3_PULSE;
- 103              		.loc 1 35 10 is_stmt 0 view .LVU31
+  34:Sdrive/tim_drv.c **** 		Diff += (int32_t)TIM3_PULSE;
+ 102              		.loc 1 34 7 is_stmt 1 view .LVU30
+  34:Sdrive/tim_drv.c **** 		Diff += (int32_t)TIM3_PULSE;
+ 103              		.loc 1 34 10 is_stmt 0 view .LVU31
  104 0064 13F5006F 		cmn	r3, #2048
  105 0068 D5DA     		bge	.L3
-  36:Sdrive/tim_drv.c **** 
- 106              		.loc 1 36 3 is_stmt 1 view .LVU32
-  36:Sdrive/tim_drv.c **** 
- 107              		.loc 1 36 8 is_stmt 0 view .LVU33
+  35:Sdrive/tim_drv.c **** 
+ 106              		.loc 1 35 3 is_stmt 1 view .LVU32
+  35:Sdrive/tim_drv.c **** 
+ 107              		.loc 1 35 8 is_stmt 0 view .LVU33
  108 006a 03F58053 		add	r3, r3, #4096
  109              	.LVL6:
-  36:Sdrive/tim_drv.c **** 
- 110              		.loc 1 36 8 view .LVU34
+  35:Sdrive/tim_drv.c **** 
+ 110              		.loc 1 35 8 view .LVU34
  111 006e D2E7     		b	.L3
  112              	.L5:
  113              		.align	2
@@ -178,10 +177,10 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s 			page 1
  119 0080 00000000 		.word	SpeedMrpmFil.0
  120 0084 7C0A7C3F 		.word	1065093756
  121 0088 00000000 		.word	Motor
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s 			page 4
-
-
  122              		.cfi_endproc
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKxoJBa.s 			page 4
+
+
  123              	.LFE272:
  125              		.section	.text.MotorAngleGet,"ax",%progbits
  126              		.align	1
@@ -191,95 +190,95 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s 			page 1
  130              		.thumb_func
  132              	MotorAngleGet:
  133              	.LFB273:
-  47:Sdrive/tim_drv.c **** 
-  48:Sdrive/tim_drv.c **** /**
-  49:Sdrive/tim_drv.c ****  * @brief 把编码器机械位置换算为一个周期内的转子电角度。
-  50:Sdrive/tim_drv.c ****  *
-  51:Sdrive/tim_drv.c ****  * theta_e=CNT/ENCODE_PULSE*2PI*P。乘极对数 P 后可能跨越多个电周期，
-  52:Sdrive/tim_drv.c ****  * while 循环将结果回绕到 (0,2PI]，供 Park 变换使用。
-  53:Sdrive/tim_drv.c ****  */
-  54:Sdrive/tim_drv.c **** void MotorAngleGet(void)
-  55:Sdrive/tim_drv.c **** {
- 134              		.loc 1 55 1 is_stmt 1 view -0
+  46:Sdrive/tim_drv.c **** 
+  47:Sdrive/tim_drv.c **** /**
+  48:Sdrive/tim_drv.c ****  * @brief 把编码器机械位置换算为一个周期内的转子电角度。
+  49:Sdrive/tim_drv.c ****  *
+  50:Sdrive/tim_drv.c ****  * theta_e=CNT/ENCODE_PULSE*2PI*P。乘极对数 P 后可能跨越多个电周期，
+  51:Sdrive/tim_drv.c ****  * while 循环将结果回绕到 (0,2PI]，供 Park 变换使用。
+  52:Sdrive/tim_drv.c ****  */
+  53:Sdrive/tim_drv.c **** void MotorAngleGet(void)
+  54:Sdrive/tim_drv.c **** {
+ 134              		.loc 1 54 1 is_stmt 1 view -0
  135              		.cfi_startproc
  136              		@ args = 0, pretend = 0, frame = 0
  137              		@ frame_needed = 0, uses_anonymous_args = 0
  138              		@ link register save eliminated.
-  56:Sdrive/tim_drv.c **** 	Motor.E_theta = (float)TIM3->CNT / ENCODE_PULSE * PIX2 * Motor.P; // CNT/4096(编码器转一圈�
- 139              		.loc 1 56 2 view .LVU36
- 140              		.loc 1 56 29 is_stmt 0 view .LVU37
+  55:Sdrive/tim_drv.c **** 	Motor.E_theta = (float)TIM3->CNT / ENCODE_PULSE * PIX2 * Motor.P; // CNT/4096(编码器转一圈�
+ 139              		.loc 1 55 2 view .LVU36
+ 140              		.loc 1 55 29 is_stmt 0 view .LVU37
  141 0000 1D4B     		ldr	r3, .L11
  142 0002 D3ED097A 		vldr.32	s15, [r3, #36]	@ int
- 143              		.loc 1 56 18 view .LVU38
+ 143              		.loc 1 55 18 view .LVU38
  144 0006 F8EE677A 		vcvt.f32.u32	s15, s15
- 145              		.loc 1 56 35 view .LVU39
+ 145              		.loc 1 55 35 view .LVU39
  146 000a 9FED1C7A 		vldr.32	s14, .L11+4
  147 000e 67EE877A 		vmul.f32	s15, s15, s14
- 148              		.loc 1 56 50 view .LVU40
+ 148              		.loc 1 55 50 view .LVU40
  149 0012 9FED1B7A 		vldr.32	s14, .L11+8
  150 0016 67EE877A 		vmul.f32	s15, s15, s14
- 151              		.loc 1 56 64 view .LVU41
+ 151              		.loc 1 55 64 view .LVU41
  152 001a 1A4B     		ldr	r3, .L11+12
  153 001c 93F82420 		ldrb	r2, [r3, #36]	@ zero_extendqisi2
  154 0020 07EE102A 		vmov	s14, r2	@ int
- 155              		.loc 1 56 57 view .LVU42
+ 155              		.loc 1 55 57 view .LVU42
  156 0024 B8EEC77A 		vcvt.f32.s32	s14, s14
  157 0028 67EE277A 		vmul.f32	s15, s14, s15
- 158              		.loc 1 56 16 view .LVU43
+ 158              		.loc 1 55 16 view .LVU43
  159 002c C3ED017A 		vstr.32	s15, [r3, #4]
-  57:Sdrive/tim_drv.c **** 
-  58:Sdrive/tim_drv.c **** 	while (Motor.E_theta >= PIX2)
- 160              		.loc 1 58 2 is_stmt 1 view .LVU44
- 161              		.loc 1 58 8 is_stmt 0 view .LVU45
+  56:Sdrive/tim_drv.c **** 
+  57:Sdrive/tim_drv.c **** 	while (Motor.E_theta >= PIX2)
+ 160              		.loc 1 57 2 is_stmt 1 view .LVU44
+ 161              		.loc 1 57 8 is_stmt 0 view .LVU45
  162 0030 06E0     		b	.L7
  163              	.L8:
-  59:Sdrive/tim_drv.c **** 		Motor.E_theta -= PIX2;
- 164              		.loc 1 59 3 is_stmt 1 view .LVU46
- 165              		.loc 1 59 17 is_stmt 0 view .LVU47
+  58:Sdrive/tim_drv.c **** 		Motor.E_theta -= PIX2;
+ 164              		.loc 1 58 3 is_stmt 1 view .LVU46
+ 165              		.loc 1 58 17 is_stmt 0 view .LVU47
  166 0032 9FED137A 		vldr.32	s14, .L11+8
  167 0036 77EEC77A 		vsub.f32	s15, s15, s14
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s 			page 5
-
-
  168 003a 124B     		ldr	r3, .L11+12
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKxoJBa.s 			page 5
+
+
  169 003c C3ED017A 		vstr.32	s15, [r3, #4]
  170              	.L7:
-  58:Sdrive/tim_drv.c **** 		Motor.E_theta -= PIX2;
- 171              		.loc 1 58 23 is_stmt 1 view .LVU48
-  58:Sdrive/tim_drv.c **** 		Motor.E_theta -= PIX2;
- 172              		.loc 1 58 14 is_stmt 0 view .LVU49
+  57:Sdrive/tim_drv.c **** 		Motor.E_theta -= PIX2;
+ 171              		.loc 1 57 23 is_stmt 1 view .LVU48
+  57:Sdrive/tim_drv.c **** 		Motor.E_theta -= PIX2;
+ 172              		.loc 1 57 14 is_stmt 0 view .LVU49
  173 0040 104B     		ldr	r3, .L11+12
  174 0042 D3ED017A 		vldr.32	s15, [r3, #4]
-  58:Sdrive/tim_drv.c **** 		Motor.E_theta -= PIX2;
- 175              		.loc 1 58 23 view .LVU50
+  57:Sdrive/tim_drv.c **** 		Motor.E_theta -= PIX2;
+ 175              		.loc 1 57 23 view .LVU50
  176 0046 9FED0E7A 		vldr.32	s14, .L11+8
  177 004a F4EEC77A 		vcmpe.f32	s15, s14
  178 004e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
  179 0052 EEDA     		bge	.L8
  180 0054 06E0     		b	.L9
  181              	.L10:
-  60:Sdrive/tim_drv.c **** 	while (Motor.E_theta < 0.0f)
-  61:Sdrive/tim_drv.c **** 		Motor.E_theta += PIX2;
- 182              		.loc 1 61 3 is_stmt 1 view .LVU51
- 183              		.loc 1 61 17 is_stmt 0 view .LVU52
+  59:Sdrive/tim_drv.c **** 	while (Motor.E_theta < 0.0f)
+  60:Sdrive/tim_drv.c **** 		Motor.E_theta += PIX2;
+ 182              		.loc 1 60 3 is_stmt 1 view .LVU51
+ 183              		.loc 1 60 17 is_stmt 0 view .LVU52
  184 0056 9FED0A7A 		vldr.32	s14, .L11+8
  185 005a 77EE877A 		vadd.f32	s15, s15, s14
  186 005e 094B     		ldr	r3, .L11+12
  187 0060 C3ED017A 		vstr.32	s15, [r3, #4]
  188              	.L9:
-  60:Sdrive/tim_drv.c **** 	while (Motor.E_theta < 0.0f)
- 189              		.loc 1 60 23 is_stmt 1 view .LVU53
-  60:Sdrive/tim_drv.c **** 	while (Motor.E_theta < 0.0f)
- 190              		.loc 1 60 14 is_stmt 0 view .LVU54
+  59:Sdrive/tim_drv.c **** 	while (Motor.E_theta < 0.0f)
+ 189              		.loc 1 59 23 is_stmt 1 view .LVU53
+  59:Sdrive/tim_drv.c **** 	while (Motor.E_theta < 0.0f)
+ 190              		.loc 1 59 14 is_stmt 0 view .LVU54
  191 0064 074B     		ldr	r3, .L11+12
  192 0066 D3ED017A 		vldr.32	s15, [r3, #4]
-  60:Sdrive/tim_drv.c **** 	while (Motor.E_theta < 0.0f)
- 193              		.loc 1 60 23 view .LVU55
+  59:Sdrive/tim_drv.c **** 	while (Motor.E_theta < 0.0f)
+ 193              		.loc 1 59 23 view .LVU55
  194 006a F5EEC07A 		vcmpe.f32	s15, #0
  195 006e F1EE10FA 		vmrs	APSR_nzcv, FPSCR
  196 0072 F0D4     		bmi	.L10
-  62:Sdrive/tim_drv.c **** }
- 197              		.loc 1 62 1 view .LVU56
+  61:Sdrive/tim_drv.c **** }
+ 197              		.loc 1 61 1 view .LVU56
  198 0074 7047     		bx	lr
  199              	.L12:
  200 0076 00BF     		.align	2
@@ -290,167 +289,42 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s 			page 1
  205 0084 00000000 		.word	Motor
  206              		.cfi_endproc
  207              	.LFE273:
- 209              		.section	.text.HAL_TIM_PeriodElapsedCallback,"ax",%progbits
- 210              		.align	1
- 211              		.global	HAL_TIM_PeriodElapsedCallback
- 212              		.syntax unified
- 213              		.thumb
- 214              		.thumb_func
- 216              	HAL_TIM_PeriodElapsedCallback:
- 217              	.LVL7:
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s 			page 6
+ 209              		.section	.bss.SpeedMrpmFil.0,"aw",%nobits
+ 210              		.align	2
+ 213              	SpeedMrpmFil.0:
+ 214 0000 00000000 		.space	4
+ 215              		.global	EnCoSpeed
+ 216              		.section	.bss.EnCoSpeed,"aw",%nobits
+ 217              		.align	2
+ 220              	EnCoSpeed:
+ 221 0000 00000000 		.space	12
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKxoJBa.s 			page 6
 
 
- 218              	.LFB274:
-  63:Sdrive/tim_drv.c **** 
-  64:Sdrive/tim_drv.c **** /**
-  65:Sdrive/tim_drv.c ****  * @brief HAL 定时器周期完成回调，执行一个高速电机控制周期。
-  66:Sdrive/tim_drv.c ****  * @param htim 产生更新事件的定时器句柄；本函数只处理 TIM1。
-  67:Sdrive/tim_drv.c ****  *
-  68:Sdrive/tim_drv.c ****  * TIM1 每 50 us 进入一次：先更新 ADC 物理量，再完成电流坐标变换；每累计
-  69:Sdrive/tim_drv.c ****  * SPEED_CNT 次更新一次编码器速度，最后由 MotorModeSel() 执行当前控制模式。
-  70:Sdrive/tim_drv.c ****  * @warning 该函数运行在中断上下文，所有被调函数都必须在下次 TIM1 中断前
-  71:Sdrive/tim_drv.c ****  */
-  72:Sdrive/tim_drv.c **** void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-  73:Sdrive/tim_drv.c **** {
- 219              		.loc 1 73 1 is_stmt 1 view -0
- 220              		.cfi_startproc
- 221              		@ args = 0, pretend = 0, frame = 0
- 222              		@ frame_needed = 0, uses_anonymous_args = 0
- 223              		.loc 1 73 1 is_stmt 0 view .LVU58
- 224 0000 08B5     		push	{r3, lr}
- 225              	.LCFI0:
- 226              		.cfi_def_cfa_offset 8
- 227              		.cfi_offset 3, -8
- 228              		.cfi_offset 14, -4
-  74:Sdrive/tim_drv.c **** 	if (htim == (&htim1)) // FOC控制		20KHz
- 229              		.loc 1 74 2 is_stmt 1 view .LVU59
- 230              		.loc 1 74 5 is_stmt 0 view .LVU60
- 231 0002 0B4B     		ldr	r3, .L17
- 232 0004 8342     		cmp	r3, r0
- 233 0006 00D0     		beq	.L16
- 234              	.LVL8:
- 235              	.L13:
-  75:Sdrive/tim_drv.c **** 	{
-  76:Sdrive/tim_drv.c **** 		GetAdc(); // 获取电流
-  77:Sdrive/tim_drv.c **** 		AxisDq(); // 坐标轴变换
-  78:Sdrive/tim_drv.c **** 
-  79:Sdrive/tim_drv.c **** 		// EnCoSpeed.SpeedClock++;
-  80:Sdrive/tim_drv.c **** 		// if (EnCoSpeed.SpeedClock == SPEED_CNT) // 计算一次电机转速
-  81:Sdrive/tim_drv.c **** 		// {
-  82:Sdrive/tim_drv.c **** 		// 	EnCoSpeed.SpeedClock %= SPEED_CNT;
-  83:Sdrive/tim_drv.c **** 		// 	MotorSpeedGet(); // 速度获取
-  84:Sdrive/tim_drv.c **** 		// }
-  85:Sdrive/tim_drv.c **** 		// MotorModeSel(); // 控制模式选择
-  86:Sdrive/tim_drv.c ****       if(Init_Over==0)
-  87:Sdrive/tim_drv.c **** 	  {
-  88:Sdrive/tim_drv.c **** 		return;
-  89:Sdrive/tim_drv.c **** 	  }
-  90:Sdrive/tim_drv.c **** 	 //1.开环强托
-  91:Sdrive/tim_drv.c **** 		// QtMotor(); // 强拖模式
-  92:Sdrive/tim_drv.c **** 		// FocSvpwm(); // SVPWM计算
-  93:Sdrive/tim_drv.c **** 	// 2.有感电流环
-  94:Sdrive/tim_drv.c **** 	    CurCloseloop(0.3, Motor.E_theta);
-  95:Sdrive/tim_drv.c **** 		FocSvpwm(); // SVPWM计算
-  96:Sdrive/tim_drv.c **** 	}
-  97:Sdrive/tim_drv.c **** }
- 236              		.loc 1 97 1 view .LVU61
- 237 0008 08BD     		pop	{r3, pc}
- 238              	.LVL9:
- 239              	.L16:
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s 			page 7
-
-
-  76:Sdrive/tim_drv.c **** 		AxisDq(); // 坐标轴变换
- 240              		.loc 1 76 3 is_stmt 1 view .LVU62
- 241 000a FFF7FEFF 		bl	GetAdc
- 242              	.LVL10:
-  77:Sdrive/tim_drv.c **** 
- 243              		.loc 1 77 3 view .LVU63
- 244 000e FFF7FEFF 		bl	AxisDq
- 245              	.LVL11:
-  86:Sdrive/tim_drv.c **** 	  {
- 246              		.loc 1 86 7 view .LVU64
-  86:Sdrive/tim_drv.c **** 	  {
- 247              		.loc 1 86 19 is_stmt 0 view .LVU65
- 248 0012 084B     		ldr	r3, .L17+4
- 249 0014 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
-  86:Sdrive/tim_drv.c **** 	  {
- 250              		.loc 1 86 9 view .LVU66
- 251 0016 002B     		cmp	r3, #0
- 252 0018 F6D0     		beq	.L13
-  94:Sdrive/tim_drv.c **** 		FocSvpwm(); // SVPWM计算
- 253              		.loc 1 94 6 is_stmt 1 view .LVU67
- 254 001a 074B     		ldr	r3, .L17+8
- 255 001c D3ED010A 		vldr.32	s1, [r3, #4]
- 256 0020 9FED060A 		vldr.32	s0, .L17+12
- 257 0024 FFF7FEFF 		bl	CurCloseloop
- 258              	.LVL12:
-  95:Sdrive/tim_drv.c **** 	}
- 259              		.loc 1 95 3 view .LVU68
- 260 0028 FFF7FEFF 		bl	FocSvpwm
- 261              	.LVL13:
- 262 002c ECE7     		b	.L13
- 263              	.L18:
- 264 002e 00BF     		.align	2
- 265              	.L17:
- 266 0030 00000000 		.word	htim1
- 267 0034 00000000 		.word	Init_Over
- 268 0038 00000000 		.word	Motor
- 269 003c 9A99993E 		.word	1050253722
- 270              		.cfi_endproc
- 271              	.LFE274:
- 273              		.section	.bss.SpeedMrpmFil.0,"aw",%nobits
- 274              		.align	2
- 277              	SpeedMrpmFil.0:
- 278 0000 00000000 		.space	4
- 279              		.global	EnCoSpeed
- 280              		.section	.bss.EnCoSpeed,"aw",%nobits
- 281              		.align	2
- 284              	EnCoSpeed:
- 285 0000 00000000 		.space	12
- 285      00000000 
- 285      00000000 
- 286              		.text
- 287              	.Letext0:
- 288              		.file 2 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
- 289              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
- 290              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
- 291              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
- 292              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s 			page 8
-
-
- 293              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
- 294              		.file 8 "Sdrive/tim_drv.h"
- 295              		.file 9 "App/task.h"
- 296              		.file 10 "MotorFoc/motor_ctrl.h"
- 297              		.file 11 "Sdrive/adc_drv.h"
- 298              		.file 12 "MotorFoc/sen.h"
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s 			page 9
+ 221      00000000 
+ 221      00000000 
+ 222              		.text
+ 223              	.Letext0:
+ 224              		.file 2 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 225              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 226              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 227              		.file 5 "Sdrive/tim_drv.h"
+ 228              		.file 6 "MotorFoc/motor_ctrl.h"
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKxoJBa.s 			page 7
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 tim_drv.c
-C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s:21     .text.MotorSpeedGet:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s:27     .text.MotorSpeedGet:00000000 MotorSpeedGet
-C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s:115    .text.MotorSpeedGet:00000070 $d
-C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s:284    .bss.EnCoSpeed:00000000 EnCoSpeed
-C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s:277    .bss.SpeedMrpmFil.0:00000000 SpeedMrpmFil.0
-C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s:126    .text.MotorAngleGet:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s:132    .text.MotorAngleGet:00000000 MotorAngleGet
-C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s:202    .text.MotorAngleGet:00000078 $d
-C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s:210    .text.HAL_TIM_PeriodElapsedCallback:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s:216    .text.HAL_TIM_PeriodElapsedCallback:00000000 HAL_TIM_PeriodElapsedCallback
-C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s:266    .text.HAL_TIM_PeriodElapsedCallback:00000030 $d
-C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s:274    .bss.SpeedMrpmFil.0:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccNjykT5.s:281    .bss.EnCoSpeed:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccKxoJBa.s:21     .text.MotorSpeedGet:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccKxoJBa.s:27     .text.MotorSpeedGet:00000000 MotorSpeedGet
+C:\Users\sunhao\AppData\Local\Temp\ccKxoJBa.s:115    .text.MotorSpeedGet:00000070 $d
+C:\Users\sunhao\AppData\Local\Temp\ccKxoJBa.s:220    .bss.EnCoSpeed:00000000 EnCoSpeed
+C:\Users\sunhao\AppData\Local\Temp\ccKxoJBa.s:213    .bss.SpeedMrpmFil.0:00000000 SpeedMrpmFil.0
+C:\Users\sunhao\AppData\Local\Temp\ccKxoJBa.s:126    .text.MotorAngleGet:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccKxoJBa.s:132    .text.MotorAngleGet:00000000 MotorAngleGet
+C:\Users\sunhao\AppData\Local\Temp\ccKxoJBa.s:202    .text.MotorAngleGet:00000078 $d
+C:\Users\sunhao\AppData\Local\Temp\ccKxoJBa.s:210    .bss.SpeedMrpmFil.0:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccKxoJBa.s:217    .bss.EnCoSpeed:00000000 $d
 
 UNDEFINED SYMBOLS
 Motor
-GetAdc
-AxisDq
-CurCloseloop
-FocSvpwm
-htim1
-Init_Over

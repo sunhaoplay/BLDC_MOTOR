@@ -7,7 +7,6 @@
 #include "tim.h"
 #include "motor_ctrl.h"
 #include "sen.h"
-#include "foc_trace.h"
 
 ADC_Sample AdcPara = ADC_Sample_DEFAULTS;
 ADC_Sample_F AdcFilPara = ADC_Sample_F_DEFAULTS;
@@ -72,7 +71,7 @@ void AdcSampleOffset(void)
     offset_ready = 0U;
     offset_count = 0U;
     offset_sum_u = offset_sum_w = 0U;
-    __DMB();
+    __DMB();//数据内存屏障，保证上面的清零在置 offset_active=1 之前对中断可见（编译器/CPU 不重排）
     offset_active = 1U;
     __set_PRIMASK(primask);
 
@@ -94,7 +93,7 @@ void GetAdc(void)
     AdcRawU = raw_u;
     AdcRawW = raw_w;
     ++AdcCurrentSamples;
-    __HAL_ADC_CLEAR_FLAG(&hadc2, ADC_FLAG_JSTRT | ADC_FLAG_JEOC);
+    __HAL_ADC_CLEAR_FLAG(&hadc2, ADC_FLAG_JSTRT | ADC_FLAG_JEOC);//adc2是从机，没有开中断，需要手动清除标志位
 
     if (offset_active != 0U)
     {
@@ -108,7 +107,7 @@ void GetAdc(void)
             AdcPara.OffsetCurW = AdcFilPara.OffsetCurW = w;
             AdcFilPara.CurU = AdcFilPara.CurV = AdcFilPara.CurW = 0.0f;
             offset_active = 0U;
-            __DMB();
+            __DMB();//保证前面写偏移/清电流对等待线程可见
             offset_ready = 1U;
         }
     }
@@ -185,6 +184,9 @@ void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef *hadc)
 
     if (Init_Over)
     {
+        //1.开环强托
+        // QtMotor();
+        //2.有感电流环驱动
         CurCloseloop(0.3f, Motor.E_theta);
         FocSvpwm();
         /* 采样完成时应处于下数，新的三相 CCR 应在随后的谷底前写完。 */
@@ -192,7 +194,6 @@ void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef *hadc)
         const uint32_t elapsed = DWT->CYCCNT - start_cycles;
         if (entry_down == 0U || (TIM1->CR1 & TIM_CR1_DIR) == 0U || count > entry_count || elapsed >= entry_count)
             ++AdcControlDeadlineMisses;
-        FocTraceRecord();
     }
     if (AdcFault == 0U)
         AdcSlowStart();

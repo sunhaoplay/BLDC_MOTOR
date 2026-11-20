@@ -29,7 +29,9 @@ build/task.o: App/task.c App/task.h Core/Inc/main.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  Core/Inc/stm32f4xx_it.h Sdrive/led_drv.h Sdrive/tim_drv.h \
- Sdrive/adc_drv.h MotorFoc/motor_para.h \
+ Sdrive/adc_drv.h Core/Inc/adc.h Core/Inc/main.h Core/Inc/tim.h \
+ Core/Inc/usart.h MotorFoc/motor_ctrl.h \
+ Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h App/task.h \
  Drivers/CMSIS/DSP/Include/arm_math.h \
  Drivers/CMSIS/DSP/Include/arm_math_types.h \
  Drivers/CMSIS/Include/cmsis_compiler.h \
@@ -59,11 +61,9 @@ build/task.o: App/task.c App/task.h Core/Inc/main.h \
  Drivers/CMSIS/DSP/Include/dsp/complex_math_functions.h \
  Drivers/CMSIS/DSP/Include/dsp/filtering_functions.h \
  Drivers/CMSIS/DSP/Include/dsp/support_functions.h \
- Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h \
- MotorFoc/motor_ctrl.h \
- Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h App/task.h \
- MotorFoc/foc.h MotorFoc/motor_para.h MotorFoc/pid.h \
- MotorFoc/motor_ctrl.h MotorFoc/sen.h Core/Inc/tim.h Core/Inc/main.h
+ Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h MotorFoc/foc.h \
+ MotorFoc/motor_para.h MotorFoc/pid.h MotorFoc/motor_ctrl.h \
+ MotorFoc/sen.h
 App/task.h:
 Core/Inc/main.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -101,7 +101,13 @@ Core/Inc/stm32f4xx_it.h:
 Sdrive/led_drv.h:
 Sdrive/tim_drv.h:
 Sdrive/adc_drv.h:
-MotorFoc/motor_para.h:
+Core/Inc/adc.h:
+Core/Inc/main.h:
+Core/Inc/tim.h:
+Core/Inc/usart.h:
+MotorFoc/motor_ctrl.h:
+Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h:
+App/task.h:
 Drivers/CMSIS/DSP/Include/arm_math.h:
 Drivers/CMSIS/DSP/Include/arm_math_types.h:
 Drivers/CMSIS/Include/cmsis_compiler.h:
@@ -132,13 +138,8 @@ Drivers/CMSIS/DSP/Include/dsp/complex_math_functions.h:
 Drivers/CMSIS/DSP/Include/dsp/filtering_functions.h:
 Drivers/CMSIS/DSP/Include/dsp/support_functions.h:
 Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h:
-MotorFoc/motor_ctrl.h:
-Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h:
-App/task.h:
 MotorFoc/foc.h:
 MotorFoc/motor_para.h:
 MotorFoc/pid.h:
 MotorFoc/motor_ctrl.h:
 MotorFoc/sen.h:
-Core/Inc/tim.h:
-Core/Inc/main.h:

@@ -1,0 +1,1080 @@
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"foc_trace.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Sdrive/foc_trace.c"
+  20              		.section	.text.FocTraceArm,"ax",%progbits
+  21              		.align	1
+  22              		.global	FocTraceArm
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	FocTraceArm:
+  28              	.LVL0:
+  29              	.LFB272:
+   1:Sdrive/foc_trace.c **** /** @brief 固定周期记录 1024 点，冻结后从主循环经 USART1 导出 CSV。 */
+   2:Sdrive/foc_trace.c **** #include "foc_trace.h"
+   3:Sdrive/foc_trace.c **** #include "adc_drv.h"
+   4:Sdrive/foc_trace.c **** #include "motor_ctrl.h"
+   5:Sdrive/foc_trace.c **** #include "usart.h"
+   6:Sdrive/foc_trace.c **** 
+   7:Sdrive/foc_trace.c **** _Static_assert(sizeof(FOC_TRACE_SAMPLE) == 32U, "Trace samples must occupy 32 bytes");
+   8:Sdrive/foc_trace.c **** FOC_TRACE_SAMPLE FocTraceBuffer[FOC_TRACE_POINTS];
+   9:Sdrive/foc_trace.c **** volatile FOC_TRACE_STATE FocTraceState;
+  10:Sdrive/foc_trace.c **** volatile uint16_t FocTraceCount;
+  11:Sdrive/foc_trace.c **** volatile uint32_t FocTraceRequest;
+  12:Sdrive/foc_trace.c **** static uint16_t trace_divider, trace_clock;
+  13:Sdrive/foc_trace.c **** static uint16_t send_index;
+  14:Sdrive/foc_trace.c **** 
+  15:Sdrive/foc_trace.c **** uint8_t FocTraceArm(uint16_t divider)
+  16:Sdrive/foc_trace.c **** {
+  30              		.loc 1 16 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+  17:Sdrive/foc_trace.c ****     if (divider == 0U || FocTraceState != FOC_TRACE_IDLE)
+  35              		.loc 1 17 5 view .LVU1
+  36              		.loc 1 17 8 is_stmt 0 view .LVU2
+  37 0000 70B1     		cbz	r0, .L3
+  38              		.loc 1 17 40 discriminator 1 view .LVU3
+  39 0002 094A     		ldr	r2, .L5
+  40 0004 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+  41              		.loc 1 17 23 discriminator 1 view .LVU4
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s 			page 2
+
+
+  42 0006 6AB9     		cbnz	r2, .L4
+  18:Sdrive/foc_trace.c ****         return 0U;
+  19:Sdrive/foc_trace.c ****     FocTraceCount = 0U;
+  43              		.loc 1 19 5 is_stmt 1 view .LVU5
+  44              		.loc 1 19 19 is_stmt 0 view .LVU6
+  45 0008 0849     		ldr	r1, .L5+4
+  46 000a 0A80     		strh	r2, [r1]	@ movhi
+  20:Sdrive/foc_trace.c ****     trace_divider = divider;
+  47              		.loc 1 20 5 is_stmt 1 view .LVU7
+  48              		.loc 1 20 19 is_stmt 0 view .LVU8
+  49 000c 0849     		ldr	r1, .L5+8
+  50 000e 0880     		strh	r0, [r1]	@ movhi
+  21:Sdrive/foc_trace.c ****     trace_clock = 0U;
+  51              		.loc 1 21 5 is_stmt 1 view .LVU9
+  52              		.loc 1 21 17 is_stmt 0 view .LVU10
+  53 0010 084B     		ldr	r3, .L5+12
+  54 0012 1A80     		strh	r2, [r3]	@ movhi
+  22:Sdrive/foc_trace.c ****     __DMB();
+  55              		.loc 1 22 5 is_stmt 1 view .LVU11
+  56              	.LBB10:
+  57              	.LBI10:
+  58              		.file 2 "Drivers/CMSIS/Include/cmsis_gcc.h"
+   1:Drivers/CMSIS/Include/cmsis_gcc.h **** /**************************************************************************//**
+   2:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @file     cmsis_gcc.h
+   3:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @brief    CMSIS compiler GCC header file
+   4:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @version  V5.4.1
+   5:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @date     27. May 2021
+   6:Drivers/CMSIS/Include/cmsis_gcc.h ****  ******************************************************************************/
+   7:Drivers/CMSIS/Include/cmsis_gcc.h **** /*
+   8:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Copyright (c) 2009-2021 Arm Limited. All rights reserved.
+   9:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
+  10:Drivers/CMSIS/Include/cmsis_gcc.h ****  * SPDX-License-Identifier: Apache-2.0
+  11:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
+  12:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Licensed under the Apache License, Version 2.0 (the License); you may
+  13:Drivers/CMSIS/Include/cmsis_gcc.h ****  * not use this file except in compliance with the License.
+  14:Drivers/CMSIS/Include/cmsis_gcc.h ****  * You may obtain a copy of the License at
+  15:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
+  16:Drivers/CMSIS/Include/cmsis_gcc.h ****  * www.apache.org/licenses/LICENSE-2.0
+  17:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
+  18:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Unless required by applicable law or agreed to in writing, software
+  19:Drivers/CMSIS/Include/cmsis_gcc.h ****  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  20:Drivers/CMSIS/Include/cmsis_gcc.h ****  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  21:Drivers/CMSIS/Include/cmsis_gcc.h ****  * See the License for the specific language governing permissions and
+  22:Drivers/CMSIS/Include/cmsis_gcc.h ****  * limitations under the License.
+  23:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+  24:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+  25:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __CMSIS_GCC_H
+  26:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_H
+  27:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+  28:Drivers/CMSIS/Include/cmsis_gcc.h **** /* ignore some GCC warnings */
+  29:Drivers/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic push
+  30:Drivers/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wsign-conversion"
+  31:Drivers/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wconversion"
+  32:Drivers/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wunused-parameter"
+  33:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+  34:Drivers/CMSIS/Include/cmsis_gcc.h **** /* Fallback for __has_builtin */
+  35:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __has_builtin
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s 			page 3
+
+
+  36:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __has_builtin(x) (0)
+  37:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  38:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+  39:Drivers/CMSIS/Include/cmsis_gcc.h **** /* CMSIS compiler specific defines */
+  40:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __ASM
+  41:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __ASM                                  __asm
+  42:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  43:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __INLINE
+  44:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __INLINE                               inline
+  45:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  46:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __STATIC_INLINE
+  47:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __STATIC_INLINE                        static inline
+  48:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  49:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __STATIC_FORCEINLINE
+  50:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __STATIC_FORCEINLINE                   __attribute__((always_inline)) static inline
+  51:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  52:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __NO_RETURN
+  53:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __NO_RETURN                            __attribute__((__noreturn__))
+  54:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  55:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __USED
+  56:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __USED                                 __attribute__((used))
+  57:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  58:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __WEAK
+  59:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __WEAK                                 __attribute__((weak))
+  60:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  61:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __PACKED
+  62:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __PACKED                               __attribute__((packed, aligned(1)))
+  63:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  64:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __PACKED_STRUCT
+  65:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __PACKED_STRUCT                        struct __attribute__((packed, aligned(1)))
+  66:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  67:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __PACKED_UNION
+  68:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __PACKED_UNION                         union __attribute__((packed, aligned(1)))
+  69:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  70:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT32        /* deprecated */
+  71:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  72:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  73:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  74:Drivers/CMSIS/Include/cmsis_gcc.h ****   struct __attribute__((packed)) T_UINT32 { uint32_t v; };
+  75:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+  76:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32(x)                  (((struct T_UINT32 *)(x))->v)
+  77:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  78:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT16_WRITE
+  79:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  80:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  81:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  82:Drivers/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT16_WRITE { uint16_t v; };
+  83:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+  84:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT16_WRITE(addr, val)    (void)((((struct T_UINT16_WRITE *)(void *)(addr))-
+  85:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  86:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT16_READ
+  87:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  88:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  89:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  90:Drivers/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT16_READ { uint16_t v; };
+  91:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+  92:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT16_READ(addr)          (((const struct T_UINT16_READ *)(const void *)(add
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s 			page 4
+
+
+  93:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  94:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT32_WRITE
+  95:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  96:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  97:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  98:Drivers/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT32_WRITE { uint32_t v; };
+  99:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+ 100:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32_WRITE(addr, val)    (void)((((struct T_UINT32_WRITE *)(void *)(addr))-
+ 101:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 102:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT32_READ
+ 103:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+ 104:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+ 105:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+ 106:Drivers/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT32_READ { uint32_t v; };
+ 107:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+ 108:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32_READ(addr)          (((const struct T_UINT32_READ *)(const void *)(add
+ 109:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 110:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __ALIGNED
+ 111:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __ALIGNED(x)                           __attribute__((aligned(x)))
+ 112:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 113:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __RESTRICT
+ 114:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __RESTRICT                             __restrict
+ 115:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 116:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __COMPILER_BARRIER
+ 117:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __COMPILER_BARRIER()                   __ASM volatile("":::"memory")
+ 118:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 119:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 120:Drivers/CMSIS/Include/cmsis_gcc.h **** /* #########################  Startup and Lowlevel Init  ######################## */
+ 121:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 122:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __PROGRAM_START
+ 123:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 124:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 125:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Initializes data and bss sections
+ 126:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details This default implementations initialized all data and additional bss
+ 127:Drivers/CMSIS/Include/cmsis_gcc.h ****            sections relying on .copy.table and .zero.table specified properly
+ 128:Drivers/CMSIS/Include/cmsis_gcc.h ****            in the used linker script.
+ 129:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 130:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 131:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE __NO_RETURN void __cmsis_start(void)
+ 132:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 133:Drivers/CMSIS/Include/cmsis_gcc.h ****   extern void _start(void) __NO_RETURN;
+ 134:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 135:Drivers/CMSIS/Include/cmsis_gcc.h ****   typedef struct {
+ 136:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t const* src;
+ 137:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t* dest;
+ 138:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t  wlen;
+ 139:Drivers/CMSIS/Include/cmsis_gcc.h ****   } __copy_table_t;
+ 140:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 141:Drivers/CMSIS/Include/cmsis_gcc.h ****   typedef struct {
+ 142:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t* dest;
+ 143:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t  wlen;
+ 144:Drivers/CMSIS/Include/cmsis_gcc.h ****   } __zero_table_t;
+ 145:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 146:Drivers/CMSIS/Include/cmsis_gcc.h ****   extern const __copy_table_t __copy_table_start__;
+ 147:Drivers/CMSIS/Include/cmsis_gcc.h ****   extern const __copy_table_t __copy_table_end__;
+ 148:Drivers/CMSIS/Include/cmsis_gcc.h ****   extern const __zero_table_t __zero_table_start__;
+ 149:Drivers/CMSIS/Include/cmsis_gcc.h ****   extern const __zero_table_t __zero_table_end__;
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s 			page 5
+
+
+ 150:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 151:Drivers/CMSIS/Include/cmsis_gcc.h ****   for (__copy_table_t const* pTable = &__copy_table_start__; pTable < &__copy_table_end__; ++pTable
+ 152:Drivers/CMSIS/Include/cmsis_gcc.h ****     for(uint32_t i=0u; i<pTable->wlen; ++i) {
+ 153:Drivers/CMSIS/Include/cmsis_gcc.h ****       pTable->dest[i] = pTable->src[i];
+ 154:Drivers/CMSIS/Include/cmsis_gcc.h ****     }
+ 155:Drivers/CMSIS/Include/cmsis_gcc.h ****   }
+ 156:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 157:Drivers/CMSIS/Include/cmsis_gcc.h ****   for (__zero_table_t const* pTable = &__zero_table_start__; pTable < &__zero_table_end__; ++pTable
+ 158:Drivers/CMSIS/Include/cmsis_gcc.h ****     for(uint32_t i=0u; i<pTable->wlen; ++i) {
+ 159:Drivers/CMSIS/Include/cmsis_gcc.h ****       pTable->dest[i] = 0u;
+ 160:Drivers/CMSIS/Include/cmsis_gcc.h ****     }
+ 161:Drivers/CMSIS/Include/cmsis_gcc.h ****   }
+ 162:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 163:Drivers/CMSIS/Include/cmsis_gcc.h ****   _start();
+ 164:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 165:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 166:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __PROGRAM_START           __cmsis_start
+ 167:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 168:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 169:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __INITIAL_SP
+ 170:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __INITIAL_SP              __StackTop
+ 171:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 172:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 173:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __STACK_LIMIT
+ 174:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __STACK_LIMIT             __StackLimit
+ 175:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 176:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 177:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __VECTOR_TABLE
+ 178:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __VECTOR_TABLE            __Vectors
+ 179:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 180:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 181:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __VECTOR_TABLE_ATTRIBUTE
+ 182:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __VECTOR_TABLE_ATTRIBUTE  __attribute__((used, section(".vectors")))
+ 183:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 184:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 185:Drivers/CMSIS/Include/cmsis_gcc.h **** #if defined (__ARM_FEATURE_CMSE) && (__ARM_FEATURE_CMSE == 3U)
+ 186:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __STACK_SEAL
+ 187:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __STACK_SEAL              __StackSeal
+ 188:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 189:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 190:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __TZ_STACK_SEAL_SIZE
+ 191:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __TZ_STACK_SEAL_SIZE      8U
+ 192:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 193:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 194:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __TZ_STACK_SEAL_VALUE
+ 195:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __TZ_STACK_SEAL_VALUE     0xFEF5EDA5FEF5EDA5ULL
+ 196:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 197:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 198:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 199:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __TZ_set_STACKSEAL_S (uint32_t* stackTop) {
+ 200:Drivers/CMSIS/Include/cmsis_gcc.h ****   *((uint64_t *)stackTop) = __TZ_STACK_SEAL_VALUE;
+ 201:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 202:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 203:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 204:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 205:Drivers/CMSIS/Include/cmsis_gcc.h **** /* ##########################  Core Instruction Access  ######################### */
+ 206:Drivers/CMSIS/Include/cmsis_gcc.h **** /** \defgroup CMSIS_Core_InstructionInterface CMSIS Core Instruction Interface
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s 			page 6
+
+
+ 207:Drivers/CMSIS/Include/cmsis_gcc.h ****   Access to dedicated instructions
+ 208:Drivers/CMSIS/Include/cmsis_gcc.h ****   @{
+ 209:Drivers/CMSIS/Include/cmsis_gcc.h **** */
+ 210:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 211:Drivers/CMSIS/Include/cmsis_gcc.h **** /* Define macros for porting to both thumb1 and thumb2.
+ 212:Drivers/CMSIS/Include/cmsis_gcc.h ****  * For thumb1, use low register (r0-r7), specified by constraint "l"
+ 213:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Otherwise, use general registers, specified by constraint "r" */
+ 214:Drivers/CMSIS/Include/cmsis_gcc.h **** #if defined (__thumb__) && !defined (__thumb2__)
+ 215:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_OUT_REG(r) "=l" (r)
+ 216:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_RW_REG(r) "+l" (r)
+ 217:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_USE_REG(r) "l" (r)
+ 218:Drivers/CMSIS/Include/cmsis_gcc.h **** #else
+ 219:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_OUT_REG(r) "=r" (r)
+ 220:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_RW_REG(r) "+r" (r)
+ 221:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_USE_REG(r) "r" (r)
+ 222:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 223:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 224:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 225:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   No Operation
+ 226:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details No Operation does nothing. This instruction can be used for code alignment purposes.
+ 227:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 228:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __NOP()                             __ASM volatile ("nop")
+ 229:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 230:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 231:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Wait For Interrupt
+ 232:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Wait For Interrupt is a hint instruction that suspends execution until one of a number o
+ 233:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 234:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __WFI()                             __ASM volatile ("wfi":::"memory")
+ 235:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 236:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 237:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 238:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Wait For Event
+ 239:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Wait For Event is a hint instruction that permits the processor to enter
+ 240:Drivers/CMSIS/Include/cmsis_gcc.h ****            a low-power state until one of a number of events occurs.
+ 241:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 242:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __WFE()                             __ASM volatile ("wfe":::"memory")
+ 243:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 244:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 245:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 246:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Send Event
+ 247:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Send Event is a hint instruction. It causes an event to be signaled to the CPU.
+ 248:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 249:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __SEV()                             __ASM volatile ("sev")
+ 250:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 251:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 252:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 253:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Instruction Synchronization Barrier
+ 254:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Instruction Synchronization Barrier flushes the pipeline in the processor,
+ 255:Drivers/CMSIS/Include/cmsis_gcc.h ****            so that all instructions following the ISB are fetched from cache or memory,
+ 256:Drivers/CMSIS/Include/cmsis_gcc.h ****            after the instruction has been completed.
+ 257:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 258:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __ISB(void)
+ 259:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 260:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("isb 0xF":::"memory");
+ 261:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 262:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 263:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s 			page 7
+
+
+ 264:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 265:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Data Synchronization Barrier
+ 266:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Acts as a special kind of Data Memory Barrier.
+ 267:Drivers/CMSIS/Include/cmsis_gcc.h ****            It completes when all explicit memory accesses before this instruction complete.
+ 268:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 269:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __DSB(void)
+ 270:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 271:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("dsb 0xF":::"memory");
+ 272:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 273:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 274:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 275:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 276:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Data Memory Barrier
+ 277:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Ensures the apparent order of the explicit memory operations before
+ 278:Drivers/CMSIS/Include/cmsis_gcc.h ****            and after the instruction, without ensuring their completion.
+ 279:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 280:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __DMB(void)
+  59              		.loc 2 280 27 view .LVU12
+  60              	.LBB11:
+ 281:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 282:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("dmb 0xF":::"memory");
+  61              		.loc 2 282 3 view .LVU13
+  62              		.syntax unified
+  63              	@ 282 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+  64 0014 BFF35F8F 		dmb 0xF
+  65              	@ 0 "" 2
+  66              		.thumb
+  67              		.syntax unified
+  68              	.LBE11:
+  69              	.LBE10:
+  23:Sdrive/foc_trace.c ****     FocTraceState = FOC_TRACE_RECORDING;
+  70              		.loc 1 23 5 view .LVU14
+  71              		.loc 1 23 19 is_stmt 0 view .LVU15
+  72 0018 0120     		movs	r0, #1
+  73              	.LVL1:
+  74              		.loc 1 23 19 view .LVU16
+  75 001a 034B     		ldr	r3, .L5
+  76 001c 1870     		strb	r0, [r3]
+  24:Sdrive/foc_trace.c ****     return 1U;
+  77              		.loc 1 24 5 is_stmt 1 view .LVU17
+  78              		.loc 1 24 12 is_stmt 0 view .LVU18
+  79 001e 7047     		bx	lr
+  80              	.LVL2:
+  81              	.L3:
+  18:Sdrive/foc_trace.c ****     FocTraceCount = 0U;
+  82              		.loc 1 18 16 view .LVU19
+  83 0020 0020     		movs	r0, #0
+  84              	.LVL3:
+  18:Sdrive/foc_trace.c ****     FocTraceCount = 0U;
+  85              		.loc 1 18 16 view .LVU20
+  86 0022 7047     		bx	lr
+  87              	.LVL4:
+  88              	.L4:
+  18:Sdrive/foc_trace.c ****     FocTraceCount = 0U;
+  89              		.loc 1 18 16 view .LVU21
+  90 0024 0020     		movs	r0, #0
+  91              	.LVL5:
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s 			page 8
+
+
+  25:Sdrive/foc_trace.c **** }
+  92              		.loc 1 25 1 view .LVU22
+  93 0026 7047     		bx	lr
+  94              	.L6:
+  95              		.align	2
+  96              	.L5:
+  97 0028 00000000 		.word	FocTraceState
+  98 002c 00000000 		.word	FocTraceCount
+  99 0030 00000000 		.word	trace_divider
+ 100 0034 00000000 		.word	trace_clock
+ 101              		.cfi_endproc
+ 102              	.LFE272:
+ 104              		.section	.text.FocTraceRecord,"ax",%progbits
+ 105              		.align	1
+ 106              		.global	FocTraceRecord
+ 107              		.syntax unified
+ 108              		.thumb
+ 109              		.thumb_func
+ 111              	FocTraceRecord:
+ 112              	.LFB273:
+  26:Sdrive/foc_trace.c **** 
+  27:Sdrive/foc_trace.c **** void FocTraceRecord(void)
+  28:Sdrive/foc_trace.c **** {
+ 113              		.loc 1 28 1 is_stmt 1 view -0
+ 114              		.cfi_startproc
+ 115              		@ args = 0, pretend = 0, frame = 0
+ 116              		@ frame_needed = 0, uses_anonymous_args = 0
+ 117              		@ link register save eliminated.
+  29:Sdrive/foc_trace.c ****     if (FocTraceState != FOC_TRACE_RECORDING || ++trace_clock < trace_divider)
+ 118              		.loc 1 29 5 view .LVU24
+ 119              		.loc 1 29 23 is_stmt 0 view .LVU25
+ 120 0000 214B     		ldr	r3, .L16
+ 121 0002 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 122              		.loc 1 29 8 view .LVU26
+ 123 0004 012B     		cmp	r3, #1
+ 124 0006 3DD1     		bne	.L12
+ 125              		.loc 1 29 49 discriminator 1 view .LVU27
+ 126 0008 204A     		ldr	r2, .L16+4
+ 127 000a 1388     		ldrh	r3, [r2]
+ 128 000c 0133     		adds	r3, r3, #1
+ 129 000e 9BB2     		uxth	r3, r3
+ 130              		.loc 1 29 46 discriminator 1 view .LVU28
+ 131 0010 1380     		strh	r3, [r2]	@ movhi
+ 132              		.loc 1 29 63 discriminator 1 view .LVU29
+ 133 0012 1F4A     		ldr	r2, .L16+8
+ 134 0014 1288     		ldrh	r2, [r2]
+ 135              		.loc 1 29 46 discriminator 1 view .LVU30
+ 136 0016 9342     		cmp	r3, r2
+ 137 0018 34D3     		bcc	.L12
+  28:Sdrive/foc_trace.c ****     if (FocTraceState != FOC_TRACE_RECORDING || ++trace_clock < trace_divider)
+ 138              		.loc 1 28 1 view .LVU31
+ 139 001a 10B4     		push	{r4}
+ 140              	.LCFI0:
+ 141              		.cfi_def_cfa_offset 4
+ 142              		.cfi_offset 4, -4
+  30:Sdrive/foc_trace.c ****         return;
+  31:Sdrive/foc_trace.c ****     trace_clock = 0U;
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s 			page 9
+
+
+ 143              		.loc 1 31 5 is_stmt 1 view .LVU32
+ 144              		.loc 1 31 17 is_stmt 0 view .LVU33
+ 145 001c 1B4B     		ldr	r3, .L16+4
+ 146 001e 0022     		movs	r2, #0
+ 147 0020 1A80     		strh	r2, [r3]	@ movhi
+  32:Sdrive/foc_trace.c ****     FOC_TRACE_SAMPLE *sample = &FocTraceBuffer[FocTraceCount];
+ 148              		.loc 1 32 5 is_stmt 1 view .LVU34
+ 149              		.loc 1 32 47 is_stmt 0 view .LVU35
+ 150 0022 1C4A     		ldr	r2, .L16+12
+ 151 0024 1388     		ldrh	r3, [r2]
+ 152 0026 9BB2     		uxth	r3, r3
+ 153              	.LVL6:
+  33:Sdrive/foc_trace.c ****     sample->tick = AdcCurrentSamples;
+ 154              		.loc 1 33 5 is_stmt 1 view .LVU36
+ 155              		.loc 1 33 18 is_stmt 0 view .LVU37
+ 156 0028 1B49     		ldr	r1, .L16+16
+ 157 002a 0C68     		ldr	r4, [r1]
+ 158 002c 1B49     		ldr	r1, .L16+20
+ 159 002e 5801     		lsls	r0, r3, #5
+ 160 0030 01EB4313 		add	r3, r1, r3, lsl #5
+ 161              	.LVL7:
+ 162              		.loc 1 33 18 view .LVU38
+ 163 0034 0C50     		str	r4, [r1, r0]
+  34:Sdrive/foc_trace.c ****     sample->adc_u = AdcRawU;
+ 164              		.loc 1 34 5 is_stmt 1 view .LVU39
+ 165              		.loc 1 34 19 is_stmt 0 view .LVU40
+ 166 0036 1A49     		ldr	r1, .L16+24
+ 167 0038 0988     		ldrh	r1, [r1]
+ 168 003a 9980     		strh	r1, [r3, #4]	@ movhi
+  35:Sdrive/foc_trace.c ****     sample->adc_w = AdcRawW;
+ 169              		.loc 1 35 5 is_stmt 1 view .LVU41
+ 170              		.loc 1 35 19 is_stmt 0 view .LVU42
+ 171 003c 1949     		ldr	r1, .L16+28
+ 172 003e 0988     		ldrh	r1, [r1]
+ 173 0040 D980     		strh	r1, [r3, #6]	@ movhi
+  36:Sdrive/foc_trace.c ****     sample->iu = AdcPara.CurU;
+ 174              		.loc 1 36 5 is_stmt 1 view .LVU43
+ 175              		.loc 1 36 25 is_stmt 0 view .LVU44
+ 176 0042 1949     		ldr	r1, .L16+32
+ 177 0044 C868     		ldr	r0, [r1, #12]	@ float
+ 178              		.loc 1 36 16 view .LVU45
+ 179 0046 9860     		str	r0, [r3, #8]	@ float
+  37:Sdrive/foc_trace.c ****     sample->iv = AdcPara.CurV;
+ 180              		.loc 1 37 5 is_stmt 1 view .LVU46
+ 181              		.loc 1 37 25 is_stmt 0 view .LVU47
+ 182 0048 0869     		ldr	r0, [r1, #16]	@ float
+ 183              		.loc 1 37 16 view .LVU48
+ 184 004a D860     		str	r0, [r3, #12]	@ float
+  38:Sdrive/foc_trace.c ****     sample->iw = AdcPara.CurW;
+ 185              		.loc 1 38 5 is_stmt 1 view .LVU49
+ 186              		.loc 1 38 25 is_stmt 0 view .LVU50
+ 187 004c 4969     		ldr	r1, [r1, #20]	@ float
+ 188              		.loc 1 38 16 view .LVU51
+ 189 004e 1961     		str	r1, [r3, #16]	@ float
+  39:Sdrive/foc_trace.c ****     sample->id = Park.Ds;
+ 190              		.loc 1 39 5 is_stmt 1 view .LVU52
+ 191              		.loc 1 39 22 is_stmt 0 view .LVU53
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s 			page 10
+
+
+ 192 0050 1649     		ldr	r1, .L16+36
+ 193 0052 C868     		ldr	r0, [r1, #12]	@ float
+ 194              		.loc 1 39 16 view .LVU54
+ 195 0054 5861     		str	r0, [r3, #20]	@ float
+  40:Sdrive/foc_trace.c ****     sample->iq = Park.Qs;
+ 196              		.loc 1 40 5 is_stmt 1 view .LVU55
+ 197              		.loc 1 40 22 is_stmt 0 view .LVU56
+ 198 0056 0869     		ldr	r0, [r1, #16]	@ float
+ 199              		.loc 1 40 16 view .LVU57
+ 200 0058 9861     		str	r0, [r3, #24]	@ float
+  41:Sdrive/foc_trace.c ****     sample->theta = Park.Theta;
+ 201              		.loc 1 41 5 is_stmt 1 view .LVU58
+ 202              		.loc 1 41 25 is_stmt 0 view .LVU59
+ 203 005a 8968     		ldr	r1, [r1, #8]	@ float
+ 204              		.loc 1 41 19 view .LVU60
+ 205 005c D961     		str	r1, [r3, #28]	@ float
+  42:Sdrive/foc_trace.c ****     ++FocTraceCount;
+ 206              		.loc 1 42 5 is_stmt 1 view .LVU61
+ 207 005e 1388     		ldrh	r3, [r2]
+ 208              	.LVL8:
+ 209              		.loc 1 42 5 is_stmt 0 view .LVU62
+ 210 0060 9BB2     		uxth	r3, r3
+ 211 0062 0133     		adds	r3, r3, #1
+ 212 0064 9BB2     		uxth	r3, r3
+ 213 0066 1380     		strh	r3, [r2]	@ movhi
+  43:Sdrive/foc_trace.c ****     if (FocTraceCount == FOC_TRACE_POINTS)
+ 214              		.loc 1 43 5 is_stmt 1 view .LVU63
+ 215              		.loc 1 43 23 is_stmt 0 view .LVU64
+ 216 0068 1388     		ldrh	r3, [r2]
+ 217 006a 9BB2     		uxth	r3, r3
+ 218              		.loc 1 43 8 view .LVU65
+ 219 006c B3F5806F 		cmp	r3, #1024
+ 220 0070 02D0     		beq	.L15
+ 221              	.L7:
+  44:Sdrive/foc_trace.c ****     {
+  45:Sdrive/foc_trace.c ****         __DMB();
+  46:Sdrive/foc_trace.c ****         FocTraceState = FOC_TRACE_READY;
+  47:Sdrive/foc_trace.c ****     }
+  48:Sdrive/foc_trace.c **** }
+ 222              		.loc 1 48 1 view .LVU66
+ 223 0072 5DF8044B 		ldr	r4, [sp], #4
+ 224 0076 7047     		bx	lr
+ 225              	.L15:
+  45:Sdrive/foc_trace.c ****         FocTraceState = FOC_TRACE_READY;
+ 226              		.loc 1 45 9 is_stmt 1 view .LVU67
+ 227              	.LBB12:
+ 228              	.LBI12:
+ 280:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 229              		.loc 2 280 27 view .LVU68
+ 230              	.LBB13:
+ 231              		.loc 2 282 3 view .LVU69
+ 232              		.syntax unified
+ 233              	@ 282 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 234 0078 BFF35F8F 		dmb 0xF
+ 235              	@ 0 "" 2
+ 236              		.thumb
+ 237              		.syntax unified
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s 			page 11
+
+
+ 238              	.LBE13:
+ 239              	.LBE12:
+  46:Sdrive/foc_trace.c ****     }
+ 240              		.loc 1 46 9 view .LVU70
+  46:Sdrive/foc_trace.c ****     }
+ 241              		.loc 1 46 23 is_stmt 0 view .LVU71
+ 242 007c 024B     		ldr	r3, .L16
+ 243 007e 0222     		movs	r2, #2
+ 244 0080 1A70     		strb	r2, [r3]
+ 245 0082 F6E7     		b	.L7
+ 246              	.LVL9:
+ 247              	.L12:
+ 248              	.LCFI1:
+ 249              		.cfi_def_cfa_offset 0
+ 250              		.cfi_restore 4
+  46:Sdrive/foc_trace.c ****     }
+ 251              		.loc 1 46 23 view .LVU72
+ 252 0084 7047     		bx	lr
+ 253              	.L17:
+ 254 0086 00BF     		.align	2
+ 255              	.L16:
+ 256 0088 00000000 		.word	FocTraceState
+ 257 008c 00000000 		.word	trace_clock
+ 258 0090 00000000 		.word	trace_divider
+ 259 0094 00000000 		.word	FocTraceCount
+ 260 0098 00000000 		.word	AdcCurrentSamples
+ 261 009c 00000000 		.word	FocTraceBuffer
+ 262 00a0 00000000 		.word	AdcRawU
+ 263 00a4 00000000 		.word	AdcRawW
+ 264 00a8 00000000 		.word	AdcPara
+ 265 00ac 00000000 		.word	Park
+ 266              		.cfi_endproc
+ 267              	.LFE273:
+ 269              		.section	.rodata.FocTraceService.str1.4,"aMS",%progbits,1
+ 270              		.align	2
+ 271              	.LC0:
+ 272 0000 256C752C 		.ascii	"%lu,%u,%u,%.5f,%.5f,%.5f,%.5f,%.5f,%.6f\015\012\000"
+ 272      25752C25 
+ 272      752C252E 
+ 272      35662C25 
+ 272      2E35662C 
+ 273              		.section	.text.FocTraceService,"ax",%progbits
+ 274              		.align	1
+ 275              		.global	FocTraceService
+ 276              		.syntax unified
+ 277              		.thumb
+ 278              		.thumb_func
+ 280              	FocTraceService:
+ 281              	.LFB274:
+  49:Sdrive/foc_trace.c **** 
+  50:Sdrive/foc_trace.c **** void FocTraceService(void)
+  51:Sdrive/foc_trace.c **** {
+ 282              		.loc 1 51 1 is_stmt 1 view -0
+ 283              		.cfi_startproc
+ 284              		@ args = 0, pretend = 0, frame = 0
+ 285              		@ frame_needed = 0, uses_anonymous_args = 0
+ 286 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s 			page 12
+
+
+ 287              	.LCFI2:
+ 288              		.cfi_def_cfa_offset 36
+ 289              		.cfi_offset 4, -36
+ 290              		.cfi_offset 5, -32
+ 291              		.cfi_offset 6, -28
+ 292              		.cfi_offset 7, -24
+ 293              		.cfi_offset 8, -20
+ 294              		.cfi_offset 9, -16
+ 295              		.cfi_offset 10, -12
+ 296              		.cfi_offset 11, -8
+ 297              		.cfi_offset 14, -4
+ 298 0004 8DB0     		sub	sp, sp, #52
+ 299              	.LCFI3:
+ 300              		.cfi_def_cfa_offset 88
+  52:Sdrive/foc_trace.c ****     if (FocTraceRequest != 0U && FocTraceState == FOC_TRACE_IDLE)
+ 301              		.loc 1 52 5 view .LVU74
+ 302              		.loc 1 52 25 is_stmt 0 view .LVU75
+ 303 0006 414B     		ldr	r3, .L31
+ 304 0008 1B68     		ldr	r3, [r3]
+ 305              		.loc 1 52 8 view .LVU76
+ 306 000a 83B1     		cbz	r3, .L19
+ 307              		.loc 1 52 48 discriminator 1 view .LVU77
+ 308 000c 404B     		ldr	r3, .L31+4
+ 309 000e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 310              		.loc 1 52 31 discriminator 1 view .LVU78
+ 311 0010 6BB9     		cbnz	r3, .L19
+ 312              	.LBB14:
+  53:Sdrive/foc_trace.c ****     {
+  54:Sdrive/foc_trace.c ****         uint32_t divider = FocTraceRequest;
+ 313              		.loc 1 54 9 is_stmt 1 view .LVU79
+ 314              		.loc 1 54 18 is_stmt 0 view .LVU80
+ 315 0012 3E4B     		ldr	r3, .L31
+ 316 0014 1868     		ldr	r0, [r3]
+ 317              	.LVL10:
+  55:Sdrive/foc_trace.c ****         if (divider > 65535U)
+ 318              		.loc 1 55 9 is_stmt 1 view .LVU81
+ 319              		.loc 1 55 12 is_stmt 0 view .LVU82
+ 320 0016 B0F5803F 		cmp	r0, #65536
+ 321 001a 01D3     		bcc	.L20
+  56:Sdrive/foc_trace.c ****             divider = 65535U;
+ 322              		.loc 1 56 21 view .LVU83
+ 323 001c 4FF6FF70 		movw	r0, #65535
+ 324              	.LVL11:
+ 325              	.L20:
+  57:Sdrive/foc_trace.c ****         if (FocTraceArm((uint16_t)divider) != 0U)
+ 326              		.loc 1 57 9 is_stmt 1 view .LVU84
+ 327              		.loc 1 57 13 is_stmt 0 view .LVU85
+ 328 0020 80B2     		uxth	r0, r0
+ 329              	.LVL12:
+ 330              		.loc 1 57 13 view .LVU86
+ 331 0022 FFF7FEFF 		bl	FocTraceArm
+ 332              	.LVL13:
+ 333              		.loc 1 57 12 discriminator 1 view .LVU87
+ 334 0026 10B1     		cbz	r0, .L19
+  58:Sdrive/foc_trace.c ****             FocTraceRequest = 0U;
+ 335              		.loc 1 58 13 is_stmt 1 view .LVU88
+ 336              		.loc 1 58 29 is_stmt 0 view .LVU89
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s 			page 13
+
+
+ 337 0028 384B     		ldr	r3, .L31
+ 338 002a 0022     		movs	r2, #0
+ 339 002c 1A60     		str	r2, [r3]
+ 340              	.LVL14:
+ 341              	.L19:
+ 342              		.loc 1 58 29 view .LVU90
+ 343              	.LBE14:
+  59:Sdrive/foc_trace.c ****     }
+  60:Sdrive/foc_trace.c ****     /* 故障或手动停机时也允许导出已经记录的部分。 */
+  61:Sdrive/foc_trace.c ****     if (!Init_Over && FocTraceState == FOC_TRACE_RECORDING)
+ 344              		.loc 1 61 5 is_stmt 1 view .LVU91
+ 345              		.loc 1 61 9 is_stmt 0 view .LVU92
+ 346 002e 394B     		ldr	r3, .L31+8
+ 347 0030 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 348              		.loc 1 61 8 view .LVU93
+ 349 0032 1BB9     		cbnz	r3, .L21
+ 350              		.loc 1 61 37 discriminator 1 view .LVU94
+ 351 0034 364B     		ldr	r3, .L31+4
+ 352 0036 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 353              		.loc 1 61 20 discriminator 1 view .LVU95
+ 354 0038 012B     		cmp	r3, #1
+ 355 003a 4FD0     		beq	.L28
+ 356              	.L21:
+  62:Sdrive/foc_trace.c ****     {
+  63:Sdrive/foc_trace.c ****         __DMB();
+  64:Sdrive/foc_trace.c ****         FocTraceState = FOC_TRACE_READY;
+  65:Sdrive/foc_trace.c ****     }
+  66:Sdrive/foc_trace.c ****     if (uart1_tx_busy() != 0U)
+ 357              		.loc 1 66 5 is_stmt 1 view .LVU96
+ 358              		.loc 1 66 9 is_stmt 0 view .LVU97
+ 359 003c FFF7FEFF 		bl	uart1_tx_busy
+ 360              	.LVL15:
+ 361              		.loc 1 66 8 discriminator 1 view .LVU98
+ 362 0040 0028     		cmp	r0, #0
+ 363 0042 48D1     		bne	.L18
+  67:Sdrive/foc_trace.c ****         return;
+  68:Sdrive/foc_trace.c ****     if (FocTraceState == FOC_TRACE_READY)
+ 364              		.loc 1 68 5 is_stmt 1 view .LVU99
+ 365              		.loc 1 68 23 is_stmt 0 view .LVU100
+ 366 0044 324B     		ldr	r3, .L31+4
+ 367 0046 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 368              		.loc 1 68 8 view .LVU101
+ 369 0048 022B     		cmp	r3, #2
+ 370 004a 4DD0     		beq	.L29
+  69:Sdrive/foc_trace.c ****     {
+  70:Sdrive/foc_trace.c ****         static const uint8_t header[] = "tick,adc_u,adc_w,iu_A,iv_A,iw_A,id_A,iq_A,theta_rad\r\n";
+  71:Sdrive/foc_trace.c ****         if (shell_send_raw(header, sizeof(header) - 1U) == HAL_OK)
+  72:Sdrive/foc_trace.c ****         {
+  73:Sdrive/foc_trace.c ****             send_index = 0U;
+  74:Sdrive/foc_trace.c ****             FocTraceState = FOC_TRACE_SENDING;
+  75:Sdrive/foc_trace.c ****         }
+  76:Sdrive/foc_trace.c ****         return;
+  77:Sdrive/foc_trace.c ****     }
+  78:Sdrive/foc_trace.c ****     if (FocTraceState != FOC_TRACE_SENDING)
+ 371              		.loc 1 78 5 is_stmt 1 view .LVU102
+ 372              		.loc 1 78 23 is_stmt 0 view .LVU103
+ 373 004c 304B     		ldr	r3, .L31+4
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s 			page 14
+
+
+ 374 004e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 375              		.loc 1 78 8 view .LVU104
+ 376 0050 032B     		cmp	r3, #3
+ 377 0052 40D1     		bne	.L18
+  79:Sdrive/foc_trace.c ****         return;
+  80:Sdrive/foc_trace.c ****     if (send_index == FocTraceCount)
+ 378              		.loc 1 80 5 is_stmt 1 view .LVU105
+ 379              		.loc 1 80 20 is_stmt 0 view .LVU106
+ 380 0054 304B     		ldr	r3, .L31+12
+ 381 0056 1B88     		ldrh	r3, [r3]
+ 382 0058 304A     		ldr	r2, .L31+16
+ 383 005a 1288     		ldrh	r2, [r2]
+ 384 005c 92B2     		uxth	r2, r2
+ 385              		.loc 1 80 8 view .LVU107
+ 386 005e 9342     		cmp	r3, r2
+ 387 0060 4FD0     		beq	.L30
+  81:Sdrive/foc_trace.c ****     {
+  82:Sdrive/foc_trace.c ****         FocTraceState = FOC_TRACE_IDLE;
+  83:Sdrive/foc_trace.c ****         return;
+  84:Sdrive/foc_trace.c ****     }
+  85:Sdrive/foc_trace.c ****     const FOC_TRACE_SAMPLE *sample = &FocTraceBuffer[send_index];
+ 388              		.loc 1 85 5 is_stmt 1 view .LVU108
+ 389              	.LVL16:
+  86:Sdrive/foc_trace.c ****     if (shell_send("%lu,%u,%u,%.5f,%.5f,%.5f,%.5f,%.5f,%.6f\r\n",
+ 390              		.loc 1 86 5 view .LVU109
+  87:Sdrive/foc_trace.c ****                    (unsigned long)sample->tick, (unsigned)sample->adc_u, (unsigned)sample->adc_w,
+ 391              		.loc 1 87 41 is_stmt 0 view .LVU110
+ 392 0062 2F4A     		ldr	r2, .L31+20
+ 393 0064 5901     		lsls	r1, r3, #5
+ 394 0066 02EB4313 		add	r3, r2, r3, lsl #5
+ 395              	.LVL17:
+ 396              		.loc 1 87 41 view .LVU111
+ 397 006a 5458     		ldr	r4, [r2, r1]
+ 398              		.loc 1 87 65 view .LVU112
+ 399 006c 9D88     		ldrh	r5, [r3, #4]
+ 400              		.loc 1 87 90 view .LVU113
+ 401 006e DE88     		ldrh	r6, [r3, #6]
+  88:Sdrive/foc_trace.c ****                    (double)sample->iu, (double)sample->iv, (double)sample->iw,
+ 402              		.loc 1 88 34 view .LVU114
+ 403 0070 9F68     		ldr	r7, [r3, #8]	@ float
+ 404              		.loc 1 88 54 view .LVU115
+ 405 0072 D3F80C80 		ldr	r8, [r3, #12]	@ float
+ 406              		.loc 1 88 74 view .LVU116
+ 407 0076 D3F81090 		ldr	r9, [r3, #16]	@ float
+  89:Sdrive/foc_trace.c ****                    (double)sample->id, (double)sample->iq, (double)sample->theta) > 0)
+ 408              		.loc 1 89 34 view .LVU117
+ 409 007a D3F814A0 		ldr	r10, [r3, #20]	@ float
+ 410              		.loc 1 89 54 view .LVU118
+ 411 007e D3F818B0 		ldr	fp, [r3, #24]	@ float
+  86:Sdrive/foc_trace.c ****                    (unsigned long)sample->tick, (unsigned)sample->adc_u, (unsigned)sample->adc_w,
+ 412              		.loc 1 86 9 view .LVU119
+ 413 0082 D869     		ldr	r0, [r3, #28]	@ float
+ 414 0084 FFF7FEFF 		bl	__aeabi_f2d
+ 415              	.LVL18:
+  86:Sdrive/foc_trace.c ****                    (unsigned long)sample->tick, (unsigned)sample->adc_u, (unsigned)sample->adc_w,
+ 416              		.loc 1 86 9 view .LVU120
+ 417 0088 CDE90A01 		strd	r0, [sp, #40]
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s 			page 15
+
+
+ 418 008c 5846     		mov	r0, fp	@ float
+ 419 008e FFF7FEFF 		bl	__aeabi_f2d
+ 420              	.LVL19:
+ 421 0092 CDE90801 		strd	r0, [sp, #32]
+ 422 0096 5046     		mov	r0, r10	@ float
+ 423 0098 FFF7FEFF 		bl	__aeabi_f2d
+ 424              	.LVL20:
+ 425 009c CDE90601 		strd	r0, [sp, #24]
+ 426 00a0 4846     		mov	r0, r9	@ float
+ 427 00a2 FFF7FEFF 		bl	__aeabi_f2d
+ 428              	.LVL21:
+ 429 00a6 CDE90401 		strd	r0, [sp, #16]
+ 430 00aa 4046     		mov	r0, r8	@ float
+ 431 00ac FFF7FEFF 		bl	__aeabi_f2d
+ 432              	.LVL22:
+ 433 00b0 CDE90201 		strd	r0, [sp, #8]
+ 434 00b4 3846     		mov	r0, r7	@ float
+ 435 00b6 FFF7FEFF 		bl	__aeabi_f2d
+ 436              	.LVL23:
+ 437 00ba CDE90001 		strd	r0, [sp]
+ 438 00be 3346     		mov	r3, r6
+ 439 00c0 2A46     		mov	r2, r5
+ 440 00c2 2146     		mov	r1, r4
+ 441 00c4 1748     		ldr	r0, .L31+24
+ 442 00c6 FFF7FEFF 		bl	shell_send
+ 443              	.LVL24:
+  86:Sdrive/foc_trace.c ****                    (unsigned long)sample->tick, (unsigned)sample->adc_u, (unsigned)sample->adc_w,
+ 444              		.loc 1 86 8 discriminator 1 view .LVU121
+ 445 00ca 0028     		cmp	r0, #0
+ 446 00cc 03DD     		ble	.L18
+  90:Sdrive/foc_trace.c ****         ++send_index;
+ 447              		.loc 1 90 9 is_stmt 1 view .LVU122
+ 448 00ce 124A     		ldr	r2, .L31+12
+ 449 00d0 1388     		ldrh	r3, [r2]
+ 450 00d2 0133     		adds	r3, r3, #1
+ 451 00d4 1380     		strh	r3, [r2]	@ movhi
+ 452              	.LVL25:
+ 453              	.L18:
+  91:Sdrive/foc_trace.c **** }
+ 454              		.loc 1 91 1 is_stmt 0 view .LVU123
+ 455 00d6 0DB0     		add	sp, sp, #52
+ 456              	.LCFI4:
+ 457              		.cfi_remember_state
+ 458              		.cfi_def_cfa_offset 36
+ 459              		@ sp needed
+ 460 00d8 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 461              	.L28:
+ 462              	.LCFI5:
+ 463              		.cfi_restore_state
+  63:Sdrive/foc_trace.c ****         FocTraceState = FOC_TRACE_READY;
+ 464              		.loc 1 63 9 is_stmt 1 view .LVU124
+ 465              	.LBB15:
+ 466              	.LBI15:
+ 280:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 467              		.loc 2 280 27 view .LVU125
+ 468              	.LBB16:
+ 469              		.loc 2 282 3 view .LVU126
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s 			page 16
+
+
+ 470              		.syntax unified
+ 471              	@ 282 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 472 00dc BFF35F8F 		dmb 0xF
+ 473              	@ 0 "" 2
+ 474              		.thumb
+ 475              		.syntax unified
+ 476              	.LBE16:
+ 477              	.LBE15:
+  64:Sdrive/foc_trace.c ****     }
+ 478              		.loc 1 64 9 view .LVU127
+  64:Sdrive/foc_trace.c ****     }
+ 479              		.loc 1 64 23 is_stmt 0 view .LVU128
+ 480 00e0 0B4B     		ldr	r3, .L31+4
+ 481 00e2 0222     		movs	r2, #2
+ 482 00e4 1A70     		strb	r2, [r3]
+ 483 00e6 A9E7     		b	.L21
+ 484              	.L29:
+ 485              	.LBB17:
+  70:Sdrive/foc_trace.c ****         if (shell_send_raw(header, sizeof(header) - 1U) == HAL_OK)
+ 486              		.loc 1 70 9 is_stmt 1 view .LVU129
+  71:Sdrive/foc_trace.c ****         {
+ 487              		.loc 1 71 9 view .LVU130
+  71:Sdrive/foc_trace.c ****         {
+ 488              		.loc 1 71 13 is_stmt 0 view .LVU131
+ 489 00e8 3521     		movs	r1, #53
+ 490 00ea 0F48     		ldr	r0, .L31+28
+ 491 00ec FFF7FEFF 		bl	shell_send_raw
+ 492              	.LVL26:
+  71:Sdrive/foc_trace.c ****         {
+ 493              		.loc 1 71 12 discriminator 1 view .LVU132
+ 494 00f0 0028     		cmp	r0, #0
+ 495 00f2 F0D1     		bne	.L18
+  73:Sdrive/foc_trace.c ****             FocTraceState = FOC_TRACE_SENDING;
+ 496              		.loc 1 73 13 is_stmt 1 view .LVU133
+  73:Sdrive/foc_trace.c ****             FocTraceState = FOC_TRACE_SENDING;
+ 497              		.loc 1 73 24 is_stmt 0 view .LVU134
+ 498 00f4 084B     		ldr	r3, .L31+12
+ 499 00f6 0022     		movs	r2, #0
+ 500 00f8 1A80     		strh	r2, [r3]	@ movhi
+  74:Sdrive/foc_trace.c ****         }
+ 501              		.loc 1 74 13 is_stmt 1 view .LVU135
+  74:Sdrive/foc_trace.c ****         }
+ 502              		.loc 1 74 27 is_stmt 0 view .LVU136
+ 503 00fa 054B     		ldr	r3, .L31+4
+ 504 00fc 0322     		movs	r2, #3
+ 505 00fe 1A70     		strb	r2, [r3]
+  76:Sdrive/foc_trace.c ****     }
+ 506              		.loc 1 76 9 is_stmt 1 view .LVU137
+ 507 0100 E9E7     		b	.L18
+ 508              	.L30:
+ 509              	.LBE17:
+  82:Sdrive/foc_trace.c ****         return;
+ 510              		.loc 1 82 9 view .LVU138
+  82:Sdrive/foc_trace.c ****         return;
+ 511              		.loc 1 82 23 is_stmt 0 view .LVU139
+ 512 0102 034B     		ldr	r3, .L31+4
+ 513 0104 0022     		movs	r2, #0
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s 			page 17
+
+
+ 514 0106 1A70     		strb	r2, [r3]
+  83:Sdrive/foc_trace.c ****     }
+ 515              		.loc 1 83 9 is_stmt 1 view .LVU140
+ 516 0108 E5E7     		b	.L18
+ 517              	.L32:
+ 518 010a 00BF     		.align	2
+ 519              	.L31:
+ 520 010c 00000000 		.word	FocTraceRequest
+ 521 0110 00000000 		.word	FocTraceState
+ 522 0114 00000000 		.word	Init_Over
+ 523 0118 00000000 		.word	send_index
+ 524 011c 00000000 		.word	FocTraceCount
+ 525 0120 00000000 		.word	FocTraceBuffer
+ 526 0124 00000000 		.word	.LC0
+ 527 0128 00000000 		.word	header.0
+ 528              		.cfi_endproc
+ 529              	.LFE274:
+ 531              		.section	.rodata.header.0,"a"
+ 532              		.align	2
+ 535              	header.0:
+ 536 0000 7469636B 		.ascii	"tick,adc_u,adc_w,iu_A,iv_A,iw_A,id_A,iq_A,theta_rad"
+ 536      2C616463 
+ 536      5F752C61 
+ 536      64635F77 
+ 536      2C69755F 
+ 537 0033 0D0A00   		.ascii	"\015\012\000"
+ 538              		.section	.bss.send_index,"aw",%nobits
+ 539              		.align	1
+ 542              	send_index:
+ 543 0000 0000     		.space	2
+ 544              		.section	.bss.trace_clock,"aw",%nobits
+ 545              		.align	1
+ 548              	trace_clock:
+ 549 0000 0000     		.space	2
+ 550              		.section	.bss.trace_divider,"aw",%nobits
+ 551              		.align	1
+ 554              	trace_divider:
+ 555 0000 0000     		.space	2
+ 556              		.global	FocTraceRequest
+ 557              		.section	.bss.FocTraceRequest,"aw",%nobits
+ 558              		.align	2
+ 561              	FocTraceRequest:
+ 562 0000 00000000 		.space	4
+ 563              		.global	FocTraceCount
+ 564              		.section	.bss.FocTraceCount,"aw",%nobits
+ 565              		.align	1
+ 568              	FocTraceCount:
+ 569 0000 0000     		.space	2
+ 570              		.global	FocTraceState
+ 571              		.section	.bss.FocTraceState,"aw",%nobits
+ 574              	FocTraceState:
+ 575 0000 00       		.space	1
+ 576              		.global	FocTraceBuffer
+ 577              		.section	.bss.FocTraceBuffer,"aw",%nobits
+ 578              		.align	2
+ 581              	FocTraceBuffer:
+ 582 0000 00000000 		.space	32768
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s 			page 18
+
+
+ 582      00000000 
+ 582      00000000 
+ 582      00000000 
+ 582      00000000 
+ 583              		.text
+ 584              	.Letext0:
+ 585              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 586              		.file 4 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 587              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 588              		.file 6 "Sdrive/foc_trace.h"
+ 589              		.file 7 "Sdrive/adc_drv.h"
+ 590              		.file 8 "MotorFoc/foc.h"
+ 591              		.file 9 "MotorFoc/motor_ctrl.h"
+ 592              		.file 10 "Core/Inc/usart.h"
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s 			page 19
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 foc_trace.c
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:21     .text.FocTraceArm:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:27     .text.FocTraceArm:00000000 FocTraceArm
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:97     .text.FocTraceArm:00000028 $d
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:574    .bss.FocTraceState:00000000 FocTraceState
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:568    .bss.FocTraceCount:00000000 FocTraceCount
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:554    .bss.trace_divider:00000000 trace_divider
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:548    .bss.trace_clock:00000000 trace_clock
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:105    .text.FocTraceRecord:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:111    .text.FocTraceRecord:00000000 FocTraceRecord
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:256    .text.FocTraceRecord:00000088 $d
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:581    .bss.FocTraceBuffer:00000000 FocTraceBuffer
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:270    .rodata.FocTraceService.str1.4:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:274    .text.FocTraceService:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:280    .text.FocTraceService:00000000 FocTraceService
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:520    .text.FocTraceService:0000010c $d
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:561    .bss.FocTraceRequest:00000000 FocTraceRequest
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:542    .bss.send_index:00000000 send_index
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:535    .rodata.header.0:00000000 header.0
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:532    .rodata.header.0:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:539    .bss.send_index:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:545    .bss.trace_clock:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:551    .bss.trace_divider:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:558    .bss.FocTraceRequest:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:565    .bss.FocTraceCount:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:575    .bss.FocTraceState:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccye9SkI.s:578    .bss.FocTraceBuffer:00000000 $d
+
+UNDEFINED SYMBOLS
+AdcCurrentSamples
+AdcRawU
+AdcRawW
+AdcPara
+Park
+uart1_tx_busy
+__aeabi_f2d
+shell_send
+shell_send_raw
+Init_Over

@@ -62,8 +62,7 @@ build/tim_drv.o: Sdrive/tim_drv.c App/task.h Core/Inc/main.h \
  Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h \
  Sdrive/tim_drv.h MotorFoc/motor_ctrl.h \
  Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h MotorFoc/foc.h \
- MotorFoc/motor_para.h MotorFoc/pid.h MotorFoc/motor_ctrl.h \
- MotorFoc/sen.h
+ MotorFoc/motor_para.h MotorFoc/pid.h MotorFoc/motor_ctrl.h
 App/task.h:
 Core/Inc/main.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -139,4 +138,3 @@ MotorFoc/foc.h:
 MotorFoc/motor_para.h:
 MotorFoc/pid.h:
 MotorFoc/motor_ctrl.h:
-MotorFoc/sen.h:
