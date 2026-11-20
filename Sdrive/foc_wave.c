@@ -1,4 +1,4 @@
-/** @brief 连续三相电流波形：ADC 单生产者，主循环单消费者，USART1 DMA 零拷贝。 */
+/** @brief 连续三通道波形：ADC 单生产者，主循环单消费者，USART1 DMA 零拷贝。 */
 #include "foc_wave.h"
 #include "motor_ctrl.h"
 #include "usart.h"
@@ -7,7 +7,7 @@
 
 typedef struct
 {
-    float iu, iv, iw;
+    float channels[3];
     uint32_t tail;
 } FOC_WAVE_FRAME;
 
@@ -22,18 +22,22 @@ _Static_assert(FOC_WAVE_BATCH_FRAMES > 0U && FOC_WAVE_BATCH_FRAMES * 16U <= 6553
                "Wave batch must fit the HAL DMA length");
 _Static_assert(FOC_WAVE_DIVIDER > 0U && PWM_FRQ % FOC_WAVE_DIVIDER == 0U,
                "Wave divider must divide the nominal control frequency");
+_Static_assert(FOC_WAVE_DEFAULT_VIEW <= FOC_WAVE_VIEW_DQ_SPEED,
+               "Unknown default wave view");
 
 static FOC_WAVE_FRAME frames[FOC_WAVE_BUFFER_FRAMES]; /* 普通 SRAM，可供 DMA 读取。 */
 static volatile uint32_t write_pos, read_pos;
 static uint32_t capture_clock;
 static uint16_t tx_frames;
 volatile uint8_t FocWaveEnabled;
+volatile uint32_t FocWaveView = FOC_WAVE_DEFAULT_VIEW;
 volatile uint32_t FocWaveFault;
 volatile uint32_t FocWaveSamples, FocWaveSent, FocWaveDropped, FocWaveTxDropped, FocWaveTxErrors;
 
 HAL_StatusTypeDef FocWaveInit(void)
 {
     FocWaveEnabled = 0U;
+    FocWaveView = FOC_WAVE_DEFAULT_VIEW;
     FocWaveFault = 0U;
     write_pos = read_pos = capture_clock = 0U;
     tx_frames = 0U;
@@ -75,9 +79,24 @@ void FocWaveCapture(float iu, float iv, float iw)
         return;
     }
     FOC_WAVE_FRAME *frame = &frames[pos & (FOC_WAVE_BUFFER_FRAMES - 1U)];
-    frame->iu = iu;
-    frame->iv = iv;
-    frame->iw = iw;
+    switch (FocWaveView)
+    {
+    case FOC_WAVE_VIEW_FILTERED:
+        frame->channels[0] = AdcFilPara.CurU;
+        frame->channels[1] = AdcFilPara.CurV;
+        frame->channels[2] = AdcFilPara.CurW;
+        break;
+    case FOC_WAVE_VIEW_DQ_SPEED:
+        frame->channels[0] = Park.Ds;
+        frame->channels[1] = Park.Qs;
+        frame->channels[2] = Motor.speed_M_rpm;
+        break;
+    default:
+        frame->channels[0] = iu;
+        frame->channels[1] = iv;
+        frame->channels[2] = iw;
+        break;
+    }
     frame->tail = 0x7F800000U; /* STM32 小端字节序：00 00 80 7F。 */
     ++FocWaveSamples;
     __DMB();

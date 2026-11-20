@@ -20,7 +20,7 @@ extern ENCOSPEED EnCoSpeed;
 /** @brief 根据 TIM3 计数计算 0..2PI 范围内的转子电角度。 */
 void MotorAngleGet(void);
 
-/** @brief 根据相邻采样的编码器计数差计算并滤波机械/电气转速。 */
+/** @brief 按 PWM_FRQ / SPEED_CNT 调用，以编码器计数差计算并滤波机械/电气转速。 */
 void MotorSpeedGet(void);
 
 #endif 

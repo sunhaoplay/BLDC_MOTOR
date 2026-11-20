@@ -195,6 +195,14 @@ void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef *hadc)
         const uint32_t elapsed = DWT->CYCCNT - start_cycles;
         if (entry_down == 0U || (TIM1->CR1 & TIM_CR1_DIR) == 0U || count > entry_count || elapsed >= entry_count)
             ++AdcControlDeadlineMisses;
+        /* 测速系数按 PWM_FRQ / SPEED_CNT 定义，使用同样的调用分频。
+         * 放在 CCR 写入后，不推迟本拍占空比计算。
+         */
+        if (++EnCoSpeed.SpeedClock >= SPEED_CNT)
+        {
+            EnCoSpeed.SpeedClock = 0U;
+            MotorSpeedGet();
+        }
         FocWaveCapture(AdcPara.CurU, AdcPara.CurV, AdcPara.CurW);
     }
     if (AdcFault == 0U)
