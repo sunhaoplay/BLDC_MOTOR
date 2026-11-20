@@ -70,6 +70,7 @@ Drivers/CMSIS/DSP/Source/FastMathFunctions/arm_cos_f32.c \
 Drivers/CMSIS/DSP/Source/CommonTables/arm_common_tables.c \
 Sdrive/tim_drv.c \
 Sdrive/adc_drv.c \
+Sdrive/foc_wave.c \
 Sdrive/led_drv.c \
 App/task.c \
 MotorFoc/motor_ctrl.c \

@@ -50,6 +50,27 @@ static volatile uint16_t shell_tx_active_length;
 static volatile uint8_t shell_tx_active;
 static char shell_printf_buffer[SHELL_PRINTF_BUFFER_SIZE];
 static volatile uint8_t shell_printf_busy;
+static volatile uint8_t uart1_stream_mode;
+static volatile UART1_STREAM_STATE stream_state;
+
+/* NVIC_PRIORITYGROUP_4；USART1 / TX DMA 的优先级均为 2。
+ * 只屏蔽优先级 >=2 的中断，优先级 0 的 ADC 电流环始终可以抢占。
+ */
+static uint32_t UART1_StreamLock(void)
+{
+  const uint32_t saved = __get_BASEPRI();
+  __set_BASEPRI_MAX(2U << (8U - __NVIC_PRIO_BITS));
+  __DSB();
+  __ISB();
+  return saved;
+}
+
+static void UART1_StreamUnlock(uint32_t saved)
+{
+  __DMB();
+  __set_BASEPRI(saved);
+  __ISB();
+}
 
 static HAL_StatusTypeDef UART_DMA_StartReceive(UART_DMA_RxContext *context);
 static void UART_DMA_HandleRxEvent(UART_DMA_RxContext *context, uint16_t length);
@@ -74,7 +95,7 @@ void MX_USART1_UART_Init(void)
 
   /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
-  huart1.Init.BaudRate = 115200;
+  huart1.Init.BaudRate = 921600;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;
@@ -271,7 +292,7 @@ static HAL_StatusTypeDef Shell_TxStartLocked(void)
   uint16_t contiguous_length;
   uint16_t bytes_to_end;
 
-  if ((shell_tx_active != 0U) || (shell_tx_count == 0U))
+  if (uart1_stream_mode != 0U || (shell_tx_active != 0U) || (shell_tx_count == 0U))
   {
     return HAL_OK;
   }
@@ -337,6 +358,8 @@ HAL_StatusTypeDef UART_DMA_Init(void)
   shell_tx_active_length = 0U;
   shell_tx_active = 0U;
   shell_printf_busy = 0U;
+  uart1_stream_mode = 0U;
+  stream_state = UART1_STREAM_IDLE;
 
   if (UART_DMA_StartReceive(&uart1_rx_context) != HAL_OK)
   {
@@ -361,6 +384,9 @@ HAL_StatusTypeDef shell_send_raw(const uint8_t *data, uint16_t length)
   {
     return HAL_ERROR;
   }
+
+  if (uart1_stream_mode != 0U)
+    return HAL_BUSY;
 
   primask = __get_PRIMASK();
   __disable_irq();
@@ -396,6 +422,9 @@ int shell_send(const char *format, ...)
   int formatted_length;
   HAL_StatusTypeDef send_status;
   va_list args;
+
+  if (uart1_stream_mode != 0U)
+    return -1;
 
   if (format == NULL)
   {
@@ -449,8 +478,54 @@ int shell_send(const char *format, ...)
 
 uint8_t uart1_tx_busy(void)
 {
-  return ((shell_tx_count != 0U) ||
+  return ((stream_state == UART1_STREAM_BUSY) || (stream_state == UART1_STREAM_ABORTING) ||
+          (shell_tx_count != 0U) ||
           (huart1.gState == HAL_UART_STATE_BUSY_TX)) ? 1U : 0U;
+}
+
+HAL_StatusTypeDef uart1_stream_enable(void)
+{
+  const uint32_t saved = UART1_StreamLock();
+  if (uart1_stream_mode != 0U)
+  {
+    UART1_StreamUnlock(saved);
+    return HAL_OK;
+  }
+  if (shell_tx_count != 0U || shell_tx_active != 0U || huart1.gState != HAL_UART_STATE_READY)
+  {
+    UART1_StreamUnlock(saved);
+    return HAL_BUSY;
+  }
+  stream_state = UART1_STREAM_IDLE;
+  uart1_stream_mode = 1U;
+  UART1_StreamUnlock(saved);
+  return HAL_OK;
+}
+
+HAL_StatusTypeDef uart1_stream_send(const uint8_t *data, uint16_t length)
+{
+  if (data == NULL || length == 0U || uart1_stream_mode == 0U)
+    return HAL_ERROR;
+  const uint32_t saved = UART1_StreamLock();
+  if (stream_state == UART1_STREAM_BUSY || stream_state == UART1_STREAM_ABORTING ||
+      huart1.gState != HAL_UART_STATE_READY)
+  {
+    UART1_StreamUnlock(saved);
+    return HAL_BUSY;
+  }
+  stream_state = UART1_STREAM_BUSY;
+  const HAL_StatusTypeDef status = HAL_UART_Transmit_DMA(&huart1, data, length);
+  if (status == HAL_OK)
+    __HAL_DMA_DISABLE_IT(huart1.hdmatx, DMA_IT_HT);
+  else
+    stream_state = UART1_STREAM_ERROR;
+  UART1_StreamUnlock(saved);
+  return status;
+}
+
+UART1_STREAM_STATE uart1_stream_state(void)
+{
+  return stream_state;
 }
 const uint8_t *uart1_msg_data(void)
 {
@@ -485,7 +560,22 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *uart)
   /* Continue the shell queue, or return an RS-485 transceiver to receive. */
   if (uart->Instance == USART1)
   {
-    Shell_TxComplete();
+    if (uart1_stream_mode != 0U)
+    {
+      __DMB();
+      stream_state = UART1_STREAM_DONE;
+    }
+    else
+      Shell_TxComplete();
+  }
+}
+
+void HAL_UART_AbortTransmitCpltCallback(UART_HandleTypeDef *uart)
+{
+  if (uart->Instance == USART1 && stream_state == UART1_STREAM_ABORTING)
+  {
+    __DMB();
+    stream_state = UART1_STREAM_ERROR;
   }
 }
 
@@ -496,6 +586,13 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *uart)
   if (uart->Instance == USART1)
   {
     context = &uart1_rx_context;
+
+    /* RX 错误但 TX 仍忙时保持发送；TX 被 HAL 结束时，先确认 DMA 中止再释放缓冲。 */
+    if (stream_state == UART1_STREAM_BUSY && uart->gState == HAL_UART_STATE_READY)
+    {
+      stream_state = UART1_STREAM_ABORTING;
+      (void)HAL_UART_AbortTransmit_IT(uart);
+    }
 
     /* If a shell DMA TX failed, retry its current contiguous queue block. */
     if ((shell_tx_active != 0U) && (uart->gState == HAL_UART_STATE_READY))

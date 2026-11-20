@@ -7,6 +7,7 @@
 #include "tim.h"
 #include "motor_ctrl.h"
 #include "sen.h"
+#include "foc_wave.h"
 
 ADC_Sample AdcPara = ADC_Sample_DEFAULTS;
 ADC_Sample_F AdcFilPara = ADC_Sample_F_DEFAULTS;
@@ -194,6 +195,7 @@ void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef *hadc)
         const uint32_t elapsed = DWT->CYCCNT - start_cycles;
         if (entry_down == 0U || (TIM1->CR1 & TIM_CR1_DIR) == 0U || count > entry_count || elapsed >= entry_count)
             ++AdcControlDeadlineMisses;
+        FocWaveCapture(AdcPara.CurU, AdcPara.CurV, AdcPara.CurW);
     }
     if (AdcFault == 0U)
         AdcSlowStart();

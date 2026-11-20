@@ -1,6 +1,6 @@
 /**
  * @file task.c
- * @brief 上电校准、ADC 驱动电流环启动，以及冻结波形的后台导出。
+ * @brief 上电校准、ADC 驱动电流环启动，以及实时波形的 DMA 发送。
  */
 #include "task.h"
 #include "adc.h"
@@ -8,6 +8,7 @@
 #include "usart.h"
 #include "motor_ctrl.h"
 #include "sen.h"
+#include "foc_wave.h"
 
 void task_init(void)
 {
@@ -22,6 +23,7 @@ void task_init(void)
         Error_Handler();
     }
 
+    (void)FocWaveInit(); /* 遥测失败只禁用波形，不阻止电机启动。 */
     /* 定时器和 ADC 已运行，三相输出关闭，先等待霍尔电流传感器稳定。 */
     HAL_Delay(100);
     AdcSampleOffset();
@@ -55,6 +57,7 @@ void task_init(void)
 void task_loop(void)
 {
     static uint32_t last_led;
+    FocWaveService();
     const uint32_t now = HAL_GetTick();
     if ((uint32_t)(now - last_led) >= 500U)
     {

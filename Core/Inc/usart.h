@@ -64,6 +64,21 @@ void uart1_msg_rev(uint8_t *buf, uint16_t len);
 
 /** Return non-zero while the corresponding UART DMA transmission is active. */
 uint8_t uart1_tx_busy(void);
+
+typedef enum
+{
+  UART1_STREAM_IDLE,
+  UART1_STREAM_BUSY,
+  UART1_STREAM_DONE,
+  UART1_STREAM_ABORTING,
+  UART1_STREAM_ERROR
+} UART1_STREAM_STATE;
+
+/** 主循环取得二进制流独占权，直到重新初始化；shell 发送返回忙，避免混入文本。 */
+HAL_StatusTypeDef uart1_stream_enable(void);
+/** 仅主循环调用。零拷贝，数据须保持有效直到状态变为 DONE 或 ERROR。 */
+HAL_StatusTypeDef uart1_stream_send(const uint8_t *data, uint16_t length);
+UART1_STREAM_STATE uart1_stream_state(void);
 /* USER CODE END Private defines */
 
 void MX_USART1_UART_Init(void);

@@ -17,7 +17,7 @@
 // #include "key_drv.h"
 // #include "motor_ctrl.h"
 
-extern UART_HandleTypeDef huart1; /**< USART1 句柄，用于缓存波形 CSV 导出。 */
+extern UART_HandleTypeDef huart1; /**< USART1 句柄，用于实时 JustFloat 波形。 */
 extern TIM_HandleTypeDef htim1;   /**< TIM1 产生三相 PWM 和 OC4REF 内部采样触发。 */
 extern ADC_HandleTypeDef hadc1;   /**< ADC1 主 ADC：注入组采电流，规则组采慢信号。 */
 extern TIM_HandleTypeDef htim3;   /**< TIM3 句柄，工作在正交编码器接口模式。 */
@@ -29,7 +29,7 @@ extern TIM_HandleTypeDef htim3;   /**< TIM3 句柄，工作在正交编码器接
 void task_init(void);
 
 /**
- * @brief 导出已冻结的波形，并更新 LED；不阻塞 ADC 控制中断。
+ * @brief 批量启动波形 DMA 发送，并更新 LED；不等待串口发送完成。
  * @note 该函数由 main() 的无限循环反复调用，不应在其中加入永久阻塞操作。
  */
 void task_loop(void);
