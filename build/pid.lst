@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s 			page 1
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s 			page 1
   32              		@ args = 0, pretend = 0, frame = 0
   33              		@ frame_needed = 0, uses_anonymous_args = 0
   34              		@ link register save eliminated.
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s 			page 2
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s 			page 2
 
 
   35              		.loc 1 24 1 is_stmt 0 view .LVU1
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s 			page 1
   41:MotorFoc/pid.c ****  * 对积分状态先限幅可减轻输出饱和时的积分饱和，但不包含反算抗饱和环
   42:MotorFoc/pid.c ****  */
   43:MotorFoc/pid.c **** void PiController(M_PI_Control pv)
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s 			page 3
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s 			page 3
 
 
   44:MotorFoc/pid.c **** {
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s 			page 1
  121 0042 D4ED0A7A 		vldr.32	s15, [r4, #40]
  122              		.loc 1 51 25 view .LVU31
  123 0046 94ED071A 		vldr.32	s2, [r4, #28]
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s 			page 4
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s 			page 4
 
 
  124              		.loc 1 51 5 view .LVU32
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s 			page 1
   63:MotorFoc/pid.c ****  */
   64:MotorFoc/pid.c **** void PiParaInit(void)
   65:MotorFoc/pid.c **** {
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s 			page 5
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s 			page 5
 
 
  169              		.loc 1 65 1 is_stmt 1 view -0
@@ -249,10 +249,10 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s 			page 1
   66:MotorFoc/pid.c **** 	pi_spd.Kp = Para.SpdLessKp;
  174              		.loc 1 66 2 view .LVU46
  175              		.loc 1 66 18 is_stmt 0 view .LVU47
- 176 0000 134A     		ldr	r2, .L18
+ 176 0000 124A     		ldr	r2, .L18
  177 0002 916C     		ldr	r1, [r2, #72]	@ float
  178              		.loc 1 66 12 view .LVU48
- 179 0004 134B     		ldr	r3, .L18+4
+ 179 0004 124B     		ldr	r3, .L18+4
  180 0006 1961     		str	r1, [r3, #16]	@ float
   67:MotorFoc/pid.c **** 	pi_spd.Ki =Para.SpdLessKi;
  181              		.loc 1 67 2 is_stmt 1 view .LVU49
@@ -263,102 +263,102 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s 			page 1
   68:MotorFoc/pid.c **** 	pi_spd.Umax = PI_MAX_SPD;
  186              		.loc 1 68 2 is_stmt 1 view .LVU52
  187              		.loc 1 68 14 is_stmt 0 view .LVU53
- 188 000c 124A     		ldr	r2, .L18+8
+ 188 000c 114A     		ldr	r2, .L18+8
  189 000e 9A61     		str	r2, [r3, #24]	@ float
   69:MotorFoc/pid.c **** 	pi_spd.Umin = -PI_MAX_SPD;
  190              		.loc 1 69 2 is_stmt 1 view .LVU54
  191              		.loc 1 69 14 is_stmt 0 view .LVU55
- 192 0010 124A     		ldr	r2, .L18+12
+ 192 0010 114A     		ldr	r2, .L18+12
  193 0012 DA61     		str	r2, [r3, #28]	@ float
   70:MotorFoc/pid.c **** 
   71:MotorFoc/pid.c **** 	pi_id.Kp = 0.3f;
  194              		.loc 1 71 2 is_stmt 1 view .LVU56
  195              		.loc 1 71 11 is_stmt 0 view .LVU57
- 196 0014 124B     		ldr	r3, .L18+16
- 197 0016 DFF868C0 		ldr	ip, .L18+48
+ 196 0014 114B     		ldr	r3, .L18+16
+ 197 0016 DFF868C0 		ldr	ip, .L18+52
  198 001a C3F810C0 		str	ip, [r3, #16]	@ float
-  72:MotorFoc/pid.c **** 	// pi_id.Ki = 1000.0f;
-  73:MotorFoc/pid.c **** 	pi_id.Ki = 0.0f;
- 199              		.loc 1 73 2 is_stmt 1 view .LVU58
- 200              		.loc 1 73 11 is_stmt 0 view .LVU59
- 201 001e 0022     		movs	r2, #0
- 202 0020 5A61     		str	r2, [r3, #20]	@ float
+  72:MotorFoc/pid.c **** 	pi_id.Ki = 1000.0f;
+ 199              		.loc 1 72 2 is_stmt 1 view .LVU58
+ 200              		.loc 1 72 11 is_stmt 0 view .LVU59
+ 201 001e 1048     		ldr	r0, .L18+20
+ 202 0020 5861     		str	r0, [r3, #20]	@ float
+  73:MotorFoc/pid.c **** 	// pi_id.Ki = 0.0f;
   74:MotorFoc/pid.c **** 
   75:MotorFoc/pid.c **** 	pi_id.Umax = PI_MAX_Ud;
  203              		.loc 1 75 2 is_stmt 1 view .LVU60
  204              		.loc 1 75 13 is_stmt 0 view .LVU61
- 205 0022 1048     		ldr	r0, .L18+20
- 206 0024 9861     		str	r0, [r3, #24]	@ float
+ 205 0022 1049     		ldr	r1, .L18+24
+ 206 0024 9961     		str	r1, [r3, #24]	@ float
   76:MotorFoc/pid.c **** 	pi_id.Umin = -PI_MAX_Ud;
  207              		.loc 1 76 2 is_stmt 1 view .LVU62
  208              		.loc 1 76 13 is_stmt 0 view .LVU63
- 209 0026 1049     		ldr	r1, .L18+24
- 210 0028 D961     		str	r1, [r3, #28]	@ float
+ 209 0026 104A     		ldr	r2, .L18+28
+ 210 0028 DA61     		str	r2, [r3, #28]	@ float
   77:MotorFoc/pid.c **** 
   78:MotorFoc/pid.c **** 	pi_iq.Kp = 0.3f;
  211              		.loc 1 78 2 is_stmt 1 view .LVU64
  212              		.loc 1 78 11 is_stmt 0 view .LVU65
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s 			page 6
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s 			page 6
 
 
- 213 002a 104B     		ldr	r3, .L18+28
+ 213 002a 104B     		ldr	r3, .L18+32
  214 002c C3F810C0 		str	ip, [r3, #16]	@ float
   79:MotorFoc/pid.c **** 	pi_iq.Ki = 1000.0f;
  215              		.loc 1 79 2 is_stmt 1 view .LVU66
  216              		.loc 1 79 11 is_stmt 0 view .LVU67
- 217 0030 DFF850C0 		ldr	ip, .L18+52
- 218 0034 C3F814C0 		str	ip, [r3, #20]	@ float
+ 217 0030 5861     		str	r0, [r3, #20]	@ float
   80:MotorFoc/pid.c **** 	pi_iq.Umax = PI_MAX_Uq;
- 219              		.loc 1 80 2 is_stmt 1 view .LVU68
- 220              		.loc 1 80 13 is_stmt 0 view .LVU69
- 221 0038 9861     		str	r0, [r3, #24]	@ float
+ 218              		.loc 1 80 2 is_stmt 1 view .LVU68
+ 219              		.loc 1 80 13 is_stmt 0 view .LVU69
+ 220 0032 9961     		str	r1, [r3, #24]	@ float
   81:MotorFoc/pid.c **** 	pi_iq.Umin = -PI_MAX_Uq;
- 222              		.loc 1 81 2 is_stmt 1 view .LVU70
- 223              		.loc 1 81 13 is_stmt 0 view .LVU71
- 224 003a D961     		str	r1, [r3, #28]	@ float
+ 221              		.loc 1 81 2 is_stmt 1 view .LVU70
+ 222              		.loc 1 81 13 is_stmt 0 view .LVU71
+ 223 0034 DA61     		str	r2, [r3, #28]	@ float
   82:MotorFoc/pid.c **** 
   83:MotorFoc/pid.c **** 	pi_pos.Kp = 0.02f;
- 225              		.loc 1 83 2 is_stmt 1 view .LVU72
- 226              		.loc 1 83 12 is_stmt 0 view .LVU73
- 227 003c 0C4B     		ldr	r3, .L18+32
- 228 003e 0D49     		ldr	r1, .L18+36
- 229 0040 1961     		str	r1, [r3, #16]	@ float
+ 224              		.loc 1 83 2 is_stmt 1 view .LVU72
+ 225              		.loc 1 83 12 is_stmt 0 view .LVU73
+ 226 0036 0E4B     		ldr	r3, .L18+36
+ 227 0038 0E4A     		ldr	r2, .L18+40
+ 228 003a 1A61     		str	r2, [r3, #16]	@ float
   84:MotorFoc/pid.c **** 	pi_pos.Ki = 0.0f;
- 230              		.loc 1 84 2 is_stmt 1 view .LVU74
- 231              		.loc 1 84 12 is_stmt 0 view .LVU75
- 232 0042 5A61     		str	r2, [r3, #20]	@ float
+ 229              		.loc 1 84 2 is_stmt 1 view .LVU74
+ 230              		.loc 1 84 12 is_stmt 0 view .LVU75
+ 231 003c 0022     		movs	r2, #0
+ 232 003e 5A61     		str	r2, [r3, #20]	@ float
   85:MotorFoc/pid.c **** 	pi_pos.Umax = SPD_REF_MAX;
  233              		.loc 1 85 2 is_stmt 1 view .LVU76
  234              		.loc 1 85 14 is_stmt 0 view .LVU77
- 235 0044 0C4A     		ldr	r2, .L18+40
- 236 0046 9A61     		str	r2, [r3, #24]	@ float
+ 235 0040 0D4A     		ldr	r2, .L18+44
+ 236 0042 9A61     		str	r2, [r3, #24]	@ float
   86:MotorFoc/pid.c **** 	pi_pos.Umin = -SPD_REF_MAX;
  237              		.loc 1 86 2 is_stmt 1 view .LVU78
  238              		.loc 1 86 14 is_stmt 0 view .LVU79
- 239 0048 0C4A     		ldr	r2, .L18+44
- 240 004a DA61     		str	r2, [r3, #28]	@ float
+ 239 0044 0D4A     		ldr	r2, .L18+48
+ 240 0046 DA61     		str	r2, [r3, #28]	@ float
   87:MotorFoc/pid.c **** }
  241              		.loc 1 87 1 view .LVU80
- 242 004c 7047     		bx	lr
+ 242 0048 7047     		bx	lr
  243              	.L19:
- 244 004e 00BF     		.align	2
+ 244 004a 00BF     		.align	2
  245              	.L18:
- 246 0050 00000000 		.word	Para
- 247 0054 00000000 		.word	pi_spd
- 248 0058 00002041 		.word	1092616192
- 249 005c 000020C1 		.word	-1054867456
- 250 0060 00000000 		.word	pi_id
- 251 0064 0000C040 		.word	1086324736
- 252 0068 0000C0C0 		.word	-1061158912
- 253 006c 00000000 		.word	pi_iq
- 254 0070 00000000 		.word	pi_pos
- 255 0074 0AD7A33C 		.word	1017370378
- 256 0078 00007A45 		.word	1165623296
- 257 007c 00007AC5 		.word	-981860352
- 258 0080 9A99993E 		.word	1050253722
- 259 0084 00007A44 		.word	1148846080
+ 246 004c 00000000 		.word	Para
+ 247 0050 00000000 		.word	pi_spd
+ 248 0054 00002041 		.word	1092616192
+ 249 0058 000020C1 		.word	-1054867456
+ 250 005c 00000000 		.word	pi_id
+ 251 0060 00007A44 		.word	1148846080
+ 252 0064 0000C040 		.word	1086324736
+ 253 0068 0000C0C0 		.word	-1061158912
+ 254 006c 00000000 		.word	pi_iq
+ 255 0070 00000000 		.word	pi_pos
+ 256 0074 0AD7A33C 		.word	1017370378
+ 257 0078 00007A45 		.word	1165623296
+ 258 007c 00007AC5 		.word	-981860352
+ 259 0080 9A99993E 		.word	1050253722
  260              		.cfi_endproc
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s 			page 7
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s 			page 7
 
 
  261              	.LFE274:
@@ -404,27 +404,27 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s 			page 1
  294              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
  295              		.file 4 "MotorFoc/pid.h"
  296              		.file 5 "MotorFoc/motor_ctrl.h"
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s 			page 8
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s 			page 8
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 pid.c
-C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s:21     .text.Limit_Sat:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s:27     .text.Limit_Sat:00000000 Limit_Sat
-C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s:66     .text.PiController:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s:72     .text.PiController:00000000 PiController
-C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s:156    .text.PiController:00000074 $d
-C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s:161    .text.PiParaInit:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s:167    .text.PiParaInit:00000000 PiParaInit
-C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s:246    .text.PiParaInit:00000050 $d
-C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s:289    .bss.pi_spd:00000000 pi_spd
-C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s:282    .bss.pi_id:00000000 pi_id
-C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s:275    .bss.pi_iq:00000000 pi_iq
-C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s:268    .bss.pi_pos:00000000 pi_pos
-C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s:265    .bss.pi_pos:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s:272    .bss.pi_iq:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s:279    .bss.pi_id:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\cchAB7N3.s:286    .bss.pi_spd:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s:21     .text.Limit_Sat:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s:27     .text.Limit_Sat:00000000 Limit_Sat
+C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s:66     .text.PiController:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s:72     .text.PiController:00000000 PiController
+C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s:156    .text.PiController:00000074 $d
+C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s:161    .text.PiParaInit:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s:167    .text.PiParaInit:00000000 PiParaInit
+C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s:246    .text.PiParaInit:0000004c $d
+C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s:289    .bss.pi_spd:00000000 pi_spd
+C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s:282    .bss.pi_id:00000000 pi_id
+C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s:275    .bss.pi_iq:00000000 pi_iq
+C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s:268    .bss.pi_pos:00000000 pi_pos
+C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s:265    .bss.pi_pos:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s:272    .bss.pi_iq:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s:279    .bss.pi_id:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccChvMO6.s:286    .bss.pi_spd:00000000 $d
 
 UNDEFINED SYMBOLS
 Para

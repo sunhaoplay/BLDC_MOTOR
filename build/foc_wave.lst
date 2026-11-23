@@ -1,0 +1,1328 @@
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"foc_wave.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Sdrive/foc_wave.c"
+  20              		.section	.text.FocWaveInit,"ax",%progbits
+  21              		.align	1
+  22              		.global	FocWaveInit
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	FocWaveInit:
+  28              	.LFB272:
+   1:Sdrive/foc_wave.c **** /** @brief 连续三通道波形：ADC 单生产者，主循环单消费者，USART1 DMA 零拷贝�
+   2:Sdrive/foc_wave.c **** #include "foc_wave.h"
+   3:Sdrive/foc_wave.c **** #include "motor_ctrl.h"
+   4:Sdrive/foc_wave.c **** #include "usart.h"
+   5:Sdrive/foc_wave.c **** #include <float.h>
+   6:Sdrive/foc_wave.c **** #include <stddef.h>
+   7:Sdrive/foc_wave.c **** 
+   8:Sdrive/foc_wave.c **** typedef struct
+   9:Sdrive/foc_wave.c **** {
+  10:Sdrive/foc_wave.c ****     float channels[3];
+  11:Sdrive/foc_wave.c ****     uint32_t tail;
+  12:Sdrive/foc_wave.c **** } FOC_WAVE_FRAME;
+  13:Sdrive/foc_wave.c **** 
+  14:Sdrive/foc_wave.c **** _Static_assert(sizeof(float) == 4U && FLT_MANT_DIG == 24 && FLT_MAX_EXP == 128,
+  15:Sdrive/foc_wave.c ****                "JustFloat requires IEEE 754 binary32");
+  16:Sdrive/foc_wave.c **** _Static_assert(sizeof(FOC_WAVE_FRAME) == 16U && offsetof(FOC_WAVE_FRAME, tail) == 12U,
+  17:Sdrive/foc_wave.c ****                "JustFloat frame must contain exactly 16 bytes");
+  18:Sdrive/foc_wave.c **** _Static_assert(FOC_WAVE_BUFFER_FRAMES >= FOC_WAVE_BATCH_FRAMES &&
+  19:Sdrive/foc_wave.c ****                (FOC_WAVE_BUFFER_FRAMES & (FOC_WAVE_BUFFER_FRAMES - 1U)) == 0U,
+  20:Sdrive/foc_wave.c ****                "Wave buffer size must be a power of two and fit one batch");
+  21:Sdrive/foc_wave.c **** _Static_assert(FOC_WAVE_BATCH_FRAMES > 0U && FOC_WAVE_BATCH_FRAMES * 16U <= 65535U,
+  22:Sdrive/foc_wave.c ****                "Wave batch must fit the HAL DMA length");
+  23:Sdrive/foc_wave.c **** _Static_assert(FOC_WAVE_DIVIDER > 0U && PWM_FRQ % FOC_WAVE_DIVIDER == 0U,
+  24:Sdrive/foc_wave.c ****                "Wave divider must divide the nominal control frequency");
+  25:Sdrive/foc_wave.c **** _Static_assert(FOC_WAVE_DEFAULT_VIEW <= FOC_WAVE_VIEW_DQ_SPEED,
+  26:Sdrive/foc_wave.c ****                "Unknown default wave view");
+  27:Sdrive/foc_wave.c **** 
+  28:Sdrive/foc_wave.c **** static FOC_WAVE_FRAME frames[FOC_WAVE_BUFFER_FRAMES]; /* 普通 SRAM，可供 DMA 读取。 */
+  29:Sdrive/foc_wave.c **** static volatile uint32_t write_pos, read_pos;
+  30:Sdrive/foc_wave.c **** static uint32_t capture_clock;
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s 			page 2
+
+
+  31:Sdrive/foc_wave.c **** static uint16_t tx_frames;
+  32:Sdrive/foc_wave.c **** volatile uint8_t FocWaveEnabled;
+  33:Sdrive/foc_wave.c **** volatile uint32_t FocWaveView = FOC_WAVE_DEFAULT_VIEW;
+  34:Sdrive/foc_wave.c **** volatile uint32_t FocWaveFault;
+  35:Sdrive/foc_wave.c **** volatile uint32_t FocWaveSamples, FocWaveSent, FocWaveDropped, FocWaveTxDropped, FocWaveTxErrors;
+  36:Sdrive/foc_wave.c **** 
+  37:Sdrive/foc_wave.c **** HAL_StatusTypeDef FocWaveInit(void)
+  38:Sdrive/foc_wave.c **** {
+  29              		.loc 1 38 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 08B5     		push	{r3, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 8
+  36              		.cfi_offset 3, -8
+  37              		.cfi_offset 14, -4
+  39:Sdrive/foc_wave.c ****     FocWaveEnabled = 0U;
+  38              		.loc 1 39 5 view .LVU1
+  39              		.loc 1 39 20 is_stmt 0 view .LVU2
+  40 0002 0023     		movs	r3, #0
+  41 0004 174A     		ldr	r2, .L7
+  42 0006 1370     		strb	r3, [r2]
+  40:Sdrive/foc_wave.c ****     FocWaveView = FOC_WAVE_DEFAULT_VIEW;
+  43              		.loc 1 40 5 is_stmt 1 view .LVU3
+  44              		.loc 1 40 17 is_stmt 0 view .LVU4
+  45 0008 174A     		ldr	r2, .L7+4
+  46 000a 1360     		str	r3, [r2]
+  41:Sdrive/foc_wave.c ****     FocWaveFault = 0U;
+  47              		.loc 1 41 5 is_stmt 1 view .LVU5
+  48              		.loc 1 41 18 is_stmt 0 view .LVU6
+  49 000c 174A     		ldr	r2, .L7+8
+  50 000e 1360     		str	r3, [r2]
+  42:Sdrive/foc_wave.c ****     write_pos = read_pos = capture_clock = 0U;
+  51              		.loc 1 42 5 is_stmt 1 view .LVU7
+  52              		.loc 1 42 42 is_stmt 0 view .LVU8
+  53 0010 174A     		ldr	r2, .L7+12
+  54 0012 1360     		str	r3, [r2]
+  55              		.loc 1 42 26 view .LVU9
+  56 0014 174A     		ldr	r2, .L7+16
+  57 0016 1360     		str	r3, [r2]
+  58              		.loc 1 42 15 view .LVU10
+  59 0018 174A     		ldr	r2, .L7+20
+  60 001a 1360     		str	r3, [r2]
+  43:Sdrive/foc_wave.c ****     tx_frames = 0U;
+  61              		.loc 1 43 5 is_stmt 1 view .LVU11
+  62              		.loc 1 43 15 is_stmt 0 view .LVU12
+  63 001c 174A     		ldr	r2, .L7+24
+  64 001e 1380     		strh	r3, [r2]	@ movhi
+  44:Sdrive/foc_wave.c ****     FocWaveSamples = FocWaveSent = FocWaveDropped = FocWaveTxDropped = FocWaveTxErrors = 0U;
+  65              		.loc 1 44 5 is_stmt 1 view .LVU13
+  66              		.loc 1 44 88 is_stmt 0 view .LVU14
+  67 0020 174A     		ldr	r2, .L7+28
+  68 0022 1360     		str	r3, [r2]
+  69              		.loc 1 44 70 view .LVU15
+  70 0024 174A     		ldr	r2, .L7+32
+  71 0026 1360     		str	r3, [r2]
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s 			page 3
+
+
+  72              		.loc 1 44 51 view .LVU16
+  73 0028 174A     		ldr	r2, .L7+36
+  74 002a 1360     		str	r3, [r2]
+  75              		.loc 1 44 34 view .LVU17
+  76 002c 174A     		ldr	r2, .L7+40
+  77 002e 1360     		str	r3, [r2]
+  78              		.loc 1 44 20 view .LVU18
+  79 0030 174A     		ldr	r2, .L7+44
+  80 0032 1360     		str	r3, [r2]
+  45:Sdrive/foc_wave.c ****     /* 8N1 每字节占 10 bit，最多使用名义串口带宽的 80%。 */
+  46:Sdrive/foc_wave.c ****     const uint32_t bit_rate = (PWM_FRQ / FOC_WAVE_DIVIDER) * sizeof(FOC_WAVE_FRAME) * 10U;
+  81              		.loc 1 46 5 is_stmt 1 view .LVU19
+  82              	.LVL0:
+  47:Sdrive/foc_wave.c ****     if (bit_rate > huart1.Init.BaudRate * 8U / 10U)
+  83              		.loc 1 47 5 view .LVU20
+  84              		.loc 1 47 31 is_stmt 0 view .LVU21
+  85 0034 174B     		ldr	r3, .L7+48
+  86 0036 5A68     		ldr	r2, [r3, #4]
+  87              		.loc 1 47 8 view .LVU22
+  88 0038 174B     		ldr	r3, .L7+52
+  89 003a B3EBC20F 		cmp	r3, r2, lsl #3
+  90 003e 03D9     		bls	.L2
+  48:Sdrive/foc_wave.c ****     {
+  49:Sdrive/foc_wave.c ****         FocWaveFault = 1U;
+  91              		.loc 1 49 9 is_stmt 1 view .LVU23
+  92              		.loc 1 49 22 is_stmt 0 view .LVU24
+  93 0040 0120     		movs	r0, #1
+  94 0042 0A4B     		ldr	r3, .L7+8
+  95 0044 1860     		str	r0, [r3]
+  50:Sdrive/foc_wave.c ****         return HAL_ERROR;
+  96              		.loc 1 50 9 is_stmt 1 view .LVU25
+  97              	.L3:
+  51:Sdrive/foc_wave.c ****     }
+  52:Sdrive/foc_wave.c ****     if (uart1_stream_enable() != HAL_OK)
+  53:Sdrive/foc_wave.c ****     {
+  54:Sdrive/foc_wave.c ****         FocWaveFault = 2U;
+  55:Sdrive/foc_wave.c ****         return HAL_BUSY;
+  56:Sdrive/foc_wave.c ****     }
+  57:Sdrive/foc_wave.c ****     __DMB();
+  58:Sdrive/foc_wave.c ****     FocWaveEnabled = 1U;
+  59:Sdrive/foc_wave.c ****     return HAL_OK;
+  60:Sdrive/foc_wave.c **** }
+  98              		.loc 1 60 1 is_stmt 0 view .LVU26
+  99 0046 08BD     		pop	{r3, pc}
+ 100              	.L2:
+  52:Sdrive/foc_wave.c ****     {
+ 101              		.loc 1 52 5 is_stmt 1 view .LVU27
+  52:Sdrive/foc_wave.c ****     {
+ 102              		.loc 1 52 9 is_stmt 0 view .LVU28
+ 103 0048 FFF7FEFF 		bl	uart1_stream_enable
+ 104              	.LVL1:
+  52:Sdrive/foc_wave.c ****     {
+ 105              		.loc 1 52 8 discriminator 1 view .LVU29
+ 106 004c 28B9     		cbnz	r0, .L6
+  57:Sdrive/foc_wave.c ****     FocWaveEnabled = 1U;
+ 107              		.loc 1 57 5 is_stmt 1 view .LVU30
+ 108              	.LBB15:
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s 			page 4
+
+
+ 109              	.LBI15:
+ 110              		.file 2 "Drivers/CMSIS/Include/cmsis_gcc.h"
+   1:Drivers/CMSIS/Include/cmsis_gcc.h **** /**************************************************************************//**
+   2:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @file     cmsis_gcc.h
+   3:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @brief    CMSIS compiler GCC header file
+   4:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @version  V5.4.1
+   5:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @date     27. May 2021
+   6:Drivers/CMSIS/Include/cmsis_gcc.h ****  ******************************************************************************/
+   7:Drivers/CMSIS/Include/cmsis_gcc.h **** /*
+   8:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Copyright (c) 2009-2021 Arm Limited. All rights reserved.
+   9:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
+  10:Drivers/CMSIS/Include/cmsis_gcc.h ****  * SPDX-License-Identifier: Apache-2.0
+  11:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
+  12:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Licensed under the Apache License, Version 2.0 (the License); you may
+  13:Drivers/CMSIS/Include/cmsis_gcc.h ****  * not use this file except in compliance with the License.
+  14:Drivers/CMSIS/Include/cmsis_gcc.h ****  * You may obtain a copy of the License at
+  15:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
+  16:Drivers/CMSIS/Include/cmsis_gcc.h ****  * www.apache.org/licenses/LICENSE-2.0
+  17:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
+  18:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Unless required by applicable law or agreed to in writing, software
+  19:Drivers/CMSIS/Include/cmsis_gcc.h ****  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  20:Drivers/CMSIS/Include/cmsis_gcc.h ****  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  21:Drivers/CMSIS/Include/cmsis_gcc.h ****  * See the License for the specific language governing permissions and
+  22:Drivers/CMSIS/Include/cmsis_gcc.h ****  * limitations under the License.
+  23:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+  24:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+  25:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __CMSIS_GCC_H
+  26:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_H
+  27:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+  28:Drivers/CMSIS/Include/cmsis_gcc.h **** /* ignore some GCC warnings */
+  29:Drivers/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic push
+  30:Drivers/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wsign-conversion"
+  31:Drivers/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wconversion"
+  32:Drivers/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wunused-parameter"
+  33:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+  34:Drivers/CMSIS/Include/cmsis_gcc.h **** /* Fallback for __has_builtin */
+  35:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __has_builtin
+  36:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __has_builtin(x) (0)
+  37:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  38:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+  39:Drivers/CMSIS/Include/cmsis_gcc.h **** /* CMSIS compiler specific defines */
+  40:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __ASM
+  41:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __ASM                                  __asm
+  42:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  43:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __INLINE
+  44:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __INLINE                               inline
+  45:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  46:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __STATIC_INLINE
+  47:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __STATIC_INLINE                        static inline
+  48:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  49:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __STATIC_FORCEINLINE
+  50:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __STATIC_FORCEINLINE                   __attribute__((always_inline)) static inline
+  51:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  52:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __NO_RETURN
+  53:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __NO_RETURN                            __attribute__((__noreturn__))
+  54:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  55:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __USED
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s 			page 5
+
+
+  56:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __USED                                 __attribute__((used))
+  57:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  58:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __WEAK
+  59:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __WEAK                                 __attribute__((weak))
+  60:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  61:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __PACKED
+  62:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __PACKED                               __attribute__((packed, aligned(1)))
+  63:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  64:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __PACKED_STRUCT
+  65:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __PACKED_STRUCT                        struct __attribute__((packed, aligned(1)))
+  66:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  67:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __PACKED_UNION
+  68:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __PACKED_UNION                         union __attribute__((packed, aligned(1)))
+  69:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  70:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT32        /* deprecated */
+  71:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  72:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  73:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  74:Drivers/CMSIS/Include/cmsis_gcc.h ****   struct __attribute__((packed)) T_UINT32 { uint32_t v; };
+  75:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+  76:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32(x)                  (((struct T_UINT32 *)(x))->v)
+  77:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  78:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT16_WRITE
+  79:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  80:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  81:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  82:Drivers/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT16_WRITE { uint16_t v; };
+  83:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+  84:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT16_WRITE(addr, val)    (void)((((struct T_UINT16_WRITE *)(void *)(addr))-
+  85:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  86:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT16_READ
+  87:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  88:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  89:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  90:Drivers/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT16_READ { uint16_t v; };
+  91:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+  92:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT16_READ(addr)          (((const struct T_UINT16_READ *)(const void *)(add
+  93:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  94:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT32_WRITE
+  95:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  96:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  97:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  98:Drivers/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT32_WRITE { uint32_t v; };
+  99:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+ 100:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32_WRITE(addr, val)    (void)((((struct T_UINT32_WRITE *)(void *)(addr))-
+ 101:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 102:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT32_READ
+ 103:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+ 104:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+ 105:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+ 106:Drivers/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT32_READ { uint32_t v; };
+ 107:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+ 108:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32_READ(addr)          (((const struct T_UINT32_READ *)(const void *)(add
+ 109:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 110:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __ALIGNED
+ 111:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __ALIGNED(x)                           __attribute__((aligned(x)))
+ 112:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s 			page 6
+
+
+ 113:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __RESTRICT
+ 114:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __RESTRICT                             __restrict
+ 115:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 116:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __COMPILER_BARRIER
+ 117:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __COMPILER_BARRIER()                   __ASM volatile("":::"memory")
+ 118:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 119:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 120:Drivers/CMSIS/Include/cmsis_gcc.h **** /* #########################  Startup and Lowlevel Init  ######################## */
+ 121:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 122:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __PROGRAM_START
+ 123:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 124:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 125:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Initializes data and bss sections
+ 126:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details This default implementations initialized all data and additional bss
+ 127:Drivers/CMSIS/Include/cmsis_gcc.h ****            sections relying on .copy.table and .zero.table specified properly
+ 128:Drivers/CMSIS/Include/cmsis_gcc.h ****            in the used linker script.
+ 129:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 130:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 131:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE __NO_RETURN void __cmsis_start(void)
+ 132:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 133:Drivers/CMSIS/Include/cmsis_gcc.h ****   extern void _start(void) __NO_RETURN;
+ 134:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 135:Drivers/CMSIS/Include/cmsis_gcc.h ****   typedef struct {
+ 136:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t const* src;
+ 137:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t* dest;
+ 138:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t  wlen;
+ 139:Drivers/CMSIS/Include/cmsis_gcc.h ****   } __copy_table_t;
+ 140:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 141:Drivers/CMSIS/Include/cmsis_gcc.h ****   typedef struct {
+ 142:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t* dest;
+ 143:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t  wlen;
+ 144:Drivers/CMSIS/Include/cmsis_gcc.h ****   } __zero_table_t;
+ 145:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 146:Drivers/CMSIS/Include/cmsis_gcc.h ****   extern const __copy_table_t __copy_table_start__;
+ 147:Drivers/CMSIS/Include/cmsis_gcc.h ****   extern const __copy_table_t __copy_table_end__;
+ 148:Drivers/CMSIS/Include/cmsis_gcc.h ****   extern const __zero_table_t __zero_table_start__;
+ 149:Drivers/CMSIS/Include/cmsis_gcc.h ****   extern const __zero_table_t __zero_table_end__;
+ 150:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 151:Drivers/CMSIS/Include/cmsis_gcc.h ****   for (__copy_table_t const* pTable = &__copy_table_start__; pTable < &__copy_table_end__; ++pTable
+ 152:Drivers/CMSIS/Include/cmsis_gcc.h ****     for(uint32_t i=0u; i<pTable->wlen; ++i) {
+ 153:Drivers/CMSIS/Include/cmsis_gcc.h ****       pTable->dest[i] = pTable->src[i];
+ 154:Drivers/CMSIS/Include/cmsis_gcc.h ****     }
+ 155:Drivers/CMSIS/Include/cmsis_gcc.h ****   }
+ 156:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 157:Drivers/CMSIS/Include/cmsis_gcc.h ****   for (__zero_table_t const* pTable = &__zero_table_start__; pTable < &__zero_table_end__; ++pTable
+ 158:Drivers/CMSIS/Include/cmsis_gcc.h ****     for(uint32_t i=0u; i<pTable->wlen; ++i) {
+ 159:Drivers/CMSIS/Include/cmsis_gcc.h ****       pTable->dest[i] = 0u;
+ 160:Drivers/CMSIS/Include/cmsis_gcc.h ****     }
+ 161:Drivers/CMSIS/Include/cmsis_gcc.h ****   }
+ 162:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 163:Drivers/CMSIS/Include/cmsis_gcc.h ****   _start();
+ 164:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 165:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 166:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __PROGRAM_START           __cmsis_start
+ 167:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 168:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 169:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __INITIAL_SP
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s 			page 7
+
+
+ 170:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __INITIAL_SP              __StackTop
+ 171:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 172:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 173:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __STACK_LIMIT
+ 174:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __STACK_LIMIT             __StackLimit
+ 175:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 176:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 177:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __VECTOR_TABLE
+ 178:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __VECTOR_TABLE            __Vectors
+ 179:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 180:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 181:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __VECTOR_TABLE_ATTRIBUTE
+ 182:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __VECTOR_TABLE_ATTRIBUTE  __attribute__((used, section(".vectors")))
+ 183:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 184:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 185:Drivers/CMSIS/Include/cmsis_gcc.h **** #if defined (__ARM_FEATURE_CMSE) && (__ARM_FEATURE_CMSE == 3U)
+ 186:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __STACK_SEAL
+ 187:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __STACK_SEAL              __StackSeal
+ 188:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 189:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 190:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __TZ_STACK_SEAL_SIZE
+ 191:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __TZ_STACK_SEAL_SIZE      8U
+ 192:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 193:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 194:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __TZ_STACK_SEAL_VALUE
+ 195:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __TZ_STACK_SEAL_VALUE     0xFEF5EDA5FEF5EDA5ULL
+ 196:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 197:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 198:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 199:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __TZ_set_STACKSEAL_S (uint32_t* stackTop) {
+ 200:Drivers/CMSIS/Include/cmsis_gcc.h ****   *((uint64_t *)stackTop) = __TZ_STACK_SEAL_VALUE;
+ 201:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 202:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 203:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 204:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 205:Drivers/CMSIS/Include/cmsis_gcc.h **** /* ##########################  Core Instruction Access  ######################### */
+ 206:Drivers/CMSIS/Include/cmsis_gcc.h **** /** \defgroup CMSIS_Core_InstructionInterface CMSIS Core Instruction Interface
+ 207:Drivers/CMSIS/Include/cmsis_gcc.h ****   Access to dedicated instructions
+ 208:Drivers/CMSIS/Include/cmsis_gcc.h ****   @{
+ 209:Drivers/CMSIS/Include/cmsis_gcc.h **** */
+ 210:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 211:Drivers/CMSIS/Include/cmsis_gcc.h **** /* Define macros for porting to both thumb1 and thumb2.
+ 212:Drivers/CMSIS/Include/cmsis_gcc.h ****  * For thumb1, use low register (r0-r7), specified by constraint "l"
+ 213:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Otherwise, use general registers, specified by constraint "r" */
+ 214:Drivers/CMSIS/Include/cmsis_gcc.h **** #if defined (__thumb__) && !defined (__thumb2__)
+ 215:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_OUT_REG(r) "=l" (r)
+ 216:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_RW_REG(r) "+l" (r)
+ 217:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_USE_REG(r) "l" (r)
+ 218:Drivers/CMSIS/Include/cmsis_gcc.h **** #else
+ 219:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_OUT_REG(r) "=r" (r)
+ 220:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_RW_REG(r) "+r" (r)
+ 221:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_USE_REG(r) "r" (r)
+ 222:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 223:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 224:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 225:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   No Operation
+ 226:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details No Operation does nothing. This instruction can be used for code alignment purposes.
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s 			page 8
+
+
+ 227:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 228:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __NOP()                             __ASM volatile ("nop")
+ 229:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 230:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 231:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Wait For Interrupt
+ 232:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Wait For Interrupt is a hint instruction that suspends execution until one of a number o
+ 233:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 234:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __WFI()                             __ASM volatile ("wfi":::"memory")
+ 235:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 236:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 237:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 238:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Wait For Event
+ 239:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Wait For Event is a hint instruction that permits the processor to enter
+ 240:Drivers/CMSIS/Include/cmsis_gcc.h ****            a low-power state until one of a number of events occurs.
+ 241:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 242:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __WFE()                             __ASM volatile ("wfe":::"memory")
+ 243:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 244:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 245:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 246:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Send Event
+ 247:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Send Event is a hint instruction. It causes an event to be signaled to the CPU.
+ 248:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 249:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __SEV()                             __ASM volatile ("sev")
+ 250:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 251:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 252:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 253:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Instruction Synchronization Barrier
+ 254:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Instruction Synchronization Barrier flushes the pipeline in the processor,
+ 255:Drivers/CMSIS/Include/cmsis_gcc.h ****            so that all instructions following the ISB are fetched from cache or memory,
+ 256:Drivers/CMSIS/Include/cmsis_gcc.h ****            after the instruction has been completed.
+ 257:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 258:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __ISB(void)
+ 259:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 260:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("isb 0xF":::"memory");
+ 261:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 262:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 263:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 264:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 265:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Data Synchronization Barrier
+ 266:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Acts as a special kind of Data Memory Barrier.
+ 267:Drivers/CMSIS/Include/cmsis_gcc.h ****            It completes when all explicit memory accesses before this instruction complete.
+ 268:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 269:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __DSB(void)
+ 270:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 271:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("dsb 0xF":::"memory");
+ 272:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 273:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 274:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 275:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 276:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Data Memory Barrier
+ 277:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Ensures the apparent order of the explicit memory operations before
+ 278:Drivers/CMSIS/Include/cmsis_gcc.h ****            and after the instruction, without ensuring their completion.
+ 279:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 280:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __DMB(void)
+ 111              		.loc 2 280 27 view .LVU31
+ 112              	.LBB16:
+ 281:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s 			page 9
+
+
+ 282:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("dmb 0xF":::"memory");
+ 113              		.loc 2 282 3 view .LVU32
+ 114              		.syntax unified
+ 115              	@ 282 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 116 004e BFF35F8F 		dmb 0xF
+ 117              	@ 0 "" 2
+ 118              		.thumb
+ 119              		.syntax unified
+ 120              	.LBE16:
+ 121              	.LBE15:
+  58:Sdrive/foc_wave.c ****     return HAL_OK;
+ 122              		.loc 1 58 5 view .LVU33
+  58:Sdrive/foc_wave.c ****     return HAL_OK;
+ 123              		.loc 1 58 20 is_stmt 0 view .LVU34
+ 124 0052 044B     		ldr	r3, .L7
+ 125 0054 0122     		movs	r2, #1
+ 126 0056 1A70     		strb	r2, [r3]
+  59:Sdrive/foc_wave.c **** }
+ 127              		.loc 1 59 5 is_stmt 1 view .LVU35
+  59:Sdrive/foc_wave.c **** }
+ 128              		.loc 1 59 12 is_stmt 0 view .LVU36
+ 129 0058 F5E7     		b	.L3
+ 130              	.L6:
+  54:Sdrive/foc_wave.c ****         return HAL_BUSY;
+ 131              		.loc 1 54 9 is_stmt 1 view .LVU37
+  54:Sdrive/foc_wave.c ****         return HAL_BUSY;
+ 132              		.loc 1 54 22 is_stmt 0 view .LVU38
+ 133 005a 0220     		movs	r0, #2
+ 134 005c 034B     		ldr	r3, .L7+8
+ 135 005e 1860     		str	r0, [r3]
+  55:Sdrive/foc_wave.c ****     }
+ 136              		.loc 1 55 9 is_stmt 1 view .LVU39
+  55:Sdrive/foc_wave.c ****     }
+ 137              		.loc 1 55 16 is_stmt 0 view .LVU40
+ 138 0060 F1E7     		b	.L3
+ 139              	.L8:
+ 140 0062 00BF     		.align	2
+ 141              	.L7:
+ 142 0064 00000000 		.word	FocWaveEnabled
+ 143 0068 00000000 		.word	FocWaveView
+ 144 006c 00000000 		.word	FocWaveFault
+ 145 0070 00000000 		.word	capture_clock
+ 146 0074 00000000 		.word	read_pos
+ 147 0078 00000000 		.word	write_pos
+ 148 007c 00000000 		.word	tx_frames
+ 149 0080 00000000 		.word	FocWaveTxErrors
+ 150 0084 00000000 		.word	FocWaveTxDropped
+ 151 0088 00000000 		.word	FocWaveDropped
+ 152 008c 00000000 		.word	FocWaveSent
+ 153 0090 00000000 		.word	FocWaveSamples
+ 154 0094 00000000 		.word	huart1
+ 155 0098 00A86100 		.word	6400000
+ 156              		.cfi_endproc
+ 157              	.LFE272:
+ 159              		.section	.text.FocWaveCapture,"ax",%progbits
+ 160              		.align	1
+ 161              		.global	FocWaveCapture
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s 			page 10
+
+
+ 162              		.syntax unified
+ 163              		.thumb
+ 164              		.thumb_func
+ 166              	FocWaveCapture:
+ 167              	.LVL2:
+ 168              	.LFB273:
+  61:Sdrive/foc_wave.c **** 
+  62:Sdrive/foc_wave.c **** void FocWaveCapture(float iu, float iv, float iw)
+  63:Sdrive/foc_wave.c **** {
+ 169              		.loc 1 63 1 is_stmt 1 view -0
+ 170              		.cfi_startproc
+ 171              		@ args = 0, pretend = 0, frame = 0
+ 172              		@ frame_needed = 0, uses_anonymous_args = 0
+ 173              		@ link register save eliminated.
+  64:Sdrive/foc_wave.c ****     if (FocWaveEnabled == 0U)
+ 174              		.loc 1 64 5 view .LVU42
+ 175              		.loc 1 64 24 is_stmt 0 view .LVU43
+ 176 0000 2D4B     		ldr	r3, .L20
+ 177 0002 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 178              		.loc 1 64 8 view .LVU44
+ 179 0004 1BB3     		cbz	r3, .L18
+  65:Sdrive/foc_wave.c ****     {
+  66:Sdrive/foc_wave.c ****         capture_clock = 0U;
+  67:Sdrive/foc_wave.c ****         return;
+  68:Sdrive/foc_wave.c ****     }
+  69:Sdrive/foc_wave.c ****     if (++capture_clock < FOC_WAVE_DIVIDER)
+ 180              		.loc 1 69 5 is_stmt 1 view .LVU45
+ 181              		.loc 1 69 9 is_stmt 0 view .LVU46
+ 182 0006 2D4A     		ldr	r2, .L20+4
+ 183 0008 1368     		ldr	r3, [r2]
+ 184 000a 0133     		adds	r3, r3, #1
+ 185              		.loc 1 69 8 view .LVU47
+ 186 000c 1360     		str	r3, [r2]
+ 187 000e 042B     		cmp	r3, #4
+ 188 0010 43D9     		bls	.L9
+  70:Sdrive/foc_wave.c ****         return;
+  71:Sdrive/foc_wave.c ****     capture_clock = 0U;
+ 189              		.loc 1 71 5 is_stmt 1 view .LVU48
+ 190              		.loc 1 71 19 is_stmt 0 view .LVU49
+ 191 0012 1346     		mov	r3, r2
+ 192 0014 0022     		movs	r2, #0
+ 193 0016 1A60     		str	r2, [r3]
+  72:Sdrive/foc_wave.c **** 
+  73:Sdrive/foc_wave.c ****     const uint32_t pos = write_pos;
+ 194              		.loc 1 73 5 is_stmt 1 view .LVU50
+ 195              		.loc 1 73 20 is_stmt 0 view .LVU51
+ 196 0018 294B     		ldr	r3, .L20+8
+ 197 001a 1B68     		ldr	r3, [r3]
+ 198              	.LVL3:
+  74:Sdrive/foc_wave.c ****     const uint32_t consumed = read_pos;
+ 199              		.loc 1 74 5 is_stmt 1 view .LVU52
+ 200              		.loc 1 74 20 is_stmt 0 view .LVU53
+ 201 001c 294A     		ldr	r2, .L20+12
+ 202 001e 1268     		ldr	r2, [r2]
+ 203              	.LVL4:
+  75:Sdrive/foc_wave.c ****     __DMB();
+ 204              		.loc 1 75 5 is_stmt 1 view .LVU54
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s 			page 11
+
+
+ 205              	.LBB17:
+ 206              	.LBI17:
+ 280:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 207              		.loc 2 280 27 view .LVU55
+ 208              	.LBB18:
+ 209              		.loc 2 282 3 view .LVU56
+ 210              		.syntax unified
+ 211              	@ 282 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 212 0020 BFF35F8F 		dmb 0xF
+ 213              	@ 0 "" 2
+ 214              		.thumb
+ 215              		.syntax unified
+ 216              	.LBE18:
+ 217              	.LBE17:
+  76:Sdrive/foc_wave.c ****     if ((uint32_t)(pos - consumed) >= FOC_WAVE_BUFFER_FRAMES)
+ 218              		.loc 1 76 5 view .LVU57
+ 219              		.loc 1 76 24 is_stmt 0 view .LVU58
+ 220 0024 9A1A     		subs	r2, r3, r2
+ 221              	.LVL5:
+ 222              		.loc 1 76 8 view .LVU59
+ 223 0026 7F2A     		cmp	r2, #127
+ 224 0028 15D8     		bhi	.L19
+  77:Sdrive/foc_wave.c ****     {
+  78:Sdrive/foc_wave.c ****         ++FocWaveDropped; /* 绝不等待串口，也不覆盖 DMA 尚未发送完的数据。 */
+  79:Sdrive/foc_wave.c ****         return;
+  80:Sdrive/foc_wave.c ****     }
+  81:Sdrive/foc_wave.c ****     FOC_WAVE_FRAME *frame = &frames[pos & (FOC_WAVE_BUFFER_FRAMES - 1U)];
+ 225              		.loc 1 81 5 is_stmt 1 view .LVU60
+ 226              		.loc 1 81 41 is_stmt 0 view .LVU61
+ 227 002a 03F07F01 		and	r1, r3, #127
+ 228              	.LVL6:
+  82:Sdrive/foc_wave.c ****     switch (FocWaveView)
+ 229              		.loc 1 82 5 is_stmt 1 view .LVU62
+ 230 002e 264A     		ldr	r2, .L20+16
+ 231 0030 1268     		ldr	r2, [r2]
+ 232 0032 012A     		cmp	r2, #1
+ 233 0034 14D0     		beq	.L13
+ 234 0036 022A     		cmp	r2, #2
+ 235 0038 30D0     		beq	.L14
+  83:Sdrive/foc_wave.c ****     {
+  84:Sdrive/foc_wave.c ****     case FOC_WAVE_VIEW_FILTERED:
+  85:Sdrive/foc_wave.c ****         frame->channels[0] = AdcFilPara.CurU;
+  86:Sdrive/foc_wave.c ****         frame->channels[1] = AdcFilPara.CurV;
+  87:Sdrive/foc_wave.c ****         frame->channels[2] = AdcFilPara.CurW;
+  88:Sdrive/foc_wave.c ****         break;
+  89:Sdrive/foc_wave.c ****     case FOC_WAVE_VIEW_DQ_SPEED:
+  90:Sdrive/foc_wave.c ****         frame->channels[0] = Park.Ds;
+  91:Sdrive/foc_wave.c ****         frame->channels[1] = Park.Qs;
+  92:Sdrive/foc_wave.c ****         frame->channels[2] = Motor.speed_M_rpm;
+  93:Sdrive/foc_wave.c ****         break;
+  94:Sdrive/foc_wave.c ****     default:
+  95:Sdrive/foc_wave.c ****         frame->channels[0] = iu;
+ 236              		.loc 1 95 9 view .LVU63
+ 237              		.loc 1 95 28 is_stmt 0 view .LVU64
+ 238 003a 244A     		ldr	r2, .L20+20
+ 239 003c 02EB0112 		add	r2, r2, r1, lsl #4
+ 240              	.LVL7:
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s 			page 12
+
+
+ 241              		.loc 1 95 28 view .LVU65
+ 242 0040 82ED000A 		vstr.32	s0, [r2]
+  96:Sdrive/foc_wave.c ****         frame->channels[1] = iv;
+ 243              		.loc 1 96 9 is_stmt 1 view .LVU66
+ 244              		.loc 1 96 28 is_stmt 0 view .LVU67
+ 245 0044 C2ED010A 		vstr.32	s1, [r2, #4]
+  97:Sdrive/foc_wave.c ****         frame->channels[2] = iw;
+ 246              		.loc 1 97 9 is_stmt 1 view .LVU68
+ 247              		.loc 1 97 28 is_stmt 0 view .LVU69
+ 248 0048 82ED021A 		vstr.32	s2, [r2, #8]
+  98:Sdrive/foc_wave.c ****         break;
+ 249              		.loc 1 98 9 is_stmt 1 view .LVU70
+ 250 004c 16E0     		b	.L16
+ 251              	.LVL8:
+ 252              	.L18:
+  66:Sdrive/foc_wave.c ****         return;
+ 253              		.loc 1 66 9 view .LVU71
+  66:Sdrive/foc_wave.c ****         return;
+ 254              		.loc 1 66 23 is_stmt 0 view .LVU72
+ 255 004e 1B4B     		ldr	r3, .L20+4
+ 256 0050 0022     		movs	r2, #0
+ 257 0052 1A60     		str	r2, [r3]
+  67:Sdrive/foc_wave.c ****     }
+ 258              		.loc 1 67 9 is_stmt 1 view .LVU73
+ 259 0054 7047     		bx	lr
+ 260              	.LVL9:
+ 261              	.L19:
+  78:Sdrive/foc_wave.c ****         return;
+ 262              		.loc 1 78 9 view .LVU74
+ 263 0056 1E4A     		ldr	r2, .L20+24
+ 264 0058 1368     		ldr	r3, [r2]
+ 265              	.LVL10:
+  78:Sdrive/foc_wave.c ****         return;
+ 266              		.loc 1 78 9 is_stmt 0 view .LVU75
+ 267 005a 0133     		adds	r3, r3, #1
+ 268 005c 1360     		str	r3, [r2]
+  79:Sdrive/foc_wave.c ****     }
+ 269              		.loc 1 79 9 is_stmt 1 view .LVU76
+ 270 005e 7047     		bx	lr
+ 271              	.LVL11:
+ 272              	.L13:
+  85:Sdrive/foc_wave.c ****         frame->channels[1] = AdcFilPara.CurV;
+ 273              		.loc 1 85 9 view .LVU77
+  85:Sdrive/foc_wave.c ****         frame->channels[1] = AdcFilPara.CurV;
+ 274              		.loc 1 85 40 is_stmt 0 view .LVU78
+ 275 0060 1C48     		ldr	r0, .L20+28
+ 276 0062 D0F808C0 		ldr	ip, [r0, #8]	@ float
+  85:Sdrive/foc_wave.c ****         frame->channels[1] = AdcFilPara.CurV;
+ 277              		.loc 1 85 28 view .LVU79
+ 278 0066 194A     		ldr	r2, .L20+20
+ 279 0068 02EB0112 		add	r2, r2, r1, lsl #4
+ 280 006c C2F800C0 		str	ip, [r2]	@ float
+  86:Sdrive/foc_wave.c ****         frame->channels[2] = AdcFilPara.CurW;
+ 281              		.loc 1 86 9 is_stmt 1 view .LVU80
+  86:Sdrive/foc_wave.c ****         frame->channels[2] = AdcFilPara.CurW;
+ 282              		.loc 1 86 40 is_stmt 0 view .LVU81
+ 283 0070 D0F80CC0 		ldr	ip, [r0, #12]	@ float
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s 			page 13
+
+
+  86:Sdrive/foc_wave.c ****         frame->channels[2] = AdcFilPara.CurW;
+ 284              		.loc 1 86 28 view .LVU82
+ 285 0074 C2F804C0 		str	ip, [r2, #4]	@ float
+  87:Sdrive/foc_wave.c ****         break;
+ 286              		.loc 1 87 9 is_stmt 1 view .LVU83
+  87:Sdrive/foc_wave.c ****         break;
+ 287              		.loc 1 87 40 is_stmt 0 view .LVU84
+ 288 0078 0069     		ldr	r0, [r0, #16]	@ float
+  87:Sdrive/foc_wave.c ****         break;
+ 289              		.loc 1 87 28 view .LVU85
+ 290 007a 9060     		str	r0, [r2, #8]	@ float
+  88:Sdrive/foc_wave.c ****     case FOC_WAVE_VIEW_DQ_SPEED:
+ 291              		.loc 1 88 9 is_stmt 1 view .LVU86
+ 292              	.L16:
+  99:Sdrive/foc_wave.c ****     }
+ 100:Sdrive/foc_wave.c ****     frame->tail = 0x7F800000U; /* STM32 小端字节序：00 00 80 7F。 */
+ 293              		.loc 1 100 5 view .LVU87
+ 294              		.loc 1 100 17 is_stmt 0 view .LVU88
+ 295 007c 134A     		ldr	r2, .L20+20
+ 296 007e 02EB0112 		add	r2, r2, r1, lsl #4
+ 297 0082 4FF0FF41 		mov	r1, #2139095040
+ 298              	.LVL12:
+ 299              		.loc 1 100 17 view .LVU89
+ 300 0086 D160     		str	r1, [r2, #12]
+ 101:Sdrive/foc_wave.c ****     ++FocWaveSamples;
+ 301              		.loc 1 101 5 is_stmt 1 view .LVU90
+ 302 0088 1349     		ldr	r1, .L20+32
+ 303 008a 0A68     		ldr	r2, [r1]
+ 304 008c 0132     		adds	r2, r2, #1
+ 305 008e 0A60     		str	r2, [r1]
+ 102:Sdrive/foc_wave.c ****     __DMB();
+ 306              		.loc 1 102 5 view .LVU91
+ 307              	.LBB19:
+ 308              	.LBI19:
+ 280:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 309              		.loc 2 280 27 view .LVU92
+ 310              	.LBB20:
+ 311              		.loc 2 282 3 view .LVU93
+ 312              		.syntax unified
+ 313              	@ 282 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 314 0090 BFF35F8F 		dmb 0xF
+ 315              	@ 0 "" 2
+ 316              		.thumb
+ 317              		.syntax unified
+ 318              	.LBE20:
+ 319              	.LBE19:
+ 103:Sdrive/foc_wave.c ****     write_pos = pos + 1U;
+ 320              		.loc 1 103 5 view .LVU94
+ 321              		.loc 1 103 21 is_stmt 0 view .LVU95
+ 322 0094 0133     		adds	r3, r3, #1
+ 323              	.LVL13:
+ 324              		.loc 1 103 15 view .LVU96
+ 325 0096 0A4A     		ldr	r2, .L20+8
+ 326 0098 1360     		str	r3, [r2]
+ 327              	.LVL14:
+ 328              	.L9:
+ 104:Sdrive/foc_wave.c **** }
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s 			page 14
+
+
+ 329              		.loc 1 104 1 view .LVU97
+ 330 009a 7047     		bx	lr
+ 331              	.LVL15:
+ 332              	.L14:
+  90:Sdrive/foc_wave.c ****         frame->channels[1] = Park.Qs;
+ 333              		.loc 1 90 9 is_stmt 1 view .LVU98
+  90:Sdrive/foc_wave.c ****         frame->channels[1] = Park.Qs;
+ 334              		.loc 1 90 34 is_stmt 0 view .LVU99
+ 335 009c 0F48     		ldr	r0, .L20+36
+ 336 009e D0F80CC0 		ldr	ip, [r0, #12]	@ float
+  90:Sdrive/foc_wave.c ****         frame->channels[1] = Park.Qs;
+ 337              		.loc 1 90 28 view .LVU100
+ 338 00a2 0A4A     		ldr	r2, .L20+20
+ 339 00a4 02EB0112 		add	r2, r2, r1, lsl #4
+ 340 00a8 C2F800C0 		str	ip, [r2]	@ float
+  91:Sdrive/foc_wave.c ****         frame->channels[2] = Motor.speed_M_rpm;
+ 341              		.loc 1 91 9 is_stmt 1 view .LVU101
+  91:Sdrive/foc_wave.c ****         frame->channels[2] = Motor.speed_M_rpm;
+ 342              		.loc 1 91 34 is_stmt 0 view .LVU102
+ 343 00ac 0069     		ldr	r0, [r0, #16]	@ float
+  91:Sdrive/foc_wave.c ****         frame->channels[2] = Motor.speed_M_rpm;
+ 344              		.loc 1 91 28 view .LVU103
+ 345 00ae 5060     		str	r0, [r2, #4]	@ float
+  92:Sdrive/foc_wave.c ****         break;
+ 346              		.loc 1 92 9 is_stmt 1 view .LVU104
+  92:Sdrive/foc_wave.c ****         break;
+ 347              		.loc 1 92 35 is_stmt 0 view .LVU105
+ 348 00b0 0B48     		ldr	r0, .L20+40
+ 349 00b2 8068     		ldr	r0, [r0, #8]	@ float
+  92:Sdrive/foc_wave.c ****         break;
+ 350              		.loc 1 92 28 view .LVU106
+ 351 00b4 9060     		str	r0, [r2, #8]	@ float
+  93:Sdrive/foc_wave.c ****     default:
+ 352              		.loc 1 93 9 is_stmt 1 view .LVU107
+ 353 00b6 E1E7     		b	.L16
+ 354              	.L21:
+ 355              		.align	2
+ 356              	.L20:
+ 357 00b8 00000000 		.word	FocWaveEnabled
+ 358 00bc 00000000 		.word	capture_clock
+ 359 00c0 00000000 		.word	write_pos
+ 360 00c4 00000000 		.word	read_pos
+ 361 00c8 00000000 		.word	FocWaveView
+ 362 00cc 00000000 		.word	frames
+ 363 00d0 00000000 		.word	FocWaveDropped
+ 364 00d4 00000000 		.word	AdcFilPara
+ 365 00d8 00000000 		.word	FocWaveSamples
+ 366 00dc 00000000 		.word	Park
+ 367 00e0 00000000 		.word	Motor
+ 368              		.cfi_endproc
+ 369              	.LFE273:
+ 371              		.section	.text.FocWaveService,"ax",%progbits
+ 372              		.align	1
+ 373              		.global	FocWaveService
+ 374              		.syntax unified
+ 375              		.thumb
+ 376              		.thumb_func
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s 			page 15
+
+
+ 378              	FocWaveService:
+ 379              	.LFB274:
+ 105:Sdrive/foc_wave.c **** 
+ 106:Sdrive/foc_wave.c **** void FocWaveService(void)
+ 107:Sdrive/foc_wave.c **** {
+ 380              		.loc 1 107 1 view -0
+ 381              		.cfi_startproc
+ 382              		@ args = 0, pretend = 0, frame = 0
+ 383              		@ frame_needed = 0, uses_anonymous_args = 0
+ 108:Sdrive/foc_wave.c ****     if (FocWaveFault != 0U)
+ 384              		.loc 1 108 5 view .LVU109
+ 385              		.loc 1 108 22 is_stmt 0 view .LVU110
+ 386 0000 314B     		ldr	r3, .L38
+ 387 0002 1B68     		ldr	r3, [r3]
+ 388              		.loc 1 108 8 view .LVU111
+ 389 0004 002B     		cmp	r3, #0
+ 390 0006 5DD1     		bne	.L33
+ 107:Sdrive/foc_wave.c ****     if (FocWaveFault != 0U)
+ 391              		.loc 1 107 1 view .LVU112
+ 392 0008 70B5     		push	{r4, r5, r6, lr}
+ 393              	.LCFI1:
+ 394              		.cfi_def_cfa_offset 16
+ 395              		.cfi_offset 4, -16
+ 396              		.cfi_offset 5, -12
+ 397              		.cfi_offset 6, -8
+ 398              		.cfi_offset 14, -4
+ 109:Sdrive/foc_wave.c ****         return;
+ 110:Sdrive/foc_wave.c ****     if (tx_frames != 0U)
+ 399              		.loc 1 110 5 is_stmt 1 view .LVU113
+ 400              		.loc 1 110 19 is_stmt 0 view .LVU114
+ 401 000a 304B     		ldr	r3, .L38+4
+ 402 000c 1B88     		ldrh	r3, [r3]
+ 403              		.loc 1 110 8 view .LVU115
+ 404 000e 2BBB     		cbnz	r3, .L36
+ 405              	.L24:
+ 111:Sdrive/foc_wave.c ****     {
+ 112:Sdrive/foc_wave.c ****         const UART1_STREAM_STATE state = uart1_stream_state();
+ 113:Sdrive/foc_wave.c ****         if (state == UART1_STREAM_BUSY || state == UART1_STREAM_ABORTING)
+ 114:Sdrive/foc_wave.c ****             return;
+ 115:Sdrive/foc_wave.c ****         if (state == UART1_STREAM_DONE)
+ 116:Sdrive/foc_wave.c ****             FocWaveSent += tx_frames;
+ 117:Sdrive/foc_wave.c ****         else
+ 118:Sdrive/foc_wave.c ****         {
+ 119:Sdrive/foc_wave.c ****             /* 此块可能已部分到达上位机；按整块丢失统计，不重发旧电流。
+ 120:Sdrive/foc_wave.c ****             FocWaveTxDropped += tx_frames;
+ 121:Sdrive/foc_wave.c ****             ++FocWaveTxErrors;
+ 122:Sdrive/foc_wave.c ****         }
+ 123:Sdrive/foc_wave.c ****         __DMB();
+ 124:Sdrive/foc_wave.c ****         read_pos += tx_frames; /* 完成/中止确认之后，生产者才能复用这块 SRAM。 *
+ 125:Sdrive/foc_wave.c ****         tx_frames = 0U;
+ 126:Sdrive/foc_wave.c ****     }
+ 127:Sdrive/foc_wave.c **** 
+ 128:Sdrive/foc_wave.c ****     const uint32_t pos = read_pos;
+ 406              		.loc 1 128 5 is_stmt 1 view .LVU116
+ 407              		.loc 1 128 20 is_stmt 0 view .LVU117
+ 408 0010 2F4B     		ldr	r3, .L38+8
+ 409 0012 1C68     		ldr	r4, [r3]
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s 			page 16
+
+
+ 410              	.LVL16:
+ 129:Sdrive/foc_wave.c ****     const uint32_t produced = write_pos;
+ 411              		.loc 1 129 5 is_stmt 1 view .LVU118
+ 412              		.loc 1 129 20 is_stmt 0 view .LVU119
+ 413 0014 2F4B     		ldr	r3, .L38+12
+ 414 0016 1B68     		ldr	r3, [r3]
+ 415              	.LVL17:
+ 130:Sdrive/foc_wave.c ****     __DMB();
+ 416              		.loc 1 130 5 is_stmt 1 view .LVU120
+ 417              	.LBB21:
+ 418              	.LBI21:
+ 280:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 419              		.loc 2 280 27 view .LVU121
+ 420              	.LBB22:
+ 421              		.loc 2 282 3 view .LVU122
+ 422              		.syntax unified
+ 423              	@ 282 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 424 0018 BFF35F8F 		dmb 0xF
+ 425              	@ 0 "" 2
+ 426              		.thumb
+ 427              		.syntax unified
+ 428              	.LBE22:
+ 429              	.LBE21:
+ 131:Sdrive/foc_wave.c ****     uint32_t count = produced - pos;
+ 430              		.loc 1 131 5 view .LVU123
+ 431              	.LVL18:
+ 132:Sdrive/foc_wave.c ****     if (count == 0U || (count < FOC_WAVE_BATCH_FRAMES && Init_Over && FocWaveEnabled != 0U))
+ 432              		.loc 1 132 5 view .LVU124
+ 433              		.loc 1 132 8 is_stmt 0 view .LVU125
+ 434 001c 1B1B     		subs	r3, r3, r4
+ 435              	.LVL19:
+ 436              		.loc 1 132 8 view .LVU126
+ 437 001e 1CD0     		beq	.L22
+ 438              		.loc 1 132 21 discriminator 1 view .LVU127
+ 439 0020 0F2B     		cmp	r3, #15
+ 440 0022 05D8     		bhi	.L27
+ 441              		.loc 1 132 55 discriminator 2 view .LVU128
+ 442 0024 2C4A     		ldr	r2, .L38+16
+ 443 0026 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+ 444 0028 12B1     		cbz	r2, .L27
+ 445              		.loc 1 132 86 discriminator 3 view .LVU129
+ 446 002a 2C4A     		ldr	r2, .L38+20
+ 447 002c 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+ 448              		.loc 1 132 68 discriminator 3 view .LVU130
+ 449 002e A2B9     		cbnz	r2, .L22
+ 450              	.L27:
+ 133:Sdrive/foc_wave.c ****         return;
+ 134:Sdrive/foc_wave.c ****     if (count > FOC_WAVE_BATCH_FRAMES)
+ 451              		.loc 1 134 5 is_stmt 1 view .LVU131
+ 452              		.loc 1 134 8 is_stmt 0 view .LVU132
+ 453 0030 102B     		cmp	r3, #16
+ 454 0032 00D9     		bls	.L28
+ 135:Sdrive/foc_wave.c ****         count = FOC_WAVE_BATCH_FRAMES;
+ 455              		.loc 1 135 15 view .LVU133
+ 456 0034 1023     		movs	r3, #16
+ 457              	.LVL20:
+ 458              	.L28:
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s 			page 17
+
+
+ 136:Sdrive/foc_wave.c ****     const uint32_t index = pos & (FOC_WAVE_BUFFER_FRAMES - 1U);
+ 459              		.loc 1 136 5 is_stmt 1 view .LVU134
+ 460              		.loc 1 136 20 is_stmt 0 view .LVU135
+ 461 0036 04F07F02 		and	r2, r4, #127
+ 462              	.LVL21:
+ 137:Sdrive/foc_wave.c ****     const uint32_t contiguous = FOC_WAVE_BUFFER_FRAMES - index;
+ 463              		.loc 1 137 5 is_stmt 1 view .LVU136
+ 464              		.loc 1 137 20 is_stmt 0 view .LVU137
+ 465 003a C2F18005 		rsb	r5, r2, #128
+ 466              	.LVL22:
+ 138:Sdrive/foc_wave.c ****     if (count > contiguous)
+ 467              		.loc 1 138 5 is_stmt 1 view .LVU138
+ 468              		.loc 1 138 8 is_stmt 0 view .LVU139
+ 469 003e AB42     		cmp	r3, r5
+ 470 0040 00D8     		bhi	.L29
+ 471 0042 1D46     		mov	r5, r3
+ 472              	.LVL23:
+ 473              	.L29:
+ 139:Sdrive/foc_wave.c ****         count = contiguous;
+ 140:Sdrive/foc_wave.c **** 
+ 141:Sdrive/foc_wave.c ****     const HAL_StatusTypeDef status = uart1_stream_send((const uint8_t *)&frames[index],
+ 474              		.loc 1 141 5 is_stmt 1 view .LVU140
+ 475              		.loc 1 141 38 is_stmt 0 view .LVU141
+ 476 0044 AEB2     		uxth	r6, r5
+ 142:Sdrive/foc_wave.c ****                                                        (uint16_t)(count * sizeof(FOC_WAVE_FRAME)));
+ 477              		.loc 1 142 56 view .LVU142
+ 478 0046 3101     		lsls	r1, r6, #4
+ 479 0048 89B2     		uxth	r1, r1
+ 141:Sdrive/foc_wave.c ****                                                        (uint16_t)(count * sizeof(FOC_WAVE_FRAME)));
+ 480              		.loc 1 141 38 view .LVU143
+ 481 004a 2548     		ldr	r0, .L38+24
+ 482 004c 00EB0210 		add	r0, r0, r2, lsl #4
+ 483 0050 FFF7FEFF 		bl	uart1_stream_send
+ 484              	.LVL24:
+ 143:Sdrive/foc_wave.c ****     if (status == HAL_OK)
+ 485              		.loc 1 143 5 is_stmt 1 view .LVU144
+ 486              		.loc 1 143 8 is_stmt 0 view .LVU145
+ 487 0054 30BB     		cbnz	r0, .L30
+ 144:Sdrive/foc_wave.c ****         tx_frames = (uint16_t)count;
+ 488              		.loc 1 144 9 is_stmt 1 view .LVU146
+ 489              		.loc 1 144 19 is_stmt 0 view .LVU147
+ 490 0056 1D4B     		ldr	r3, .L38+4
+ 491 0058 1E80     		strh	r6, [r3]	@ movhi
+ 492              	.LVL25:
+ 493              	.L22:
+ 145:Sdrive/foc_wave.c ****     else if (status != HAL_BUSY)
+ 146:Sdrive/foc_wave.c ****     {
+ 147:Sdrive/foc_wave.c ****         FocWaveTxDropped += count;
+ 148:Sdrive/foc_wave.c ****         ++FocWaveTxErrors;
+ 149:Sdrive/foc_wave.c ****         __DMB();
+ 150:Sdrive/foc_wave.c ****         read_pos = pos + count;
+ 151:Sdrive/foc_wave.c ****     }
+ 152:Sdrive/foc_wave.c **** }
+ 494              		.loc 1 152 1 view .LVU148
+ 495 005a 70BD     		pop	{r4, r5, r6, pc}
+ 496              	.L36:
+ 497              	.LBB23:
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s 			page 18
+
+
+ 112:Sdrive/foc_wave.c ****         if (state == UART1_STREAM_BUSY || state == UART1_STREAM_ABORTING)
+ 498              		.loc 1 112 9 is_stmt 1 view .LVU149
+ 112:Sdrive/foc_wave.c ****         if (state == UART1_STREAM_BUSY || state == UART1_STREAM_ABORTING)
+ 499              		.loc 1 112 42 is_stmt 0 view .LVU150
+ 500 005c FFF7FEFF 		bl	uart1_stream_state
+ 501              	.LVL26:
+ 113:Sdrive/foc_wave.c ****             return;
+ 502              		.loc 1 113 9 is_stmt 1 view .LVU151
+ 113:Sdrive/foc_wave.c ****             return;
+ 503              		.loc 1 113 12 is_stmt 0 view .LVU152
+ 504 0060 0128     		cmp	r0, #1
+ 505 0062 FAD0     		beq	.L22
+ 113:Sdrive/foc_wave.c ****             return;
+ 506              		.loc 1 113 40 discriminator 1 view .LVU153
+ 507 0064 0328     		cmp	r0, #3
+ 508 0066 F8D0     		beq	.L22
+ 115:Sdrive/foc_wave.c ****             FocWaveSent += tx_frames;
+ 509              		.loc 1 115 9 is_stmt 1 view .LVU154
+ 115:Sdrive/foc_wave.c ****             FocWaveSent += tx_frames;
+ 510              		.loc 1 115 12 is_stmt 0 view .LVU155
+ 511 0068 0228     		cmp	r0, #2
+ 512 006a 14D0     		beq	.L37
+ 120:Sdrive/foc_wave.c ****             ++FocWaveTxErrors;
+ 513              		.loc 1 120 13 is_stmt 1 view .LVU156
+ 120:Sdrive/foc_wave.c ****             ++FocWaveTxErrors;
+ 514              		.loc 1 120 30 is_stmt 0 view .LVU157
+ 515 006c 1D4A     		ldr	r2, .L38+28
+ 516 006e 1168     		ldr	r1, [r2]
+ 517 0070 164B     		ldr	r3, .L38+4
+ 518 0072 1B88     		ldrh	r3, [r3]
+ 519 0074 0B44     		add	r3, r3, r1
+ 520 0076 1360     		str	r3, [r2]
+ 121:Sdrive/foc_wave.c ****         }
+ 521              		.loc 1 121 13 is_stmt 1 view .LVU158
+ 522 0078 1B4A     		ldr	r2, .L38+32
+ 523 007a 1368     		ldr	r3, [r2]
+ 524 007c 0133     		adds	r3, r3, #1
+ 525 007e 1360     		str	r3, [r2]
+ 526              	.L26:
+ 123:Sdrive/foc_wave.c ****         read_pos += tx_frames; /* 完成/中止确认之后，生产者才能复用这块 SRAM。 *
+ 527              		.loc 1 123 9 view .LVU159
+ 528              	.LBB24:
+ 529              	.LBI24:
+ 280:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 530              		.loc 2 280 27 view .LVU160
+ 531              	.LBB25:
+ 532              		.loc 2 282 3 view .LVU161
+ 533              		.syntax unified
+ 534              	@ 282 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 535 0080 BFF35F8F 		dmb 0xF
+ 536              	@ 0 "" 2
+ 537              		.thumb
+ 538              		.syntax unified
+ 539              	.LBE25:
+ 540              	.LBE24:
+ 124:Sdrive/foc_wave.c ****         tx_frames = 0U;
+ 541              		.loc 1 124 9 view .LVU162
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s 			page 19
+
+
+ 124:Sdrive/foc_wave.c ****         tx_frames = 0U;
+ 542              		.loc 1 124 18 is_stmt 0 view .LVU163
+ 543 0084 1249     		ldr	r1, .L38+8
+ 544 0086 0868     		ldr	r0, [r1]
+ 545              	.LVL27:
+ 124:Sdrive/foc_wave.c ****         tx_frames = 0U;
+ 546              		.loc 1 124 18 view .LVU164
+ 547 0088 104A     		ldr	r2, .L38+4
+ 548 008a 1388     		ldrh	r3, [r2]
+ 549 008c 0344     		add	r3, r3, r0
+ 550 008e 0B60     		str	r3, [r1]
+ 125:Sdrive/foc_wave.c ****     }
+ 551              		.loc 1 125 9 is_stmt 1 view .LVU165
+ 125:Sdrive/foc_wave.c ****     }
+ 552              		.loc 1 125 19 is_stmt 0 view .LVU166
+ 553 0090 0023     		movs	r3, #0
+ 554 0092 1380     		strh	r3, [r2]	@ movhi
+ 555 0094 BCE7     		b	.L24
+ 556              	.LVL28:
+ 557              	.L37:
+ 116:Sdrive/foc_wave.c ****         else
+ 558              		.loc 1 116 13 is_stmt 1 view .LVU167
+ 116:Sdrive/foc_wave.c ****         else
+ 559              		.loc 1 116 25 is_stmt 0 view .LVU168
+ 560 0096 154A     		ldr	r2, .L38+36
+ 561 0098 1168     		ldr	r1, [r2]
+ 562 009a 0C4B     		ldr	r3, .L38+4
+ 563 009c 1B88     		ldrh	r3, [r3]
+ 564 009e 0B44     		add	r3, r3, r1
+ 565 00a0 1360     		str	r3, [r2]
+ 566 00a2 EDE7     		b	.L26
+ 567              	.LVL29:
+ 568              	.L30:
+ 116:Sdrive/foc_wave.c ****         else
+ 569              		.loc 1 116 25 view .LVU169
+ 570              	.LBE23:
+ 145:Sdrive/foc_wave.c ****     {
+ 571              		.loc 1 145 10 is_stmt 1 view .LVU170
+ 145:Sdrive/foc_wave.c ****     {
+ 572              		.loc 1 145 13 is_stmt 0 view .LVU171
+ 573 00a4 0228     		cmp	r0, #2
+ 574 00a6 D8D0     		beq	.L22
+ 147:Sdrive/foc_wave.c ****         ++FocWaveTxErrors;
+ 575              		.loc 1 147 9 is_stmt 1 view .LVU172
+ 147:Sdrive/foc_wave.c ****         ++FocWaveTxErrors;
+ 576              		.loc 1 147 26 is_stmt 0 view .LVU173
+ 577 00a8 0E4A     		ldr	r2, .L38+28
+ 578 00aa 1368     		ldr	r3, [r2]
+ 579 00ac 2B44     		add	r3, r3, r5
+ 580 00ae 1360     		str	r3, [r2]
+ 148:Sdrive/foc_wave.c ****         __DMB();
+ 581              		.loc 1 148 9 is_stmt 1 view .LVU174
+ 582 00b0 0D4A     		ldr	r2, .L38+32
+ 583 00b2 1368     		ldr	r3, [r2]
+ 584 00b4 0133     		adds	r3, r3, #1
+ 585 00b6 1360     		str	r3, [r2]
+ 149:Sdrive/foc_wave.c ****         read_pos = pos + count;
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s 			page 20
+
+
+ 586              		.loc 1 149 9 view .LVU175
+ 587              	.LBB26:
+ 588              	.LBI26:
+ 280:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 589              		.loc 2 280 27 view .LVU176
+ 590              	.LBB27:
+ 591              		.loc 2 282 3 view .LVU177
+ 592              		.syntax unified
+ 593              	@ 282 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 594 00b8 BFF35F8F 		dmb 0xF
+ 595              	@ 0 "" 2
+ 596              		.thumb
+ 597              		.syntax unified
+ 598              	.LBE27:
+ 599              	.LBE26:
+ 150:Sdrive/foc_wave.c ****     }
+ 600              		.loc 1 150 9 view .LVU178
+ 150:Sdrive/foc_wave.c ****     }
+ 601              		.loc 1 150 24 is_stmt 0 view .LVU179
+ 602 00bc 2544     		add	r5, r5, r4
+ 603              	.LVL30:
+ 150:Sdrive/foc_wave.c ****     }
+ 604              		.loc 1 150 18 view .LVU180
+ 605 00be 044B     		ldr	r3, .L38+8
+ 606 00c0 1D60     		str	r5, [r3]
+ 607 00c2 CAE7     		b	.L22
+ 608              	.LVL31:
+ 609              	.L33:
+ 610              	.LCFI2:
+ 611              		.cfi_def_cfa_offset 0
+ 612              		.cfi_restore 4
+ 613              		.cfi_restore 5
+ 614              		.cfi_restore 6
+ 615              		.cfi_restore 14
+ 150:Sdrive/foc_wave.c ****     }
+ 616              		.loc 1 150 18 view .LVU181
+ 617 00c4 7047     		bx	lr
+ 618              	.L39:
+ 619 00c6 00BF     		.align	2
+ 620              	.L38:
+ 621 00c8 00000000 		.word	FocWaveFault
+ 622 00cc 00000000 		.word	tx_frames
+ 623 00d0 00000000 		.word	read_pos
+ 624 00d4 00000000 		.word	write_pos
+ 625 00d8 00000000 		.word	Init_Over
+ 626 00dc 00000000 		.word	FocWaveEnabled
+ 627 00e0 00000000 		.word	frames
+ 628 00e4 00000000 		.word	FocWaveTxDropped
+ 629 00e8 00000000 		.word	FocWaveTxErrors
+ 630 00ec 00000000 		.word	FocWaveSent
+ 631              		.cfi_endproc
+ 632              	.LFE274:
+ 634              		.global	FocWaveTxErrors
+ 635              		.section	.bss.FocWaveTxErrors,"aw",%nobits
+ 636              		.align	2
+ 639              	FocWaveTxErrors:
+ 640 0000 00000000 		.space	4
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s 			page 21
+
+
+ 641              		.global	FocWaveTxDropped
+ 642              		.section	.bss.FocWaveTxDropped,"aw",%nobits
+ 643              		.align	2
+ 646              	FocWaveTxDropped:
+ 647 0000 00000000 		.space	4
+ 648              		.global	FocWaveDropped
+ 649              		.section	.bss.FocWaveDropped,"aw",%nobits
+ 650              		.align	2
+ 653              	FocWaveDropped:
+ 654 0000 00000000 		.space	4
+ 655              		.global	FocWaveSent
+ 656              		.section	.bss.FocWaveSent,"aw",%nobits
+ 657              		.align	2
+ 660              	FocWaveSent:
+ 661 0000 00000000 		.space	4
+ 662              		.global	FocWaveSamples
+ 663              		.section	.bss.FocWaveSamples,"aw",%nobits
+ 664              		.align	2
+ 667              	FocWaveSamples:
+ 668 0000 00000000 		.space	4
+ 669              		.global	FocWaveFault
+ 670              		.section	.bss.FocWaveFault,"aw",%nobits
+ 671              		.align	2
+ 674              	FocWaveFault:
+ 675 0000 00000000 		.space	4
+ 676              		.global	FocWaveView
+ 677              		.section	.bss.FocWaveView,"aw",%nobits
+ 678              		.align	2
+ 681              	FocWaveView:
+ 682 0000 00000000 		.space	4
+ 683              		.global	FocWaveEnabled
+ 684              		.section	.bss.FocWaveEnabled,"aw",%nobits
+ 687              	FocWaveEnabled:
+ 688 0000 00       		.space	1
+ 689              		.section	.bss.tx_frames,"aw",%nobits
+ 690              		.align	1
+ 693              	tx_frames:
+ 694 0000 0000     		.space	2
+ 695              		.section	.bss.capture_clock,"aw",%nobits
+ 696              		.align	2
+ 699              	capture_clock:
+ 700 0000 00000000 		.space	4
+ 701              		.section	.bss.read_pos,"aw",%nobits
+ 702              		.align	2
+ 705              	read_pos:
+ 706 0000 00000000 		.space	4
+ 707              		.section	.bss.write_pos,"aw",%nobits
+ 708              		.align	2
+ 711              	write_pos:
+ 712 0000 00000000 		.space	4
+ 713              		.section	.bss.frames,"aw",%nobits
+ 714              		.align	2
+ 717              	frames:
+ 718 0000 00000000 		.space	2048
+ 718      00000000 
+ 718      00000000 
+ 718      00000000 
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s 			page 22
+
+
+ 718      00000000 
+ 719              		.text
+ 720              	.Letext0:
+ 721              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 722              		.file 4 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 723              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 724              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 725              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 726              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h"
+ 727              		.file 9 "Sdrive/foc_wave.h"
+ 728              		.file 10 "Sdrive/adc_drv.h"
+ 729              		.file 11 "App/task.h"
+ 730              		.file 12 "MotorFoc/foc.h"
+ 731              		.file 13 "MotorFoc/motor_ctrl.h"
+ 732              		.file 14 "Core/Inc/usart.h"
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s 			page 23
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 foc_wave.c
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:21     .text.FocWaveInit:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:27     .text.FocWaveInit:00000000 FocWaveInit
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:142    .text.FocWaveInit:00000064 $d
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:687    .bss.FocWaveEnabled:00000000 FocWaveEnabled
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:681    .bss.FocWaveView:00000000 FocWaveView
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:674    .bss.FocWaveFault:00000000 FocWaveFault
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:699    .bss.capture_clock:00000000 capture_clock
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:705    .bss.read_pos:00000000 read_pos
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:711    .bss.write_pos:00000000 write_pos
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:693    .bss.tx_frames:00000000 tx_frames
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:639    .bss.FocWaveTxErrors:00000000 FocWaveTxErrors
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:646    .bss.FocWaveTxDropped:00000000 FocWaveTxDropped
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:653    .bss.FocWaveDropped:00000000 FocWaveDropped
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:660    .bss.FocWaveSent:00000000 FocWaveSent
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:667    .bss.FocWaveSamples:00000000 FocWaveSamples
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:160    .text.FocWaveCapture:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:166    .text.FocWaveCapture:00000000 FocWaveCapture
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:357    .text.FocWaveCapture:000000b8 $d
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:717    .bss.frames:00000000 frames
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:372    .text.FocWaveService:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:378    .text.FocWaveService:00000000 FocWaveService
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:621    .text.FocWaveService:000000c8 $d
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:636    .bss.FocWaveTxErrors:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:643    .bss.FocWaveTxDropped:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:650    .bss.FocWaveDropped:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:657    .bss.FocWaveSent:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:664    .bss.FocWaveSamples:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:671    .bss.FocWaveFault:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:678    .bss.FocWaveView:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:688    .bss.FocWaveEnabled:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:690    .bss.tx_frames:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:696    .bss.capture_clock:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:702    .bss.read_pos:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:708    .bss.write_pos:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccEWoLou.s:714    .bss.frames:00000000 $d
+
+UNDEFINED SYMBOLS
+uart1_stream_enable
+huart1
+AdcFilPara
+Park
+Motor
+uart1_stream_send
+uart1_stream_state
+Init_Over

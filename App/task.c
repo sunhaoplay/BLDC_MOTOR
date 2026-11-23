@@ -9,7 +9,7 @@
 #include "motor_ctrl.h"
 #include "sen.h"
 #include "foc_wave.h"
-
+#include "htmi_app.h"
 /* 无需在线调试的上传诊断：每 500 ms 判断进展，每 4 s 用红灯闪次数报状态。
  * 仅在主循环操作 LED，不向串口插入诊断文本，也不等待发送。
  */
@@ -103,6 +103,7 @@ void task_init(void)
     }
     MotorRun();
     __DMB();
+    Motor.CtrlMode=SPEED_LOOP;
     Init_Over = true;
     __set_PRIMASK(primask);
 }
@@ -122,5 +123,8 @@ void task_loop(void)
     {
         last_led = now;
         ToggleLed(LED_B);
+        // shell_send("%u,%.3f\r\n",TIM3->CNT,Motor.E_theta);
+
     }
+    VrTask();
 }

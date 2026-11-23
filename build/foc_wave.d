@@ -1,4 +1,4 @@
-build/foc_trace.o: Sdrive/foc_trace.c Sdrive/foc_trace.h Core/Inc/main.h \
+build/foc_wave.o: Sdrive/foc_wave.c Sdrive/foc_wave.h Core/Inc/main.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  Core/Inc/stm32f4xx_hal_conf.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
@@ -27,7 +27,7 @@ build/foc_trace.o: Sdrive/foc_trace.c Sdrive/foc_trace.h Core/Inc/main.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
- Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h Sdrive/adc_drv.h \
+ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  MotorFoc/motor_ctrl.h \
  Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h App/task.h \
  Core/Inc/stm32f4xx_it.h Sdrive/led_drv.h Sdrive/tim_drv.h \
@@ -63,7 +63,7 @@ build/foc_trace.o: Sdrive/foc_trace.c Sdrive/foc_trace.h Core/Inc/main.h \
  Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h MotorFoc/foc.h \
  MotorFoc/motor_para.h MotorFoc/pid.h MotorFoc/motor_ctrl.h \
  Core/Inc/usart.h Core/Inc/main.h
-Sdrive/foc_trace.h:
+Sdrive/foc_wave.h:
 Core/Inc/main.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 Core/Inc/stm32f4xx_hal_conf.h:
@@ -96,7 +96,6 @@ Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
-Sdrive/adc_drv.h:
 MotorFoc/motor_ctrl.h:
 Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h:
 App/task.h:

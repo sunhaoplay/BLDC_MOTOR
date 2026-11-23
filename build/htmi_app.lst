@@ -1,0 +1,373 @@
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccJbeP3u.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"htmi_app.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "App/htmi_app.c"
+  20              		.section	.text.VrTask,"ax",%progbits
+  21              		.align	1
+  22              		.global	VrTask
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	VrTask:
+  28              	.LFB272:
+   1:App/htmi_app.c **** /**
+   2:App/htmi_app.c ****  * @file hmi_app.c
+   3:App/htmi_app.c ****  * @brief 实现 USART1/VOFA 协议、本地按键与电位器的人机交互逻辑。
+   4:App/htmi_app.c ****  *
+   5:App/htmi_app.c ****  * 接收方向采用 HAL 单字节中断，把以 0xFA 结束的命令帧交给后台任务解析�
+   6:App/htmi_app.c ****  * 发送方向采用 JustFloat 协议，即连续发送若干个小端 float，末尾追加固定�
+   7:App/htmi_app.c ****  * 本模块还把按键事件映射为电机控制模式，并根据模式解释电位器的物理
+   8:App/htmi_app.c ****  */
+   9:App/htmi_app.c **** 
+  10:App/htmi_app.c **** #include "htmi_app.h"
+  11:App/htmi_app.c **** #include "led_drv.h"
+  12:App/htmi_app.c **** #include "string.h"
+  13:App/htmi_app.c **** #include "motor_ctrl.h"
+  14:App/htmi_app.c **** 
+  15:App/htmi_app.c **** /**
+  16:App/htmi_app.c ****  * @brief 按控制模式把电位器采样值映射为对应给定量。
+  17:App/htmi_app.c ****  *
+  18:App/htmi_app.c ****  * 速度模式写 Para.SpeedRef，电流/IF 模式写 Para.CurRef，位置模式写
+  19:App/htmi_app.c ****  * Para.PosRef；Limit_Sat() 对给定范围限幅，防止电位器端点产生越界指令。
+  20:App/htmi_app.c ****  */
+  21:App/htmi_app.c **** void VrTask(void)
+  22:App/htmi_app.c **** {
+  29              		.loc 1 22 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 10B5     		push	{r4, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 8
+  36              		.cfi_offset 4, -8
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccJbeP3u.s 			page 2
+
+
+  37              		.cfi_offset 14, -4
+  23:App/htmi_app.c **** 	static float AdcVr = 0;
+  38              		.loc 1 23 2 view .LVU1
+  24:App/htmi_app.c **** 
+  25:App/htmi_app.c **** 	switch (Motor.CtrlMode)
+  39              		.loc 1 25 2 view .LVU2
+  40              		.loc 1 25 15 is_stmt 0 view .LVU3
+  41 0002 504B     		ldr	r3, .L13
+  42 0004 1B7C     		ldrb	r3, [r3, #16]	@ zero_extendqisi2
+  43              		.loc 1 25 2 view .LVU4
+  44 0006 092B     		cmp	r3, #9
+  45 0008 00F29A80 		bhi	.L1
+  46 000c DFE803F0 		tbb	[pc, r3]
+  47              	.L4:
+  48 0010 05       		.byte	(.L10-.L4)/2
+  49 0011 0B       		.byte	(.L9-.L4)/2
+  50 0012 28       		.byte	(.L8-.L4)/2
+  51 0013 3E       		.byte	(.L7-.L4)/2
+  52 0014 47       		.byte	(.L6-.L4)/2
+  53 0015 5D       		.byte	(.L5-.L4)/2
+  54 0016 7C       		.byte	(.L3-.L4)/2
+  55 0017 7C       		.byte	(.L3-.L4)/2
+  56 0018 7C       		.byte	(.L3-.L4)/2
+  57 0019 7C       		.byte	(.L3-.L4)/2
+  58              		.p2align 1
+  59              	.L10:
+  26:App/htmi_app.c **** 	{
+  27:App/htmi_app.c **** 	case STOP:
+  28:App/htmi_app.c **** 	{
+  29:App/htmi_app.c **** 		Para.SpeedRef = 0;
+  60              		.loc 1 29 3 is_stmt 1 view .LVU5
+  61              		.loc 1 29 17 is_stmt 0 view .LVU6
+  62 001a 4B4B     		ldr	r3, .L13+4
+  63 001c 0022     		movs	r2, #0
+  64 001e 1A82     		strh	r2, [r3, #16]	@ movhi
+  30:App/htmi_app.c **** 		Para.CurRef = 0;
+  65              		.loc 1 30 3 is_stmt 1 view .LVU7
+  66              		.loc 1 30 15 is_stmt 0 view .LVU8
+  67 0020 0022     		movs	r2, #0
+  68 0022 5A61     		str	r2, [r3, #20]	@ float
+  31:App/htmi_app.c **** 		break;
+  69              		.loc 1 31 3 is_stmt 1 view .LVU9
+  70 0024 8CE0     		b	.L1
+  71              	.L9:
+  32:App/htmi_app.c **** 	}
+  33:App/htmi_app.c **** 	case SPEED_LOOP:
+  34:App/htmi_app.c **** 	{
+  35:App/htmi_app.c **** 		AdcVr = (float)AdcPara.Vr;
+  72              		.loc 1 35 3 view .LVU10
+  73              		.loc 1 35 11 is_stmt 0 view .LVU11
+  74 0026 494B     		ldr	r3, .L13+8
+  75 0028 93ED010A 		vldr.32	s0, [r3, #4]
+  76              		.loc 1 35 9 view .LVU12
+  77 002c 484B     		ldr	r3, .L13+12
+  78 002e 83ED000A 		vstr.32	s0, [r3]
+  36:App/htmi_app.c **** 		Para.SpeedRef = (int16_t)AdcVr;
+  79              		.loc 1 36 3 is_stmt 1 view .LVU13
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccJbeP3u.s 			page 3
+
+
+  80              		.loc 1 36 19 is_stmt 0 view .LVU14
+  81 0032 BDEEC00A 		vcvt.s32.f32	s0, s0
+  82 0036 10EE103A 		vmov	r3, s0	@ int
+  83 003a 1BB2     		sxth	r3, r3
+  84              		.loc 1 36 17 view .LVU15
+  85 003c 424C     		ldr	r4, .L13+4
+  86 003e 2382     		strh	r3, [r4, #16]	@ movhi
+  37:App/htmi_app.c **** 		Para.SpeedRef = Limit_Sat(Para.SpeedRef, SPD_REF_MAX, 100.0f);
+  87              		.loc 1 37 3 is_stmt 1 view .LVU16
+  88              		.loc 1 37 19 is_stmt 0 view .LVU17
+  89 0040 9FED441A 		vldr.32	s2, .L13+16
+  90 0044 DFED440A 		vldr.32	s1, .L13+20
+  91 0048 07EE903A 		vmov	s15, r3	@ int
+  92 004c B8EEE70A 		vcvt.f32.s32	s0, s15
+  93 0050 FFF7FEFF 		bl	Limit_Sat
+  94              	.LVL0:
+  95              		.loc 1 37 17 discriminator 1 view .LVU18
+  96 0054 BDEEC00A 		vcvt.s32.f32	s0, s0
+  97 0058 10EE103A 		vmov	r3, s0	@ int
+  98 005c 2382     		strh	r3, [r4, #16]	@ movhi
+  38:App/htmi_app.c **** 		break;
+  99              		.loc 1 38 3 is_stmt 1 view .LVU19
+ 100 005e 6FE0     		b	.L1
+ 101              	.L8:
+  39:App/htmi_app.c **** 	}
+  40:App/htmi_app.c **** 	case CUR_LOOP:
+  41:App/htmi_app.c **** 	{
+  42:App/htmi_app.c **** 		AdcVr = (float)(AdcPara.Vr / 2000.0f);
+ 102              		.loc 1 42 3 view .LVU20
+ 103              		.loc 1 42 26 is_stmt 0 view .LVU21
+ 104 0060 3A4B     		ldr	r3, .L13+8
+ 105 0062 93ED017A 		vldr.32	s14, [r3, #4]
+ 106              		.loc 1 42 11 view .LVU22
+ 107 0066 DFED3D7A 		vldr.32	s15, .L13+24
+ 108 006a 87EE270A 		vdiv.f32	s0, s14, s15
+ 109              		.loc 1 42 9 view .LVU23
+ 110 006e 384B     		ldr	r3, .L13+12
+ 111 0070 83ED000A 		vstr.32	s0, [r3]
+  43:App/htmi_app.c **** 		Para.CurRef = (float)AdcVr;
+ 112              		.loc 1 43 3 is_stmt 1 view .LVU24
+ 113              		.loc 1 43 15 is_stmt 0 view .LVU25
+ 114 0074 344C     		ldr	r4, .L13+4
+ 115 0076 84ED050A 		vstr.32	s0, [r4, #20]
+  44:App/htmi_app.c **** 		Para.CurRef = Limit_Sat(Para.CurRef, 1.0f, 0.05f);
+ 116              		.loc 1 44 3 is_stmt 1 view .LVU26
+ 117              		.loc 1 44 17 is_stmt 0 view .LVU27
+ 118 007a 9FED391A 		vldr.32	s2, .L13+28
+ 119 007e F7EE000A 		vmov.f32	s1, #1.0e+0
+ 120 0082 FFF7FEFF 		bl	Limit_Sat
+ 121              	.LVL1:
+ 122              		.loc 1 44 15 discriminator 1 view .LVU28
+ 123 0086 84ED050A 		vstr.32	s0, [r4, #20]
+  45:App/htmi_app.c **** 		break;
+ 124              		.loc 1 45 3 is_stmt 1 view .LVU29
+ 125 008a 59E0     		b	.L1
+ 126              	.L7:
+  46:App/htmi_app.c **** 	}
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccJbeP3u.s 			page 4
+
+
+  47:App/htmi_app.c **** 	case POS_LOOP:
+  48:App/htmi_app.c **** 	{
+  49:App/htmi_app.c **** 		Para.PosRef = (int32_t)AdcPara.Vr;
+ 127              		.loc 1 49 3 view .LVU30
+ 128              		.loc 1 49 33 is_stmt 0 view .LVU31
+ 129 008c 2F4B     		ldr	r3, .L13+8
+ 130 008e D3ED017A 		vldr.32	s15, [r3, #4]
+ 131              		.loc 1 49 17 view .LVU32
+ 132 0092 FDEEE77A 		vcvt.s32.f32	s15, s15
+ 133              		.loc 1 49 15 view .LVU33
+ 134 0096 2C4B     		ldr	r3, .L13+4
+ 135 0098 C3ED067A 		vstr.32	s15, [r3, #24]	@ int
+  50:App/htmi_app.c **** 		break;
+ 136              		.loc 1 50 3 is_stmt 1 view .LVU34
+ 137 009c 50E0     		b	.L1
+ 138              	.L6:
+  51:App/htmi_app.c **** 	}
+  52:App/htmi_app.c **** 	case IF_CTRL:
+  53:App/htmi_app.c **** 	{
+  54:App/htmi_app.c **** 		AdcVr = (float)(AdcPara.Vr / 1000.0f);
+ 139              		.loc 1 54 3 view .LVU35
+ 140              		.loc 1 54 26 is_stmt 0 view .LVU36
+ 141 009e 2B4B     		ldr	r3, .L13+8
+ 142 00a0 93ED017A 		vldr.32	s14, [r3, #4]
+ 143              		.loc 1 54 11 view .LVU37
+ 144 00a4 DFED2F7A 		vldr.32	s15, .L13+32
+ 145 00a8 87EE270A 		vdiv.f32	s0, s14, s15
+ 146              		.loc 1 54 9 view .LVU38
+ 147 00ac 284B     		ldr	r3, .L13+12
+ 148 00ae 83ED000A 		vstr.32	s0, [r3]
+  55:App/htmi_app.c **** 		Para.CurRef = (float)AdcVr;
+ 149              		.loc 1 55 3 is_stmt 1 view .LVU39
+ 150              		.loc 1 55 15 is_stmt 0 view .LVU40
+ 151 00b2 254C     		ldr	r4, .L13+4
+ 152 00b4 84ED050A 		vstr.32	s0, [r4, #20]
+  56:App/htmi_app.c **** 		Para.CurRef = Limit_Sat(Para.CurRef, 4.0f, 0.05f);
+ 153              		.loc 1 56 3 is_stmt 1 view .LVU41
+ 154              		.loc 1 56 17 is_stmt 0 view .LVU42
+ 155 00b8 9FED291A 		vldr.32	s2, .L13+28
+ 156 00bc F1EE000A 		vmov.f32	s1, #4.0e+0
+ 157 00c0 FFF7FEFF 		bl	Limit_Sat
+ 158              	.LVL2:
+ 159              		.loc 1 56 15 discriminator 1 view .LVU43
+ 160 00c4 84ED050A 		vstr.32	s0, [r4, #20]
+  57:App/htmi_app.c **** 		break;
+ 161              		.loc 1 57 3 is_stmt 1 view .LVU44
+ 162 00c8 3AE0     		b	.L1
+ 163              	.L5:
+  58:App/htmi_app.c **** 	}
+  59:App/htmi_app.c **** 
+  60:App/htmi_app.c **** 	case HFI_CTRL:
+  61:App/htmi_app.c **** 	{
+  62:App/htmi_app.c **** 		AdcVr = (float)(AdcPara.Vr / 10.0f);
+ 164              		.loc 1 62 3 view .LVU45
+ 165              		.loc 1 62 26 is_stmt 0 view .LVU46
+ 166 00ca 204B     		ldr	r3, .L13+8
+ 167 00cc D3ED017A 		vldr.32	s15, [r3, #4]
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccJbeP3u.s 			page 5
+
+
+ 168              		.loc 1 62 11 view .LVU47
+ 169 00d0 B2EE041A 		vmov.f32	s2, #1.0e+1
+ 170 00d4 87EE810A 		vdiv.f32	s0, s15, s2
+ 171              		.loc 1 62 9 view .LVU48
+ 172 00d8 1D4B     		ldr	r3, .L13+12
+ 173 00da 83ED000A 		vstr.32	s0, [r3]
+  63:App/htmi_app.c **** 		Para.SpeedRef = (int16_t)AdcVr;
+ 174              		.loc 1 63 3 is_stmt 1 view .LVU49
+ 175              		.loc 1 63 19 is_stmt 0 view .LVU50
+ 176 00de BDEEC00A 		vcvt.s32.f32	s0, s0
+ 177 00e2 10EE103A 		vmov	r3, s0	@ int
+ 178 00e6 1BB2     		sxth	r3, r3
+ 179              		.loc 1 63 17 view .LVU51
+ 180 00e8 174C     		ldr	r4, .L13+4
+ 181 00ea 2382     		strh	r3, [r4, #16]	@ movhi
+  64:App/htmi_app.c **** 		Para.SpeedRef = Limit_Sat(Para.SpeedRef, HFI_SPD_REF_MAX, 10.0f);
+ 182              		.loc 1 64 3 is_stmt 1 view .LVU52
+ 183              		.loc 1 64 19 is_stmt 0 view .LVU53
+ 184 00ec DFED1E0A 		vldr.32	s1, .L13+36
+ 185 00f0 07EE903A 		vmov	s15, r3	@ int
+ 186 00f4 B8EEE70A 		vcvt.f32.s32	s0, s15
+ 187 00f8 FFF7FEFF 		bl	Limit_Sat
+ 188              	.LVL3:
+ 189              		.loc 1 64 17 discriminator 1 view .LVU54
+ 190 00fc BDEEC00A 		vcvt.s32.f32	s0, s0
+ 191 0100 10EE103A 		vmov	r3, s0	@ int
+ 192 0104 2382     		strh	r3, [r4, #16]	@ movhi
+  65:App/htmi_app.c **** 		break;
+ 193              		.loc 1 65 3 is_stmt 1 view .LVU55
+ 194 0106 1BE0     		b	.L1
+ 195              	.L3:
+  66:App/htmi_app.c **** 	}
+  67:App/htmi_app.c **** 
+  68:App/htmi_app.c **** 	case HFI_SMO:
+  69:App/htmi_app.c **** 	case HFI_FLUX:
+  70:App/htmi_app.c **** 	case IF_SMO:
+  71:App/htmi_app.c **** 	case IF_FLUX:
+  72:App/htmi_app.c **** 	{
+  73:App/htmi_app.c **** 		AdcVr = (float)AdcPara.Vr;
+ 196              		.loc 1 73 3 view .LVU56
+ 197              		.loc 1 73 11 is_stmt 0 view .LVU57
+ 198 0108 104B     		ldr	r3, .L13+8
+ 199 010a 93ED010A 		vldr.32	s0, [r3, #4]
+ 200              		.loc 1 73 9 view .LVU58
+ 201 010e 104B     		ldr	r3, .L13+12
+ 202 0110 83ED000A 		vstr.32	s0, [r3]
+  74:App/htmi_app.c **** 		Para.SpeedRef = (int16_t)AdcVr;
+ 203              		.loc 1 74 3 is_stmt 1 view .LVU59
+ 204              		.loc 1 74 19 is_stmt 0 view .LVU60
+ 205 0114 BDEEC00A 		vcvt.s32.f32	s0, s0
+ 206 0118 10EE103A 		vmov	r3, s0	@ int
+ 207 011c 1BB2     		sxth	r3, r3
+ 208              		.loc 1 74 17 view .LVU61
+ 209 011e 0A4C     		ldr	r4, .L13+4
+ 210 0120 2382     		strh	r3, [r4, #16]	@ movhi
+  75:App/htmi_app.c **** 		Para.SpeedRef = Limit_Sat(Para.SpeedRef, SPD_REF_MAX, 500.0f);
+ 211              		.loc 1 75 3 is_stmt 1 view .LVU62
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccJbeP3u.s 			page 6
+
+
+ 212              		.loc 1 75 19 is_stmt 0 view .LVU63
+ 213 0122 9FED121A 		vldr.32	s2, .L13+40
+ 214 0126 DFED0C0A 		vldr.32	s1, .L13+20
+ 215 012a 07EE903A 		vmov	s15, r3	@ int
+ 216 012e B8EEE70A 		vcvt.f32.s32	s0, s15
+ 217 0132 FFF7FEFF 		bl	Limit_Sat
+ 218              	.LVL4:
+ 219              		.loc 1 75 17 discriminator 1 view .LVU64
+ 220 0136 BDEEC00A 		vcvt.s32.f32	s0, s0
+ 221 013a 10EE103A 		vmov	r3, s0	@ int
+ 222 013e 2382     		strh	r3, [r4, #16]	@ movhi
+  76:App/htmi_app.c **** 		break;
+ 223              		.loc 1 76 3 is_stmt 1 view .LVU65
+ 224              	.L1:
+  77:App/htmi_app.c **** 	}
+  78:App/htmi_app.c **** 	case TO_ZERO:
+  79:App/htmi_app.c **** 	{
+  80:App/htmi_app.c **** 		break;
+  81:App/htmi_app.c **** 	}
+  82:App/htmi_app.c **** 	default:
+  83:App/htmi_app.c **** 		break;
+  84:App/htmi_app.c **** 	}
+  85:App/htmi_app.c **** }...
+ 225              		.loc 1 85 1 is_stmt 0 view .LVU66
+ 226 0140 10BD     		pop	{r4, pc}
+ 227              	.L14:
+ 228 0142 00BF     		.align	2
+ 229              	.L13:
+ 230 0144 00000000 		.word	Motor
+ 231 0148 00000000 		.word	Para
+ 232 014c 00000000 		.word	AdcPara
+ 233 0150 00000000 		.word	AdcVr.0
+ 234 0154 0000C842 		.word	1120403456
+ 235 0158 00007A45 		.word	1165623296
+ 236 015c 0000FA44 		.word	1157234688
+ 237 0160 CDCC4C3D 		.word	1028443341
+ 238 0164 00007A44 		.word	1148846080
+ 239 0168 0000AF43 		.word	1135542272
+ 240 016c 0000FA43 		.word	1140457472
+ 241              		.cfi_endproc
+ 242              	.LFE272:
+ 244              		.section	.bss.AdcVr.0,"aw",%nobits
+ 245              		.align	2
+ 248              	AdcVr.0:
+ 249 0000 00000000 		.space	4
+ 250              		.text
+ 251              	.Letext0:
+ 252              		.file 2 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 253              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 254              		.file 4 "Sdrive/adc_drv.h"
+ 255              		.file 5 "MotorFoc/motor_ctrl.h"
+ 256              		.file 6 "MotorFoc/pid.h"
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccJbeP3u.s 			page 7
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 htmi_app.c
+C:\Users\sunhao\AppData\Local\Temp\ccJbeP3u.s:21     .text.VrTask:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccJbeP3u.s:27     .text.VrTask:00000000 VrTask
+C:\Users\sunhao\AppData\Local\Temp\ccJbeP3u.s:48     .text.VrTask:00000010 $d
+C:\Users\sunhao\AppData\Local\Temp\ccJbeP3u.s:58     .text.VrTask:0000001a $t
+C:\Users\sunhao\AppData\Local\Temp\ccJbeP3u.s:230    .text.VrTask:00000144 $d
+C:\Users\sunhao\AppData\Local\Temp\ccJbeP3u.s:248    .bss.AdcVr.0:00000000 AdcVr.0
+C:\Users\sunhao\AppData\Local\Temp\ccJbeP3u.s:245    .bss.AdcVr.0:00000000 $d
+
+UNDEFINED SYMBOLS
+Limit_Sat
+Motor
+Para
+AdcPara
