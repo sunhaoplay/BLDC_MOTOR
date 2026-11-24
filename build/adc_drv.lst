@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
   28:Sdrive/adc_drv.c **** 
   29:Sdrive/adc_drv.c **** #define ADC_SLOW_DIVIDER (PWM_FRQ / 1000U)
   30:Sdrive/adc_drv.c **** #define ADC_FAULT_SYNC       0x10000U
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 2
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 2
 
 
   31:Sdrive/adc_drv.c **** #define ADC_FAULT_CALIBRATE  0x20000U
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
   51:Sdrive/adc_drv.c ****     TIM1->EGR = TIM_EGR_UG;
   52:Sdrive/adc_drv.c ****     __HAL_TIM_SET_COUNTER(&htim1, 0U);
   53:Sdrive/adc_drv.c ****     __HAL_TIM_CLEAR_FLAG(&htim1, TIM_FLAG_UPDATE);
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 3
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 3
 
 
   54:Sdrive/adc_drv.c **** 
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  108:Sdrive/adc_drv.c ****             AdcPara.OffsetCurW = AdcFilPara.OffsetCurW = w;
  109:Sdrive/adc_drv.c ****             AdcFilPara.CurU = AdcFilPara.CurV = AdcFilPara.CurW = 0.0f;
  110:Sdrive/adc_drv.c ****             offset_active = 0U;
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 4
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 4
 
 
  111:Sdrive/adc_drv.c ****             __DMB();//保证前面写偏移/清电流对等待线程可见
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  135:Sdrive/adc_drv.c ****         return;
  136:Sdrive/adc_drv.c ****     }
  137:Sdrive/adc_drv.c ****     slow_busy = 1U;
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 5
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 5
 
 
   95              		.loc 1 137 5 is_stmt 1 view .LVU15
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  137 0058 00000000 		.word	slow_busy
  138 005c 00000000 		.word	ADC_Slow
  139 0060 00000000 		.word	hadc1
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 6
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 6
 
 
  140              		.cfi_endproc
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  187              		.loc 1 45 5 view .LVU34
   45:Sdrive/adc_drv.c ****         return HAL_ERROR;
  188              		.loc 1 45 13 is_stmt 0 view .LVU35
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 7
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 7
 
 
  189 002e 1C4B     		ldr	r3, .L24+4
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
   55:Sdrive/adc_drv.c ****     DWT->CYCCNT = 0U;
  229              		.loc 1 55 22 view .LVU50
  230 0066 43F08073 		orr	r3, r3, #16777216
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 8
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 8
 
 
  231 006a C1F8FC30 		str	r3, [r1, #252]
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  270              	.L25:
  271 009a 00BF     		.align	2
  272              	.L24:
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 9
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 9
 
 
  273 009c 00000000 		.word	htim1
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
   22:Drivers/CMSIS/Include/cmsis_gcc.h ****  * limitations under the License.
   23:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
   24:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 10
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 10
 
 
   25:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __CMSIS_GCC_H
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
   79:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
   80:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
   81:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 11
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 11
 
 
   82:Drivers/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT16_WRITE { uint16_t v; };
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  136:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t const* src;
  137:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t* dest;
  138:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t  wlen;
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 12
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 12
 
 
  139:Drivers/CMSIS/Include/cmsis_gcc.h ****   } __copy_table_t;
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  193:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  194:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __TZ_STACK_SEAL_VALUE
  195:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __TZ_STACK_SEAL_VALUE     0xFEF5EDA5FEF5EDA5ULL
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 13
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 13
 
 
  196:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  250:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  251:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  252:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 14
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 14
 
 
  253:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Instruction Synchronization Barrier
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  307:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Reverses the byte order within each halfword of a word. For example, 0x12345678 becomes 
  308:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    value  Value to reverse
  309:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return               Reversed value
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 15
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 15
 
 
  310:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
@@ -898,7 +898,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  364:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __BKPT(value)                       __ASM volatile ("bkpt "#value)
  365:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  366:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 16
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 16
 
 
  367:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
@@ -958,7 +958,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  421:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  422:Drivers/CMSIS/Include/cmsis_gcc.h **** #if ((defined (__ARM_ARCH_7M__      ) && (__ARM_ARCH_7M__      == 1)) || \
  423:Drivers/CMSIS/Include/cmsis_gcc.h ****      (defined (__ARM_ARCH_7EM__     ) && (__ARM_ARCH_7EM__     == 1)) || \
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 17
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 17
 
 
  424:Drivers/CMSIS/Include/cmsis_gcc.h ****      (defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) || \
@@ -1018,7 +1018,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  478:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t result;
  479:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  480:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldrex %0, %1" : "=r" (result) : "Q" (*addr) );
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 18
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 18
 
 
  481:Drivers/CMSIS/Include/cmsis_gcc.h ****    return(result);
@@ -1078,7 +1078,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  535:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  536:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  537:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Remove the exclusive lock
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 19
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 19
 
 
  538:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Removes the exclusive lock which is created by LDREX.
@@ -1138,7 +1138,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  592:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  593:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __RRX(uint32_t value)
  594:Drivers/CMSIS/Include/cmsis_gcc.h **** {
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 20
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 20
 
 
  595:Drivers/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
@@ -1198,7 +1198,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  649:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
  650:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return        value of type uint32_t at (*ptr)
  651:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 21
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 21
 
 
  652:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __LDRT(volatile uint32_t *ptr)
@@ -1258,7 +1258,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  706:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  707:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE int32_t __SSAT(int32_t val, uint32_t sat)
  708:Drivers/CMSIS/Include/cmsis_gcc.h **** {
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 22
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 22
 
 
  709:Drivers/CMSIS/Include/cmsis_gcc.h ****   if ((sat >= 1U) && (sat <= 32U))
@@ -1318,7 +1318,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  763:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  764:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t result;
  765:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 23
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 23
 
 
  766:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldab %0, %1" : "=r" (result) : "Q" (*ptr) : "memory" );
@@ -1378,7 +1378,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  820:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  821:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("stlh %1, %0" : "=Q" (*ptr) : "r" ((uint32_t)value) : "memory" );
  822:Drivers/CMSIS/Include/cmsis_gcc.h **** }
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 24
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 24
 
 
  823:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -1438,7 +1438,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  877:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldaex %0, %1" : "=r" (result) : "Q" (*ptr) : "memory" );
  878:Drivers/CMSIS/Include/cmsis_gcc.h ****    return(result);
  879:Drivers/CMSIS/Include/cmsis_gcc.h **** }
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 25
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 25
 
 
  880:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -1498,7 +1498,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  934:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  935:Drivers/CMSIS/Include/cmsis_gcc.h **** /*@}*/ /* end of group CMSIS_Core_InstructionInterface */
  936:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 26
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 26
 
 
  937:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -1558,7 +1558,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  991:Drivers/CMSIS/Include/cmsis_gcc.h ****   return(result);
  992:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  993:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 27
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 27
 
 
  994:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -1618,7 +1618,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
 1048:Drivers/CMSIS/Include/cmsis_gcc.h **** 
 1049:Drivers/CMSIS/Include/cmsis_gcc.h **** 
 1050:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 28
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 28
 
 
 1051:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Get xPSR Register
@@ -1678,7 +1678,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
 1105:Drivers/CMSIS/Include/cmsis_gcc.h **** #if (defined (__ARM_FEATURE_CMSE ) && (__ARM_FEATURE_CMSE == 3))
 1106:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
 1107:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Set Process Stack Pointer (non-secure)
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 29
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 29
 
 
 1108:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Assigns the given value to the non-secure Process Stack Pointer (PSP) when in secure sta
@@ -1738,7 +1738,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
 1162:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Assigns the given value to the non-secure Main Stack Pointer (MSP) when in secure state.
 1163:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    topOfMainStack  Main Stack Pointer value to set
 1164:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 30
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 30
 
 
 1165:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __TZ_set_MSP_NS(uint32_t topOfMainStack)
@@ -1798,7 +1798,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  315              		.loc 2 1209 3 view .LVU71
  316              		.loc 2 1209 3 is_stmt 0 view .LVU72
  317              		.thumb
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 31
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 31
 
 
  318              		.syntax unified
@@ -1858,7 +1858,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  358              		.loc 1 74 18 view .LVU86
  359 0020 1349     		ldr	r1, .L33+16
  360 0022 0B60     		str	r3, [r1]
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 32
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 32
 
 
   75:Sdrive/adc_drv.c ****     offset_active = 1U;
@@ -1918,7 +1918,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  384              	.LBB22:
 1235:Drivers/CMSIS/Include/cmsis_gcc.h **** {
 1236:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MSR primask, %0" : : "r" (priMask) : "memory");
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 33
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 33
 
 
  385              		.loc 2 1236 3 view .LVU94
@@ -1978,7 +1978,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
   81:Sdrive/adc_drv.c ****         {
  430              		.loc 1 81 42 discriminator 1 view .LVU106
  431 0052 FFF7FEFF 		bl	HAL_GetTick
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 34
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 34
 
 
  432              	.LVL18:
@@ -2038,7 +2038,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  481              	.LVL20:
  482 000a 0446     		mov	r4, r0
   92:Sdrive/adc_drv.c ****     const uint16_t raw_w = (uint16_t)HAL_ADCEx_InjectedGetValue(&hadc2, ADC_INJECTED_RANK_1);
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 35
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 35
 
 
  483              		.loc 1 92 20 discriminator 1 view .LVU114
@@ -2098,7 +2098,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  523 0038 83B1     		cbz	r3, .L36
  101:Sdrive/adc_drv.c ****         offset_sum_w += raw_w;
  524              		.loc 1 101 9 is_stmt 1 view .LVU129
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 36
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 36
 
 
  101:Sdrive/adc_drv.c ****         offset_sum_w += raw_w;
@@ -2158,7 +2158,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  119:Sdrive/adc_drv.c ****     AdcPara.CurW = (float)((int32_t)AdcFilPara.OffsetCurW - raw_w) * I_GAIN;
  565              		.loc 1 119 68 view .LVU144
  566 0076 DFED346A 		vldr.32	s13, .L40+44
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 37
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 37
 
 
  567 007a 27EE267A 		vmul.f32	s14, s14, s13
@@ -2218,7 +2218,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  123:Sdrive/adc_drv.c ****     AdcFilPara.CurV = -AdcFilPara.CurU - AdcFilPara.CurW;
  604              		.loc 1 123 5 is_stmt 1 view .LVU162
  123:Sdrive/adc_drv.c ****     AdcFilPara.CurV = -AdcFilPara.CurU - AdcFilPara.CurW;
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 38
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 38
 
 
  605              		.loc 1 123 47 is_stmt 0 view .LVU163
@@ -2278,7 +2278,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  642 00f6 1348     		ldr	r0, .L40+40
  643 00f8 8182     		strh	r1, [r0, #20]	@ movhi
  107:Sdrive/adc_drv.c ****             AdcPara.OffsetCurW = AdcFilPara.OffsetCurW = w;
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 39
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 39
 
 
  644              		.loc 1 107 32 view .LVU181
@@ -2338,7 +2338,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  683              		.loc 1 112 13 view .LVU196
  112:Sdrive/adc_drv.c ****         }
  684              		.loc 1 112 26 is_stmt 0 view .LVU197
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 40
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 40
 
 
  685 0114 0A4B     		ldr	r3, .L40+36
@@ -2398,7 +2398,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  153:Sdrive/adc_drv.c ****     AdcPara.Vr = (float)ADC_Slow[2];
  154:Sdrive/adc_drv.c ****     /* 更新频率从 20 kHz 改为 1 kHz，保持约 10 Hz 的慢信号低通。 */
  155:Sdrive/adc_drv.c ****     if (AdcSlowSamples == 0U)
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 41
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 41
 
 
  156:Sdrive/adc_drv.c ****     {
@@ -2458,7 +2458,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  155:Sdrive/adc_drv.c ****     {
  763              		.loc 1 155 5 is_stmt 1 view .LVU215
  155:Sdrive/adc_drv.c ****     {
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 42
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 42
 
 
  764              		.loc 1 155 24 is_stmt 0 view .LVU216
@@ -2518,7 +2518,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  162:Sdrive/adc_drv.c ****         AdcFilPara.Temp += 0.06089863f * ((float)AdcPara.Temp - AdcFilPara.Temp);
  806              		.loc 1 162 9 is_stmt 1 view .LVU229
  162:Sdrive/adc_drv.c ****         AdcFilPara.Temp += 0.06089863f * ((float)AdcPara.Temp - AdcFilPara.Temp);
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 43
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 43
 
 
  807              		.loc 1 162 19 is_stmt 0 view .LVU230
@@ -2578,7 +2578,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  854              	.LVL33:
  855              	.LFB278:
  169:Sdrive/adc_drv.c **** 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 44
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 44
 
 
  170:Sdrive/adc_drv.c **** void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef *hadc)
@@ -2592,14 +2592,14 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  861              		.loc 1 172 13 is_stmt 0 view .LVU242
  862 0000 0268     		ldr	r2, [r0]
  863              		.loc 1 172 8 view .LVU243
- 864 0002 354B     		ldr	r3, .L68
+ 864 0002 324B     		ldr	r3, .L68
  865 0004 9A42     		cmp	r2, r3
  866 0006 00D0     		beq	.L62
  867              	.L59:
  868 0008 7047     		bx	lr
  869              	.L62:
  870              		.loc 1 172 44 discriminator 1 view .LVU244
- 871 000a 344B     		ldr	r3, .L68+4
+ 871 000a 314B     		ldr	r3, .L68+4
  872 000c 1B68     		ldr	r3, [r3]
  873              		.loc 1 172 32 discriminator 1 view .LVU245
  874 000e 002B     		cmp	r3, #0
@@ -2617,13 +2617,13 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  174:Sdrive/adc_drv.c ****     const uint32_t start_cycles = DWT->CYCCNT;
  884              		.loc 1 174 5 is_stmt 1 view .LVU247
  885              		.loc 1 174 20 is_stmt 0 view .LVU248
- 886 0014 324B     		ldr	r3, .L68+8
+ 886 0014 2F4B     		ldr	r3, .L68+8
  887 0016 5D68     		ldr	r5, [r3, #4]
  888              	.LVL34:
  175:Sdrive/adc_drv.c ****     const uint32_t entry_count = TIM1->CNT;
  889              		.loc 1 175 5 is_stmt 1 view .LVU249
  890              		.loc 1 175 20 is_stmt 0 view .LVU250
- 891 0018 324B     		ldr	r3, .L68+12
+ 891 0018 2F4B     		ldr	r3, .L68+12
  892 001a 5E6A     		ldr	r6, [r3, #36]
  893              	.LVL35:
  176:Sdrive/adc_drv.c ****     const uint32_t entry_down = TIM1->CR1 & TIM_CR1_DIR;
@@ -2636,9 +2636,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  177:Sdrive/adc_drv.c ****     if (__HAL_ADC_GET_FLAG(&hadc2, ADC_FLAG_JEOC) == RESET)
  900              		.loc 1 177 5 is_stmt 1 view .LVU254
  901              		.loc 1 177 9 is_stmt 0 view .LVU255
- 902 0022 314B     		ldr	r3, .L68+16
+ 902 0022 2E4B     		ldr	r3, .L68+16
  903 0024 1B68     		ldr	r3, [r3]
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 45
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 45
 
 
  904 0026 1B68     		ldr	r3, [r3]
@@ -2656,7 +2656,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  183:Sdrive/adc_drv.c ****     if (offset_ready != 0U)
  911              		.loc 1 183 5 view .LVU258
  912              		.loc 1 183 22 is_stmt 0 view .LVU259
- 913 0032 2E4B     		ldr	r3, .L68+20
+ 913 0032 2B4B     		ldr	r3, .L68+20
  914 0034 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
  915              		.loc 1 183 8 view .LVU260
  916 0036 ABB9     		cbnz	r3, .L64
@@ -2666,7 +2666,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  186:Sdrive/adc_drv.c ****     if (Init_Over)
  918              		.loc 1 186 5 is_stmt 1 view .LVU261
  919              		.loc 1 186 9 is_stmt 0 view .LVU262
- 920 0038 2D4B     		ldr	r3, .L68+24
+ 920 0038 2A4B     		ldr	r3, .L68+24
  921 003a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
  922              		.loc 1 186 8 view .LVU263
  923 003c ABB9     		cbnz	r3, .L65
@@ -2677,58 +2677,59 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  190:Sdrive/adc_drv.c ****         //2.有感电流环驱动
  191:Sdrive/adc_drv.c ****         // CurCloseloop(0.5f, Motor.E_theta);
  192:Sdrive/adc_drv.c ****         //3.有感速度环驱动
- 193:Sdrive/adc_drv.c ****         SpeedCloseloop(Para.SpeedRef, 1);
+ 193:Sdrive/adc_drv.c ****         // SpeedCloseloop(Para.SpeedRef, 1);
  194:Sdrive/adc_drv.c ****         // SpeedCloseloop(1200, 1);
- 195:Sdrive/adc_drv.c ****         FocSvpwm();
+ 195:Sdrive/adc_drv.c ****         // FocSvpwm();
  196:Sdrive/adc_drv.c ****         /* 采样完成时应处于下数，新的三相 CCR 应在随后的谷底前写完。 */
- 197:Sdrive/adc_drv.c ****         const uint32_t count = TIM1->CNT;
- 198:Sdrive/adc_drv.c ****         const uint32_t elapsed = DWT->CYCCNT - start_cycles;
- 199:Sdrive/adc_drv.c ****         if (entry_down == 0U || (TIM1->CR1 & TIM_CR1_DIR) == 0U || count > entry_count || elapsed >
- 200:Sdrive/adc_drv.c ****             ++AdcControlDeadlineMisses;
- 201:Sdrive/adc_drv.c ****         /* 测速系数按 PWM_FRQ / SPEED_CNT 定义，使用同样的调用分频。
- 202:Sdrive/adc_drv.c ****          * 放在 CCR 写入后，不推迟本拍占空比计算。
- 203:Sdrive/adc_drv.c ****          */
- 204:Sdrive/adc_drv.c ****         if (++EnCoSpeed.SpeedClock >= SPEED_CNT)
- 205:Sdrive/adc_drv.c ****         {
- 206:Sdrive/adc_drv.c ****             EnCoSpeed.SpeedClock = 0U;
- 207:Sdrive/adc_drv.c ****             MotorAngleGet();
- 208:Sdrive/adc_drv.c ****             MotorSpeedGet();
- 209:Sdrive/adc_drv.c ****         }
- 210:Sdrive/adc_drv.c ****         FocWaveCapture(AdcPara.CurU, AdcPara.CurV, AdcPara.CurW);
- 211:Sdrive/adc_drv.c ****     }
- 212:Sdrive/adc_drv.c ****     if (AdcFault == 0U)
- 925              		.loc 1 212 5 is_stmt 1 view .LVU264
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 46
+ 197:Sdrive/adc_drv.c ****         MotorModeSel(); // 控制模式选择
+ 198:Sdrive/adc_drv.c ****         const uint32_t count = TIM1->CNT;
+ 199:Sdrive/adc_drv.c ****         const uint32_t elapsed = DWT->CYCCNT - start_cycles;
+ 200:Sdrive/adc_drv.c ****         if (entry_down == 0U || (TIM1->CR1 & TIM_CR1_DIR) == 0U || count > entry_count || elapsed >
+ 201:Sdrive/adc_drv.c ****             ++AdcControlDeadlineMisses;
+ 202:Sdrive/adc_drv.c ****         /* 测速系数按 PWM_FRQ / SPEED_CNT 定义，使用同样的调用分频。
+ 203:Sdrive/adc_drv.c ****          * 放在 CCR 写入后，不推迟本拍占空比计算。
+ 204:Sdrive/adc_drv.c ****          */
+ 205:Sdrive/adc_drv.c ****         if (++EnCoSpeed.SpeedClock >= SPEED_CNT)
+ 206:Sdrive/adc_drv.c ****         {
+ 207:Sdrive/adc_drv.c ****             EnCoSpeed.SpeedClock = 0U;
+ 208:Sdrive/adc_drv.c ****             MotorAngleGet();
+ 209:Sdrive/adc_drv.c ****             MotorSpeedGet();
+ 210:Sdrive/adc_drv.c ****         }
+ 211:Sdrive/adc_drv.c ****         FocWaveCapture(AdcPara.CurU, AdcPara.CurV, AdcPara.CurW);
+ 212:Sdrive/adc_drv.c ****     }
+ 213:Sdrive/adc_drv.c ****     if (AdcFault == 0U)
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 46
 
 
- 926              		.loc 1 212 18 is_stmt 0 view .LVU265
- 927 003e 274B     		ldr	r3, .L68+4
+ 925              		.loc 1 213 5 is_stmt 1 view .LVU264
+ 926              		.loc 1 213 18 is_stmt 0 view .LVU265
+ 927 003e 244B     		ldr	r3, .L68+4
  928 0040 1B68     		ldr	r3, [r3]
- 929              		.loc 1 212 8 view .LVU266
+ 929              		.loc 1 213 8 view .LVU266
  930 0042 002B     		cmp	r3, #0
- 931 0044 45D0     		beq	.L66
+ 931 0044 3FD0     		beq	.L66
  932              	.L57:
- 213:Sdrive/adc_drv.c ****         AdcSlowStart();
- 214:Sdrive/adc_drv.c ****     const uint32_t cycles = DWT->CYCCNT - start_cycles;
- 933              		.loc 1 214 5 is_stmt 1 view .LVU267
- 934              		.loc 1 214 32 is_stmt 0 view .LVU268
- 935 0046 264B     		ldr	r3, .L68+8
+ 214:Sdrive/adc_drv.c ****         AdcSlowStart();
+ 215:Sdrive/adc_drv.c ****     const uint32_t cycles = DWT->CYCCNT - start_cycles;
+ 933              		.loc 1 215 5 is_stmt 1 view .LVU267
+ 934              		.loc 1 215 32 is_stmt 0 view .LVU268
+ 935 0046 234B     		ldr	r3, .L68+8
  936 0048 5B68     		ldr	r3, [r3, #4]
- 937              		.loc 1 214 20 view .LVU269
+ 937              		.loc 1 215 20 view .LVU269
  938 004a 5B1B     		subs	r3, r3, r5
  939              	.LVL38:
- 215:Sdrive/adc_drv.c ****     if (cycles > AdcControlCyclesMax)
- 940              		.loc 1 215 5 is_stmt 1 view .LVU270
- 941              		.loc 1 215 16 is_stmt 0 view .LVU271
- 942 004c 294A     		ldr	r2, .L68+28
+ 216:Sdrive/adc_drv.c ****     if (cycles > AdcControlCyclesMax)
+ 940              		.loc 1 216 5 is_stmt 1 view .LVU270
+ 941              		.loc 1 216 16 is_stmt 0 view .LVU271
+ 942 004c 264A     		ldr	r2, .L68+28
  943 004e 1268     		ldr	r2, [r2]
- 944              		.loc 1 215 8 view .LVU272
+ 944              		.loc 1 216 8 view .LVU272
  945 0050 9A42     		cmp	r2, r3
  946 0052 06D2     		bcs	.L49
- 216:Sdrive/adc_drv.c ****         AdcControlCyclesMax = cycles;
- 947              		.loc 1 216 9 is_stmt 1 view .LVU273
- 948              		.loc 1 216 29 is_stmt 0 view .LVU274
- 949 0054 274A     		ldr	r2, .L68+28
+ 217:Sdrive/adc_drv.c ****         AdcControlCyclesMax = cycles;
+ 947              		.loc 1 217 9 is_stmt 1 view .LVU273
+ 948              		.loc 1 217 29 is_stmt 0 view .LVU274
+ 949 0054 244A     		ldr	r2, .L68+28
  950 0056 1360     		str	r3, [r2]
  951 0058 03E0     		b	.L49
  952              	.LVL39:
@@ -2744,8 +2745,8 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  180:Sdrive/adc_drv.c ****     }
  960              		.loc 1 180 9 is_stmt 1 view .LVU277
  961              	.L49:
- 217:Sdrive/adc_drv.c **** }
- 962              		.loc 1 217 1 is_stmt 0 view .LVU278
+ 218:Sdrive/adc_drv.c **** }
+ 962              		.loc 1 218 1 is_stmt 0 view .LVU278
  963 0062 70BD     		pop	{r4, r5, r6, pc}
  964              	.LVL42:
  965              	.L64:
@@ -2756,388 +2757,379 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 1
  969 0068 E6E7     		b	.L52
  970              	.L65:
  971              	.LBB30:
- 193:Sdrive/adc_drv.c ****         // SpeedCloseloop(1200, 1);
- 972              		.loc 1 193 9 view .LVU280
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 47
+ 197:Sdrive/adc_drv.c ****         const uint32_t count = TIM1->CNT;
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 47
 
 
- 973 006a 0121     		movs	r1, #1
- 974 006c 224B     		ldr	r3, .L68+32
- 975 006e B3F91000 		ldrsh	r0, [r3, #16]
- 976 0072 FFF7FEFF 		bl	SpeedCloseloop
- 977              	.LVL44:
- 195:Sdrive/adc_drv.c ****         /* 采样完成时应处于下数，新的三相 CCR 应在随后的谷底前写完。 */
- 978              		.loc 1 195 9 view .LVU281
- 979 0076 FFF7FEFF 		bl	FocSvpwm
- 980              	.LVL45:
- 197:Sdrive/adc_drv.c ****         const uint32_t elapsed = DWT->CYCCNT - start_cycles;
- 981              		.loc 1 197 9 view .LVU282
- 197:Sdrive/adc_drv.c ****         const uint32_t elapsed = DWT->CYCCNT - start_cycles;
- 982              		.loc 1 197 24 is_stmt 0 view .LVU283
- 983 007a 1A4B     		ldr	r3, .L68+12
- 984 007c 5A6A     		ldr	r2, [r3, #36]
- 985              	.LVL46:
- 198:Sdrive/adc_drv.c ****         if (entry_down == 0U || (TIM1->CR1 & TIM_CR1_DIR) == 0U || count > entry_count || elapsed >
- 986              		.loc 1 198 9 is_stmt 1 view .LVU284
- 198:Sdrive/adc_drv.c ****         if (entry_down == 0U || (TIM1->CR1 & TIM_CR1_DIR) == 0U || count > entry_count || elapsed >
- 987              		.loc 1 198 37 is_stmt 0 view .LVU285
- 988 007e 184B     		ldr	r3, .L68+8
- 989 0080 5B68     		ldr	r3, [r3, #4]
- 198:Sdrive/adc_drv.c ****         if (entry_down == 0U || (TIM1->CR1 & TIM_CR1_DIR) == 0U || count > entry_count || elapsed >
- 990              		.loc 1 198 24 view .LVU286
- 991 0082 5B1B     		subs	r3, r3, r5
- 992              	.LVL47:
- 199:Sdrive/adc_drv.c ****             ++AdcControlDeadlineMisses;
- 993              		.loc 1 199 9 is_stmt 1 view .LVU287
- 199:Sdrive/adc_drv.c ****             ++AdcControlDeadlineMisses;
- 994              		.loc 1 199 12 is_stmt 0 view .LVU288
- 995 0084 44B1     		cbz	r4, .L54
- 199:Sdrive/adc_drv.c ****             ++AdcControlDeadlineMisses;
- 996              		.loc 1 199 38 discriminator 1 view .LVU289
- 997 0086 1749     		ldr	r1, .L68+12
- 998 0088 0968     		ldr	r1, [r1]
- 199:Sdrive/adc_drv.c ****             ++AdcControlDeadlineMisses;
- 999              		.loc 1 199 30 discriminator 1 view .LVU290
- 1000 008a 11F0100F 		tst	r1, #16
- 1001 008e 03D0     		beq	.L54
- 199:Sdrive/adc_drv.c ****             ++AdcControlDeadlineMisses;
- 1002              		.loc 1 199 65 discriminator 2 view .LVU291
- 1003 0090 9642     		cmp	r6, r2
- 1004 0092 01D3     		bcc	.L54
- 199:Sdrive/adc_drv.c ****             ++AdcControlDeadlineMisses;
- 1005              		.loc 1 199 88 discriminator 3 view .LVU292
- 1006 0094 9E42     		cmp	r6, r3
- 1007 0096 03D8     		bhi	.L55
- 1008              	.L54:
- 200:Sdrive/adc_drv.c ****         /* 测速系数按 PWM_FRQ / SPEED_CNT 定义，使用同样的调用分频。
- 1009              		.loc 1 200 13 is_stmt 1 view .LVU293
- 1010 0098 184A     		ldr	r2, .L68+36
- 1011              	.LVL48:
- 200:Sdrive/adc_drv.c ****         /* 测速系数按 PWM_FRQ / SPEED_CNT 定义，使用同样的调用分频。
- 1012              		.loc 1 200 13 is_stmt 0 view .LVU294
- 1013 009a 1368     		ldr	r3, [r2]
- 1014              	.LVL49:
- 200:Sdrive/adc_drv.c ****         /* 测速系数按 PWM_FRQ / SPEED_CNT 定义，使用同样的调用分频。
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 48
+ 972              		.loc 1 197 9 view .LVU280
+ 973 006a FFF7FEFF 		bl	MotorModeSel
+ 974              	.LVL44:
+ 198:Sdrive/adc_drv.c ****         const uint32_t elapsed = DWT->CYCCNT - start_cycles;
+ 975              		.loc 1 198 9 view .LVU281
+ 198:Sdrive/adc_drv.c ****         const uint32_t elapsed = DWT->CYCCNT - start_cycles;
+ 976              		.loc 1 198 24 is_stmt 0 view .LVU282
+ 977 006e 1A4B     		ldr	r3, .L68+12
+ 978 0070 5A6A     		ldr	r2, [r3, #36]
+ 979              	.LVL45:
+ 199:Sdrive/adc_drv.c ****         if (entry_down == 0U || (TIM1->CR1 & TIM_CR1_DIR) == 0U || count > entry_count || elapsed >
+ 980              		.loc 1 199 9 is_stmt 1 view .LVU283
+ 199:Sdrive/adc_drv.c ****         if (entry_down == 0U || (TIM1->CR1 & TIM_CR1_DIR) == 0U || count > entry_count || elapsed >
+ 981              		.loc 1 199 37 is_stmt 0 view .LVU284
+ 982 0072 184B     		ldr	r3, .L68+8
+ 983 0074 5B68     		ldr	r3, [r3, #4]
+ 199:Sdrive/adc_drv.c ****         if (entry_down == 0U || (TIM1->CR1 & TIM_CR1_DIR) == 0U || count > entry_count || elapsed >
+ 984              		.loc 1 199 24 view .LVU285
+ 985 0076 5B1B     		subs	r3, r3, r5
+ 986              	.LVL46:
+ 200:Sdrive/adc_drv.c ****             ++AdcControlDeadlineMisses;
+ 987              		.loc 1 200 9 is_stmt 1 view .LVU286
+ 200:Sdrive/adc_drv.c ****             ++AdcControlDeadlineMisses;
+ 988              		.loc 1 200 12 is_stmt 0 view .LVU287
+ 989 0078 44B1     		cbz	r4, .L54
+ 200:Sdrive/adc_drv.c ****             ++AdcControlDeadlineMisses;
+ 990              		.loc 1 200 38 discriminator 1 view .LVU288
+ 991 007a 1749     		ldr	r1, .L68+12
+ 992 007c 0968     		ldr	r1, [r1]
+ 200:Sdrive/adc_drv.c ****             ++AdcControlDeadlineMisses;
+ 993              		.loc 1 200 30 discriminator 1 view .LVU289
+ 994 007e 11F0100F 		tst	r1, #16
+ 995 0082 03D0     		beq	.L54
+ 200:Sdrive/adc_drv.c ****             ++AdcControlDeadlineMisses;
+ 996              		.loc 1 200 65 discriminator 2 view .LVU290
+ 997 0084 9642     		cmp	r6, r2
+ 998 0086 01D3     		bcc	.L54
+ 200:Sdrive/adc_drv.c ****             ++AdcControlDeadlineMisses;
+ 999              		.loc 1 200 88 discriminator 3 view .LVU291
+ 1000 0088 9E42     		cmp	r6, r3
+ 1001 008a 03D8     		bhi	.L55
+ 1002              	.L54:
+ 201:Sdrive/adc_drv.c ****         /* 测速系数按 PWM_FRQ / SPEED_CNT 定义，使用同样的调用分频。
+ 1003              		.loc 1 201 13 is_stmt 1 view .LVU292
+ 1004 008c 174A     		ldr	r2, .L68+32
+ 1005              	.LVL47:
+ 201:Sdrive/adc_drv.c ****         /* 测速系数按 PWM_FRQ / SPEED_CNT 定义，使用同样的调用分频。
+ 1006              		.loc 1 201 13 is_stmt 0 view .LVU293
+ 1007 008e 1368     		ldr	r3, [r2]
+ 1008              	.LVL48:
+ 201:Sdrive/adc_drv.c ****         /* 测速系数按 PWM_FRQ / SPEED_CNT 定义，使用同样的调用分频。
+ 1009              		.loc 1 201 13 view .LVU294
+ 1010 0090 0133     		adds	r3, r3, #1
+ 1011 0092 1360     		str	r3, [r2]
+ 1012              	.L55:
+ 205:Sdrive/adc_drv.c ****         {
+ 1013              		.loc 1 205 9 is_stmt 1 view .LVU295
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 48
 
 
- 1015              		.loc 1 200 13 view .LVU295
- 1016 009c 0133     		adds	r3, r3, #1
- 1017 009e 1360     		str	r3, [r2]
- 1018              	.L55:
- 204:Sdrive/adc_drv.c ****         {
- 1019              		.loc 1 204 9 is_stmt 1 view .LVU296
- 204:Sdrive/adc_drv.c ****         {
- 1020              		.loc 1 204 24 is_stmt 0 view .LVU297
- 1021 00a0 174A     		ldr	r2, .L68+40
- 1022 00a2 1389     		ldrh	r3, [r2, #8]
- 204:Sdrive/adc_drv.c ****         {
- 1023              		.loc 1 204 13 view .LVU298
- 1024 00a4 0133     		adds	r3, r3, #1
- 1025 00a6 9BB2     		uxth	r3, r3
- 204:Sdrive/adc_drv.c ****         {
- 1026              		.loc 1 204 12 view .LVU299
- 1027 00a8 1381     		strh	r3, [r2, #8]	@ movhi
- 1028 00aa 012B     		cmp	r3, #1
- 1029 00ac 09D8     		bhi	.L67
- 1030              	.L56:
- 210:Sdrive/adc_drv.c ****     }
- 1031              		.loc 1 210 9 is_stmt 1 view .LVU300
- 1032 00ae 154B     		ldr	r3, .L68+44
- 1033 00b0 93ED051A 		vldr.32	s2, [r3, #20]
- 1034 00b4 D3ED040A 		vldr.32	s1, [r3, #16]
- 1035 00b8 93ED030A 		vldr.32	s0, [r3, #12]
- 1036 00bc FFF7FEFF 		bl	FocWaveCapture
- 1037              	.LVL50:
- 1038 00c0 BDE7     		b	.L53
- 1039              	.L67:
- 206:Sdrive/adc_drv.c ****             MotorAngleGet();
- 1040              		.loc 1 206 13 view .LVU301
- 206:Sdrive/adc_drv.c ****             MotorAngleGet();
- 1041              		.loc 1 206 34 is_stmt 0 view .LVU302
- 1042 00c2 1346     		mov	r3, r2
- 1043 00c4 0022     		movs	r2, #0
- 1044 00c6 1A81     		strh	r2, [r3, #8]	@ movhi
- 207:Sdrive/adc_drv.c ****             MotorSpeedGet();
- 1045              		.loc 1 207 13 is_stmt 1 view .LVU303
- 1046 00c8 FFF7FEFF 		bl	MotorAngleGet
- 1047              	.LVL51:
- 208:Sdrive/adc_drv.c ****         }
- 1048              		.loc 1 208 13 view .LVU304
- 1049 00cc FFF7FEFF 		bl	MotorSpeedGet
- 1050              	.LVL52:
- 1051 00d0 EDE7     		b	.L56
+ 205:Sdrive/adc_drv.c ****         {
+ 1014              		.loc 1 205 24 is_stmt 0 view .LVU296
+ 1015 0094 164A     		ldr	r2, .L68+36
+ 1016 0096 1389     		ldrh	r3, [r2, #8]
+ 205:Sdrive/adc_drv.c ****         {
+ 1017              		.loc 1 205 13 view .LVU297
+ 1018 0098 0133     		adds	r3, r3, #1
+ 1019 009a 9BB2     		uxth	r3, r3
+ 205:Sdrive/adc_drv.c ****         {
+ 1020              		.loc 1 205 12 view .LVU298
+ 1021 009c 1381     		strh	r3, [r2, #8]	@ movhi
+ 1022 009e 012B     		cmp	r3, #1
+ 1023 00a0 09D8     		bhi	.L67
+ 1024              	.L56:
+ 211:Sdrive/adc_drv.c ****     }
+ 1025              		.loc 1 211 9 is_stmt 1 view .LVU299
+ 1026 00a2 144B     		ldr	r3, .L68+40
+ 1027 00a4 93ED051A 		vldr.32	s2, [r3, #20]
+ 1028 00a8 D3ED040A 		vldr.32	s1, [r3, #16]
+ 1029 00ac 93ED030A 		vldr.32	s0, [r3, #12]
+ 1030 00b0 FFF7FEFF 		bl	FocWaveCapture
+ 1031              	.LVL49:
+ 1032 00b4 C3E7     		b	.L53
+ 1033              	.L67:
+ 207:Sdrive/adc_drv.c ****             MotorAngleGet();
+ 1034              		.loc 1 207 13 view .LVU300
+ 207:Sdrive/adc_drv.c ****             MotorAngleGet();
+ 1035              		.loc 1 207 34 is_stmt 0 view .LVU301
+ 1036 00b6 1346     		mov	r3, r2
+ 1037 00b8 0022     		movs	r2, #0
+ 1038 00ba 1A81     		strh	r2, [r3, #8]	@ movhi
+ 208:Sdrive/adc_drv.c ****             MotorSpeedGet();
+ 1039              		.loc 1 208 13 is_stmt 1 view .LVU302
+ 1040 00bc FFF7FEFF 		bl	MotorAngleGet
+ 1041              	.LVL50:
+ 209:Sdrive/adc_drv.c ****         }
+ 1042              		.loc 1 209 13 view .LVU303
+ 1043 00c0 FFF7FEFF 		bl	MotorSpeedGet
+ 1044              	.LVL51:
+ 1045 00c4 EDE7     		b	.L56
+ 1046              	.LVL52:
+ 1047              	.L66:
+ 209:Sdrive/adc_drv.c ****         }
+ 1048              		.loc 1 209 13 is_stmt 0 view .LVU304
+ 1049              	.LBE30:
+ 214:Sdrive/adc_drv.c ****     const uint32_t cycles = DWT->CYCCNT - start_cycles;
+ 1050              		.loc 1 214 9 is_stmt 1 view .LVU305
+ 1051 00c6 FFF7FEFF 		bl	AdcSlowStart
  1052              	.LVL53:
- 1053              	.L66:
- 208:Sdrive/adc_drv.c ****         }
- 1054              		.loc 1 208 13 is_stmt 0 view .LVU305
- 1055              	.LBE30:
- 213:Sdrive/adc_drv.c ****     const uint32_t cycles = DWT->CYCCNT - start_cycles;
- 1056              		.loc 1 213 9 is_stmt 1 view .LVU306
- 1057 00d2 FFF7FEFF 		bl	AdcSlowStart
- 1058              	.LVL54:
- 1059 00d6 B6E7     		b	.L57
- 1060              	.L69:
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 49
+ 1053 00ca BCE7     		b	.L57
+ 1054              	.L69:
+ 1055              		.align	2
+ 1056              	.L68:
+ 1057 00cc 00200140 		.word	1073815552
+ 1058 00d0 00000000 		.word	AdcFault
+ 1059 00d4 001000E0 		.word	-536866816
+ 1060 00d8 00000140 		.word	1073807360
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 49
 
 
- 1061              		.align	2
- 1062              	.L68:
- 1063 00d8 00200140 		.word	1073815552
- 1064 00dc 00000000 		.word	AdcFault
- 1065 00e0 001000E0 		.word	-536866816
- 1066 00e4 00000140 		.word	1073807360
- 1067 00e8 00000000 		.word	hadc2
- 1068 00ec 00000000 		.word	offset_ready
- 1069 00f0 00000000 		.word	Init_Over
- 1070 00f4 00000000 		.word	AdcControlCyclesMax
- 1071 00f8 00000000 		.word	Para
- 1072 00fc 00000000 		.word	AdcControlDeadlineMisses
- 1073 0100 00000000 		.word	EnCoSpeed
- 1074 0104 00000000 		.word	AdcPara
- 1075              		.cfi_endproc
- 1076              	.LFE278:
- 1078              		.section	.text.HAL_ADC_ErrorCallback,"ax",%progbits
- 1079              		.align	1
- 1080              		.global	HAL_ADC_ErrorCallback
- 1081              		.syntax unified
- 1082              		.thumb
- 1083              		.thumb_func
- 1085              	HAL_ADC_ErrorCallback:
- 1086              	.LVL55:
- 1087              	.LFB279:
- 218:Sdrive/adc_drv.c **** 
- 219:Sdrive/adc_drv.c **** void HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
- 220:Sdrive/adc_drv.c **** {
- 1088              		.loc 1 220 1 view -0
- 1089              		.cfi_startproc
- 1090              		@ args = 0, pretend = 0, frame = 0
- 1091              		@ frame_needed = 0, uses_anonymous_args = 0
- 1092              		.loc 1 220 1 is_stmt 0 view .LVU308
- 1093 0000 08B5     		push	{r3, lr}
- 1094              	.LCFI6:
- 1095              		.cfi_def_cfa_offset 8
- 1096              		.cfi_offset 3, -8
- 1097              		.cfi_offset 14, -4
- 221:Sdrive/adc_drv.c ****     if (hadc->Instance == ADC1 || hadc->Instance == ADC2)
- 1098              		.loc 1 221 5 is_stmt 1 view .LVU309
- 1099              		.loc 1 221 13 is_stmt 0 view .LVU310
- 1100 0002 0368     		ldr	r3, [r0]
- 1101              		.loc 1 221 8 view .LVU311
- 1102 0004 074A     		ldr	r2, .L74
- 1103 0006 9342     		cmp	r3, r2
- 1104 0008 04D0     		beq	.L71
- 1105              		.loc 1 221 32 discriminator 1 view .LVU312
- 1106 000a 02F58072 		add	r2, r2, #256
- 1107 000e 9342     		cmp	r3, r2
- 1108 0010 00D0     		beq	.L71
- 1109              	.LVL56:
- 1110              	.L70:
- 222:Sdrive/adc_drv.c ****         AdcFail(HAL_ADC_GetError(hadc) | ADC_FAULT_SLOW);
- 223:Sdrive/adc_drv.c **** }
- 1111              		.loc 1 223 1 view .LVU313
- 1112 0012 08BD     		pop	{r3, pc}
- 1113              	.LVL57:
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 50
+ 1061 00dc 00000000 		.word	hadc2
+ 1062 00e0 00000000 		.word	offset_ready
+ 1063 00e4 00000000 		.word	Init_Over
+ 1064 00e8 00000000 		.word	AdcControlCyclesMax
+ 1065 00ec 00000000 		.word	AdcControlDeadlineMisses
+ 1066 00f0 00000000 		.word	EnCoSpeed
+ 1067 00f4 00000000 		.word	AdcPara
+ 1068              		.cfi_endproc
+ 1069              	.LFE278:
+ 1071              		.section	.text.HAL_ADC_ErrorCallback,"ax",%progbits
+ 1072              		.align	1
+ 1073              		.global	HAL_ADC_ErrorCallback
+ 1074              		.syntax unified
+ 1075              		.thumb
+ 1076              		.thumb_func
+ 1078              	HAL_ADC_ErrorCallback:
+ 1079              	.LVL54:
+ 1080              	.LFB279:
+ 219:Sdrive/adc_drv.c **** 
+ 220:Sdrive/adc_drv.c **** void HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
+ 221:Sdrive/adc_drv.c **** {
+ 1081              		.loc 1 221 1 view -0
+ 1082              		.cfi_startproc
+ 1083              		@ args = 0, pretend = 0, frame = 0
+ 1084              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1085              		.loc 1 221 1 is_stmt 0 view .LVU307
+ 1086 0000 08B5     		push	{r3, lr}
+ 1087              	.LCFI6:
+ 1088              		.cfi_def_cfa_offset 8
+ 1089              		.cfi_offset 3, -8
+ 1090              		.cfi_offset 14, -4
+ 222:Sdrive/adc_drv.c ****     if (hadc->Instance == ADC1 || hadc->Instance == ADC2)
+ 1091              		.loc 1 222 5 is_stmt 1 view .LVU308
+ 1092              		.loc 1 222 13 is_stmt 0 view .LVU309
+ 1093 0002 0368     		ldr	r3, [r0]
+ 1094              		.loc 1 222 8 view .LVU310
+ 1095 0004 074A     		ldr	r2, .L74
+ 1096 0006 9342     		cmp	r3, r2
+ 1097 0008 04D0     		beq	.L71
+ 1098              		.loc 1 222 32 discriminator 1 view .LVU311
+ 1099 000a 02F58072 		add	r2, r2, #256
+ 1100 000e 9342     		cmp	r3, r2
+ 1101 0010 00D0     		beq	.L71
+ 1102              	.LVL55:
+ 1103              	.L70:
+ 223:Sdrive/adc_drv.c ****         AdcFail(HAL_ADC_GetError(hadc) | ADC_FAULT_SLOW);
+ 224:Sdrive/adc_drv.c **** }
+ 1104              		.loc 1 224 1 view .LVU312
+ 1105 0012 08BD     		pop	{r3, pc}
+ 1106              	.LVL56:
+ 1107              	.L71:
+ 223:Sdrive/adc_drv.c ****         AdcFail(HAL_ADC_GetError(hadc) | ADC_FAULT_SLOW);
+ 1108              		.loc 1 223 9 is_stmt 1 view .LVU313
+ 223:Sdrive/adc_drv.c ****         AdcFail(HAL_ADC_GetError(hadc) | ADC_FAULT_SLOW);
+ 1109              		.loc 1 223 17 is_stmt 0 view .LVU314
+ 1110 0014 FFF7FEFF 		bl	HAL_ADC_GetError
+ 1111              	.LVL57:
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 50
 
 
- 1114              	.L71:
- 222:Sdrive/adc_drv.c ****         AdcFail(HAL_ADC_GetError(hadc) | ADC_FAULT_SLOW);
- 1115              		.loc 1 222 9 is_stmt 1 view .LVU314
- 222:Sdrive/adc_drv.c ****         AdcFail(HAL_ADC_GetError(hadc) | ADC_FAULT_SLOW);
- 1116              		.loc 1 222 17 is_stmt 0 view .LVU315
- 1117 0014 FFF7FEFF 		bl	HAL_ADC_GetError
- 1118              	.LVL58:
- 222:Sdrive/adc_drv.c ****         AdcFail(HAL_ADC_GetError(hadc) | ADC_FAULT_SLOW);
- 1119              		.loc 1 222 9 discriminator 1 view .LVU316
- 1120 0018 40F48020 		orr	r0, r0, #262144
- 1121 001c FFF7FEFF 		bl	AdcFail
- 1122              	.LVL59:
- 1123              		.loc 1 223 1 view .LVU317
- 1124 0020 F7E7     		b	.L70
- 1125              	.L75:
- 1126 0022 00BF     		.align	2
- 1127              	.L74:
- 1128 0024 00200140 		.word	1073815552
- 1129              		.cfi_endproc
- 1130              	.LFE279:
- 1132              		.section	.bss.slow_divider,"aw",%nobits
- 1133              		.align	1
- 1136              	slow_divider:
- 1137 0000 0000     		.space	2
- 1138              		.section	.bss.slow_busy,"aw",%nobits
- 1141              	slow_busy:
- 1142 0000 00       		.space	1
- 1143              		.section	.bss.offset_sum_w,"aw",%nobits
- 1144              		.align	2
- 1147              	offset_sum_w:
- 1148 0000 00000000 		.space	4
- 1149              		.section	.bss.offset_sum_u,"aw",%nobits
- 1150              		.align	2
- 1153              	offset_sum_u:
- 1154 0000 00000000 		.space	4
- 1155              		.section	.bss.offset_ready,"aw",%nobits
- 1158              	offset_ready:
- 1159 0000 00       		.space	1
- 1160              		.section	.bss.offset_active,"aw",%nobits
- 1163              	offset_active:
- 1164 0000 00       		.space	1
- 1165              		.section	.bss.offset_count,"aw",%nobits
+ 223:Sdrive/adc_drv.c ****         AdcFail(HAL_ADC_GetError(hadc) | ADC_FAULT_SLOW);
+ 1112              		.loc 1 223 9 discriminator 1 view .LVU315
+ 1113 0018 40F48020 		orr	r0, r0, #262144
+ 1114 001c FFF7FEFF 		bl	AdcFail
+ 1115              	.LVL58:
+ 1116              		.loc 1 224 1 view .LVU316
+ 1117 0020 F7E7     		b	.L70
+ 1118              	.L75:
+ 1119 0022 00BF     		.align	2
+ 1120              	.L74:
+ 1121 0024 00200140 		.word	1073815552
+ 1122              		.cfi_endproc
+ 1123              	.LFE279:
+ 1125              		.section	.bss.slow_divider,"aw",%nobits
+ 1126              		.align	1
+ 1129              	slow_divider:
+ 1130 0000 0000     		.space	2
+ 1131              		.section	.bss.slow_busy,"aw",%nobits
+ 1134              	slow_busy:
+ 1135 0000 00       		.space	1
+ 1136              		.section	.bss.offset_sum_w,"aw",%nobits
+ 1137              		.align	2
+ 1140              	offset_sum_w:
+ 1141 0000 00000000 		.space	4
+ 1142              		.section	.bss.offset_sum_u,"aw",%nobits
+ 1143              		.align	2
+ 1146              	offset_sum_u:
+ 1147 0000 00000000 		.space	4
+ 1148              		.section	.bss.offset_ready,"aw",%nobits
+ 1151              	offset_ready:
+ 1152 0000 00       		.space	1
+ 1153              		.section	.bss.offset_active,"aw",%nobits
+ 1156              	offset_active:
+ 1157 0000 00       		.space	1
+ 1158              		.section	.bss.offset_count,"aw",%nobits
+ 1159              		.align	2
+ 1162              	offset_count:
+ 1163 0000 00000000 		.space	4
+ 1164              		.global	AdcControlDeadlineMisses
+ 1165              		.section	.bss.AdcControlDeadlineMisses,"aw",%nobits
  1166              		.align	2
- 1169              	offset_count:
+ 1169              	AdcControlDeadlineMisses:
  1170 0000 00000000 		.space	4
- 1171              		.global	AdcControlDeadlineMisses
- 1172              		.section	.bss.AdcControlDeadlineMisses,"aw",%nobits
+ 1171              		.global	AdcControlCyclesMax
+ 1172              		.section	.bss.AdcControlCyclesMax,"aw",%nobits
  1173              		.align	2
- 1176              	AdcControlDeadlineMisses:
+ 1176              	AdcControlCyclesMax:
  1177 0000 00000000 		.space	4
- 1178              		.global	AdcControlCyclesMax
- 1179              		.section	.bss.AdcControlCyclesMax,"aw",%nobits
+ 1178              		.global	AdcFault
+ 1179              		.section	.bss.AdcFault,"aw",%nobits
  1180              		.align	2
- 1183              	AdcControlCyclesMax:
+ 1183              	AdcFault:
  1184 0000 00000000 		.space	4
- 1185              		.global	AdcFault
- 1186              		.section	.bss.AdcFault,"aw",%nobits
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 51
-
-
+ 1185              		.global	AdcSlowSamples
+ 1186              		.section	.bss.AdcSlowSamples,"aw",%nobits
  1187              		.align	2
- 1190              	AdcFault:
+ 1190              	AdcSlowSamples:
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 51
+
+
  1191 0000 00000000 		.space	4
- 1192              		.global	AdcSlowSamples
- 1193              		.section	.bss.AdcSlowSamples,"aw",%nobits
+ 1192              		.global	AdcCurrentSamples
+ 1193              		.section	.bss.AdcCurrentSamples,"aw",%nobits
  1194              		.align	2
- 1197              	AdcSlowSamples:
+ 1197              	AdcCurrentSamples:
  1198 0000 00000000 		.space	4
- 1199              		.global	AdcCurrentSamples
- 1200              		.section	.bss.AdcCurrentSamples,"aw",%nobits
- 1201              		.align	2
- 1204              	AdcCurrentSamples:
- 1205 0000 00000000 		.space	4
- 1206              		.global	AdcRawW
- 1207              		.section	.bss.AdcRawW,"aw",%nobits
+ 1199              		.global	AdcRawW
+ 1200              		.section	.bss.AdcRawW,"aw",%nobits
+ 1201              		.align	1
+ 1204              	AdcRawW:
+ 1205 0000 0000     		.space	2
+ 1206              		.global	AdcRawU
+ 1207              		.section	.bss.AdcRawU,"aw",%nobits
  1208              		.align	1
- 1211              	AdcRawW:
+ 1211              	AdcRawU:
  1212 0000 0000     		.space	2
- 1213              		.global	AdcRawU
- 1214              		.section	.bss.AdcRawU,"aw",%nobits
- 1215              		.align	1
- 1218              	AdcRawU:
- 1219 0000 0000     		.space	2
- 1220              		.global	ADC_Slow
- 1221              		.section	.bss.ADC_Slow,"aw",%nobits
+ 1213              		.global	ADC_Slow
+ 1214              		.section	.bss.ADC_Slow,"aw",%nobits
+ 1215              		.align	2
+ 1218              	ADC_Slow:
+ 1219 0000 00000000 		.space	6
+ 1219      0000
+ 1220              		.global	AdcFilPara
+ 1221              		.section	.bss.AdcFilPara,"aw",%nobits
  1222              		.align	2
- 1225              	ADC_Slow:
- 1226 0000 00000000 		.space	6
- 1226      0000
- 1227              		.global	AdcFilPara
- 1228              		.section	.bss.AdcFilPara,"aw",%nobits
+ 1225              	AdcFilPara:
+ 1226 0000 00000000 		.space	28
+ 1226      00000000 
+ 1226      00000000 
+ 1226      00000000 
+ 1226      00000000 
+ 1227              		.global	AdcPara
+ 1228              		.section	.bss.AdcPara,"aw",%nobits
  1229              		.align	2
- 1232              	AdcFilPara:
- 1233 0000 00000000 		.space	28
+ 1232              	AdcPara:
+ 1233 0000 00000000 		.space	32
  1233      00000000 
  1233      00000000 
  1233      00000000 
  1233      00000000 
- 1234              		.global	AdcPara
- 1235              		.section	.bss.AdcPara,"aw",%nobits
- 1236              		.align	2
- 1239              	AdcPara:
- 1240 0000 00000000 		.space	32
- 1240      00000000 
- 1240      00000000 
- 1240      00000000 
- 1240      00000000 
- 1241              		.text
- 1242              	.Letext0:
- 1243              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
- 1244              		.file 4 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
- 1245              		.file 5 "Drivers/CMSIS/Include/core_cm4.h"
- 1246              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
- 1247              		.file 7 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h"
- 1248              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
- 1249              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
- 1250              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h"
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 52
+ 1234              		.text
+ 1235              	.Letext0:
+ 1236              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 1237              		.file 4 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 1238              		.file 5 "Drivers/CMSIS/Include/core_cm4.h"
+ 1239              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 1240              		.file 7 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h"
+ 1241              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 1242              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 1243              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h"
+ 1244              		.file 11 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 1245              		.file 12 "Sdrive/adc_drv.h"
+ 1246              		.file 13 "Core/Inc/adc.h"
+ 1247              		.file 14 "Core/Inc/tim.h"
+ 1248              		.file 15 "Sdrive/tim_drv.h"
+ 1249              		.file 16 "MotorFoc/motor_ctrl.h"
+ 1250              		.file 17 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc_ex.h"
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 52
 
 
- 1251              		.file 11 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
- 1252              		.file 12 "Sdrive/adc_drv.h"
- 1253              		.file 13 "Core/Inc/adc.h"
- 1254              		.file 14 "Core/Inc/tim.h"
- 1255              		.file 15 "Sdrive/tim_drv.h"
- 1256              		.file 16 "MotorFoc/motor_ctrl.h"
- 1257              		.file 17 "Sdrive/foc_wave.h"
- 1258              		.file 18 "MotorFoc/sen.h"
- 1259              		.file 19 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc_ex.h"
- 1260              		.file 20 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
- 1261              		.file 21 "Core/Inc/main.h"
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 53
+ 1251              		.file 18 "Sdrive/foc_wave.h"
+ 1252              		.file 19 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 1253              		.file 20 "Core/Inc/main.h"
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 53
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 adc_drv.c
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:21     .text.AdcFail:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:26     .text.AdcFail:00000000 AdcFail
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:53     .text.AdcFail:00000010 $d
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1190   .bss.AdcFault:00000000 AdcFault
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:58     .text.AdcSlowStart:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:63     .text.AdcSlowStart:00000000 AdcSlowStart
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:136    .text.AdcSlowStart:00000054 $d
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1136   .bss.slow_divider:00000000 slow_divider
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1141   .bss.slow_busy:00000000 slow_busy
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1225   .bss.ADC_Slow:00000000 ADC_Slow
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:144    .text.AdcSamplingStart:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:150    .text.AdcSamplingStart:00000000 AdcSamplingStart
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:273    .text.AdcSamplingStart:0000009c $d
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:283    .text.AdcSampleOffset:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:289    .text.AdcSampleOffset:00000000 AdcSampleOffset
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:447    .text.AdcSampleOffset:00000060 $d
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1163   .bss.offset_active:00000000 offset_active
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1158   .bss.offset_ready:00000000 offset_ready
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1169   .bss.offset_count:00000000 offset_count
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1147   .bss.offset_sum_w:00000000 offset_sum_w
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1153   .bss.offset_sum_u:00000000 offset_sum_u
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:457    .text.GetAdc:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:463    .text.GetAdc:00000000 GetAdc
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:692    .text.GetAdc:0000011c $d
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1218   .bss.AdcRawU:00000000 AdcRawU
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1211   .bss.AdcRawW:00000000 AdcRawW
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1204   .bss.AdcCurrentSamples:00000000 AdcCurrentSamples
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1232   .bss.AdcFilPara:00000000 AdcFilPara
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1239   .bss.AdcPara:00000000 AdcPara
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:712    .text.HAL_ADC_ConvCpltCallback:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:718    .text.HAL_ADC_ConvCpltCallback:00000000 HAL_ADC_ConvCpltCallback
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:835    .text.HAL_ADC_ConvCpltCallback:0000009c $d
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1197   .bss.AdcSlowSamples:00000000 AdcSlowSamples
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:847    .text.HAL_ADCEx_InjectedConvCpltCallback:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:853    .text.HAL_ADCEx_InjectedConvCpltCallback:00000000 HAL_ADCEx_InjectedConvCpltCallback
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1063   .text.HAL_ADCEx_InjectedConvCpltCallback:000000d8 $d
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1183   .bss.AdcControlCyclesMax:00000000 AdcControlCyclesMax
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1176   .bss.AdcControlDeadlineMisses:00000000 AdcControlDeadlineMisses
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1079   .text.HAL_ADC_ErrorCallback:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1085   .text.HAL_ADC_ErrorCallback:00000000 HAL_ADC_ErrorCallback
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1128   .text.HAL_ADC_ErrorCallback:00000024 $d
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1133   .bss.slow_divider:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1142   .bss.slow_busy:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1144   .bss.offset_sum_w:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1150   .bss.offset_sum_u:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1159   .bss.offset_ready:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1164   .bss.offset_active:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1166   .bss.offset_count:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1173   .bss.AdcControlDeadlineMisses:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1180   .bss.AdcControlCyclesMax:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1187   .bss.AdcFault:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1194   .bss.AdcSlowSamples:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1201   .bss.AdcCurrentSamples:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1208   .bss.AdcRawW:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1215   .bss.AdcRawU:00000000 $d
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s 			page 54
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:21     .text.AdcFail:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:26     .text.AdcFail:00000000 AdcFail
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:53     .text.AdcFail:00000010 $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1183   .bss.AdcFault:00000000 AdcFault
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:58     .text.AdcSlowStart:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:63     .text.AdcSlowStart:00000000 AdcSlowStart
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:136    .text.AdcSlowStart:00000054 $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1129   .bss.slow_divider:00000000 slow_divider
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1134   .bss.slow_busy:00000000 slow_busy
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1218   .bss.ADC_Slow:00000000 ADC_Slow
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:144    .text.AdcSamplingStart:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:150    .text.AdcSamplingStart:00000000 AdcSamplingStart
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:273    .text.AdcSamplingStart:0000009c $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:283    .text.AdcSampleOffset:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:289    .text.AdcSampleOffset:00000000 AdcSampleOffset
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:447    .text.AdcSampleOffset:00000060 $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1156   .bss.offset_active:00000000 offset_active
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1151   .bss.offset_ready:00000000 offset_ready
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1162   .bss.offset_count:00000000 offset_count
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1140   .bss.offset_sum_w:00000000 offset_sum_w
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1146   .bss.offset_sum_u:00000000 offset_sum_u
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:457    .text.GetAdc:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:463    .text.GetAdc:00000000 GetAdc
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:692    .text.GetAdc:0000011c $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1211   .bss.AdcRawU:00000000 AdcRawU
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1204   .bss.AdcRawW:00000000 AdcRawW
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1197   .bss.AdcCurrentSamples:00000000 AdcCurrentSamples
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1225   .bss.AdcFilPara:00000000 AdcFilPara
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1232   .bss.AdcPara:00000000 AdcPara
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:712    .text.HAL_ADC_ConvCpltCallback:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:718    .text.HAL_ADC_ConvCpltCallback:00000000 HAL_ADC_ConvCpltCallback
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:835    .text.HAL_ADC_ConvCpltCallback:0000009c $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1190   .bss.AdcSlowSamples:00000000 AdcSlowSamples
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:847    .text.HAL_ADCEx_InjectedConvCpltCallback:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:853    .text.HAL_ADCEx_InjectedConvCpltCallback:00000000 HAL_ADCEx_InjectedConvCpltCallback
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1057   .text.HAL_ADCEx_InjectedConvCpltCallback:000000cc $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1176   .bss.AdcControlCyclesMax:00000000 AdcControlCyclesMax
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1169   .bss.AdcControlDeadlineMisses:00000000 AdcControlDeadlineMisses
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1072   .text.HAL_ADC_ErrorCallback:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1078   .text.HAL_ADC_ErrorCallback:00000000 HAL_ADC_ErrorCallback
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1121   .text.HAL_ADC_ErrorCallback:00000024 $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1126   .bss.slow_divider:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1135   .bss.slow_busy:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1137   .bss.offset_sum_w:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1143   .bss.offset_sum_u:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1152   .bss.offset_ready:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1157   .bss.offset_active:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1159   .bss.offset_count:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1166   .bss.AdcControlDeadlineMisses:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1173   .bss.AdcControlCyclesMax:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1180   .bss.AdcFault:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1187   .bss.AdcSlowSamples:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1194   .bss.AdcCurrentSamples:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1201   .bss.AdcRawW:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1208   .bss.AdcRawU:00000000 $d
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s 			page 54
 
 
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1222   .bss.ADC_Slow:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1229   .bss.AdcFilPara:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccny3sbi.s:1236   .bss.AdcPara:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1215   .bss.ADC_Slow:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1222   .bss.AdcFilPara:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccMPMKlw.s:1229   .bss.AdcPara:00000000 $d
 
 UNDEFINED SYMBOLS
 MotorStop
@@ -3153,12 +3145,10 @@ Error_Handler
 HAL_Delay
 HAL_ADCEx_InjectedGetValue
 AxisDq
-SpeedCloseloop
-FocSvpwm
+MotorModeSel
 FocWaveCapture
 MotorAngleGet
 MotorSpeedGet
 Init_Over
-Para
 EnCoSpeed
 HAL_ADC_GetError

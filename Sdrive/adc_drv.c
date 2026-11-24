@@ -190,10 +190,11 @@ void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef *hadc)
         //2.有感电流环驱动
         // CurCloseloop(0.5f, Motor.E_theta);
         //3.有感速度环驱动
-        SpeedCloseloop(Para.SpeedRef, 1);
+        // SpeedCloseloop(Para.SpeedRef, 1);
         // SpeedCloseloop(1200, 1);
-        FocSvpwm();
+        // FocSvpwm();
         /* 采样完成时应处于下数，新的三相 CCR 应在随后的谷底前写完。 */
+        MotorModeSel(); // 控制模式选择
         const uint32_t count = TIM1->CNT;
         const uint32_t elapsed = DWT->CYCCNT - start_cycles;
         if (entry_down == 0U || (TIM1->CR1 & TIM_CR1_DIR) == 0U || count > entry_count || elapsed >= entry_count)

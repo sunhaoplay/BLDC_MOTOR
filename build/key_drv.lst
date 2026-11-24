@@ -1,0 +1,862 @@
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"key_drv.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Sdrive/key_drv.c"
+  20              		.section	.text.KeyScan,"ax",%progbits
+  21              		.align	1
+  22              		.syntax unified
+  23              		.thumb
+  24              		.thumb_func
+  26              	KeyScan:
+  27              	.LVL0:
+  28              	.LFB240:
+   1:Sdrive/key_drv.c **** /**
+   2:Sdrive/key_drv.c ****  * @file key_drv.c
+   3:Sdrive/key_drv.c ****  * @brief 实现四路按键的消抖、单击/双击/长按识别状态机。
+   4:Sdrive/key_drv.c ****  *
+   5:Sdrive/key_drv.c ****  * 每个按键拥有独立状态和时间戳。GPIO 为上拉输入，所以读到 0 表示按下�
+   6:Sdrive/key_drv.c ****  * 单击只有在双击等待窗口结束后才上报；长按事件在持续时间达到阈值并
+   7:Sdrive/key_drv.c ****  */
+   8:Sdrive/key_drv.c **** #include "key_drv.h"
+   9:Sdrive/key_drv.c **** 
+  10:Sdrive/key_drv.c **** typedef struct
+  11:Sdrive/key_drv.c **** {
+  12:Sdrive/key_drv.c **** 	GPIO_TypeDef *gpio; /**< 按键所在 GPIO 端口。 */
+  13:Sdrive/key_drv.c **** 	uint32_t pin;       /**< 对应 HAL GPIO_PIN_x 位掩码。 */
+  14:Sdrive/key_drv.c **** } Key_GPIO_t;
+  15:Sdrive/key_drv.c **** 
+  16:Sdrive/key_drv.c **** static Key_GPIO_t g_gpioList[] = 
+  17:Sdrive/key_drv.c **** {
+  18:Sdrive/key_drv.c **** 	{GPIOB, GPIO_PIN_12},   // key1
+  19:Sdrive/key_drv.c **** 	{GPIOB, GPIO_PIN_13},   // key2
+  20:Sdrive/key_drv.c **** 	{GPIOB, GPIO_PIN_14},   // key3
+  21:Sdrive/key_drv.c ****     {GPIOB, GPIO_PIN_11},   // ONOFF
+  22:Sdrive/key_drv.c **** };
+  23:Sdrive/key_drv.c **** 
+  24:Sdrive/key_drv.c **** #define KEY_NUM_MAX (sizeof(g_gpioList) / sizeof(g_gpioList[0]))
+  25:Sdrive/key_drv.c **** 
+  26:Sdrive/key_drv.c **** typedef enum
+  27:Sdrive/key_drv.c **** {
+  28:Sdrive/key_drv.c **** 	KEY_RELEASE = 0, /**< 当前松开，或正在等待双击窗口结束。 */
+  29:Sdrive/key_drv.c **** 	KEY_CONFIRM,     /**< 检测到低电平，等待消抖时间确认。 */
+  30:Sdrive/key_drv.c **** 	KEY_SHORTPRESS,  /**< 已确认按下，等待释放或长按超时。 */
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s 			page 2
+
+
+  31:Sdrive/key_drv.c **** 	KEY_LONGPRESS    /**< 已达到长按时间，等待释放后上报。 */
+  32:Sdrive/key_drv.c **** } KEY_STATE;
+  33:Sdrive/key_drv.c **** 
+  34:Sdrive/key_drv.c **** #define CONFIRM_TIME                 10       // 按键消抖时间窗10ms
+  35:Sdrive/key_drv.c **** #define DOUBLE_CLICK_INTERVAL_TIME   300      // 两次抬起时间窗300ms，用来判断是否双
+  36:Sdrive/key_drv.c **** #define LONGPRESS_TIME               2000     // 长按时间窗2000ms
+  37:Sdrive/key_drv.c **** 
+  38:Sdrive/key_drv.c **** typedef struct
+  39:Sdrive/key_drv.c **** {
+  40:Sdrive/key_drv.c **** 	KEY_STATE keyState;             /**< 当前状态机状态。 */
+  41:Sdrive/key_drv.c **** 	uint8_t singleClickNum;         /**< 双击窗口内已经完成的短按次数。 */
+  42:Sdrive/key_drv.c **** 	uint64_t firstIoChangeSysTime;  /**< 本次首次检测到按下的毫秒时间戳。 */
+  43:Sdrive/key_drv.c **** 	uint64_t firstReleaseSysTime;   /**< 第一次短按释放的毫秒时间戳。 */
+  44:Sdrive/key_drv.c **** } Key_Info_t;
+  45:Sdrive/key_drv.c **** 
+  46:Sdrive/key_drv.c **** static Key_Info_t g_keyInfo[KEY_NUM_MAX];
+  47:Sdrive/key_drv.c **** 
+  48:Sdrive/key_drv.c **** /**
+  49:Sdrive/key_drv.c ****  * @brief 配置四个按键为 GPIOB 上拉输入。
+  50:Sdrive/key_drv.c ****  * @note 引脚映射来自 g_gpioList[]，数组顺序同时决定返回事件中的按键编号�
+  51:Sdrive/key_drv.c ****  */
+  52:Sdrive/key_drv.c **** void KeyDrvInit(void)
+  53:Sdrive/key_drv.c **** {
+  54:Sdrive/key_drv.c **** 	__HAL_RCC_GPIOB_CLK_ENABLE();
+  55:Sdrive/key_drv.c **** 	
+  56:Sdrive/key_drv.c **** 	GPIO_InitTypeDef gpioInitStruct;
+  57:Sdrive/key_drv.c **** 	gpioInitStruct.Mode = GPIO_MODE_INPUT;
+  58:Sdrive/key_drv.c **** 	gpioInitStruct.Pull = GPIO_PULLUP;
+  59:Sdrive/key_drv.c **** 	
+  60:Sdrive/key_drv.c **** 	for (uint8_t i = 0; i < KEY_NUM_MAX; i++)
+  61:Sdrive/key_drv.c **** 	{
+  62:Sdrive/key_drv.c **** 		gpioInitStruct.Pin = g_gpioList[i].pin;
+  63:Sdrive/key_drv.c **** 		HAL_GPIO_Init(g_gpioList[i].gpio, &gpioInitStruct);
+  64:Sdrive/key_drv.c **** 	}
+  65:Sdrive/key_drv.c **** }
+  66:Sdrive/key_drv.c **** 
+  67:Sdrive/key_drv.c **** /**
+  68:Sdrive/key_drv.c ****  * @brief 推进一步指定按键的事件识别状态机。
+  69:Sdrive/key_drv.c ****  * @param keyIndex 按键数组索引，有效范围 0..KEY_NUM_MAX-1。
+  70:Sdrive/key_drv.c ****  * @return 0 表示事件尚未完成，否则返回该按键的短按、双击或长按事件码�
+  71:Sdrive/key_drv.c ****  *
+  72:Sdrive/key_drv.c ****  * 状态流为 RELEASE -> CONFIRM -> SHORTPRESS；持续按下超过 LONGPRESS_TIME 后进入
+  73:Sdrive/key_drv.c ****  * LONGPRESS。第一次短按释放后保留 singleClickNum，若窗口内再次释放则立即上
+  74:Sdrive/key_drv.c ****  * 双击，否则窗口超时后上报单击。
+  75:Sdrive/key_drv.c ****  */
+  76:Sdrive/key_drv.c **** static uint8_t KeyScan(uint8_t keyIndex)
+  77:Sdrive/key_drv.c **** {
+  29              		.loc 1 77 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33              		.loc 1 77 1 is_stmt 0 view .LVU1
+  34 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+  35              	.LCFI0:
+  36              		.cfi_def_cfa_offset 24
+  37              		.cfi_offset 3, -24
+  38              		.cfi_offset 4, -20
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s 			page 3
+
+
+  39              		.cfi_offset 5, -16
+  40              		.cfi_offset 6, -12
+  41              		.cfi_offset 7, -8
+  42              		.cfi_offset 14, -4
+  43 0002 0446     		mov	r4, r0
+  78:Sdrive/key_drv.c **** 	uint64_t curSysTime;
+  44              		.loc 1 78 2 is_stmt 1 view .LVU2
+  79:Sdrive/key_drv.c **** 	uint8_t keyPress;
+  45              		.loc 1 79 2 view .LVU3
+  80:Sdrive/key_drv.c **** 	
+  81:Sdrive/key_drv.c **** 	keyPress = HAL_GPIO_ReadPin(g_gpioList[keyIndex].gpio, g_gpioList[keyIndex].pin);
+  46              		.loc 1 81 2 view .LVU4
+  47              		.loc 1 81 77 is_stmt 0 view .LVU5
+  48 0004 684B     		ldr	r3, .L21
+  49 0006 03EBC002 		add	r2, r3, r0, lsl #3
+  50              		.loc 1 81 13 view .LVU6
+  51 000a 9188     		ldrh	r1, [r2, #4]
+  52 000c 53F83000 		ldr	r0, [r3, r0, lsl #3]
+  53              	.LVL1:
+  54              		.loc 1 81 13 view .LVU7
+  55 0010 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+  56              	.LVL2:
+  57 0014 0546     		mov	r5, r0
+  58              	.LVL3:
+  82:Sdrive/key_drv.c **** 
+  83:Sdrive/key_drv.c **** 	switch (g_keyInfo[keyIndex].keyState)
+  59              		.loc 1 83 2 is_stmt 1 view .LVU8
+  60              		.loc 1 83 29 is_stmt 0 view .LVU9
+  61 0016 04EB4402 		add	r2, r4, r4, lsl #1
+  62 001a 644B     		ldr	r3, .L21+4
+  63 001c 13F83260 		ldrb	r6, [r3, r2, lsl #3]	@ zero_extendqisi2
+  64              		.loc 1 83 2 view .LVU10
+  65 0020 032E     		cmp	r6, #3
+  66 0022 00F2B980 		bhi	.L2
+  67 0026 DFE806F0 		tbb	[pc, r6]
+  68              	.L4:
+  69 002a 02       		.byte	(.L7-.L4)/2
+  70 002b 38       		.byte	(.L6-.L4)/2
+  71 002c 58       		.byte	(.L5-.L4)/2
+  72 002d AB       		.byte	(.L3-.L4)/2
+  73              		.p2align 1
+  74              	.L7:
+  84:Sdrive/key_drv.c **** 	{
+  85:Sdrive/key_drv.c **** 		case KEY_RELEASE:                                          //  释放状态：判断有无按键�
+  86:Sdrive/key_drv.c **** 			if (!keyPress)                                         //  有按键按下
+  75              		.loc 1 86 4 is_stmt 1 view .LVU11
+  76              		.loc 1 86 7 is_stmt 0 view .LVU12
+  77 002e D0B1     		cbz	r0, .L16
+  87:Sdrive/key_drv.c **** 			{ 
+  88:Sdrive/key_drv.c **** 				g_keyInfo[keyIndex].keyState = KEY_CONFIRM;        //  获取系统运行时间
+  89:Sdrive/key_drv.c **** 				g_keyInfo[keyIndex].firstIoChangeSysTime = HAL_GetTick();
+  90:Sdrive/key_drv.c **** 				break;
+  91:Sdrive/key_drv.c **** 			}
+  92:Sdrive/key_drv.c **** 
+  93:Sdrive/key_drv.c **** 			if (g_keyInfo[keyIndex].singleClickNum != 0)
+  78              		.loc 1 93 4 is_stmt 1 view .LVU13
+  79              		.loc 1 93 27 is_stmt 0 view .LVU14
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s 			page 4
+
+
+  80 0030 04EB4402 		add	r2, r4, r4, lsl #1
+  81 0034 5D4B     		ldr	r3, .L21+4
+  82 0036 03EBC203 		add	r3, r3, r2, lsl #3
+  83 003a 5D78     		ldrb	r5, [r3, #1]	@ zero_extendqisi2
+  84              		.loc 1 93 7 view .LVU15
+  85 003c A5B3     		cbz	r5, .L9
+  94:Sdrive/key_drv.c **** 			{
+  95:Sdrive/key_drv.c **** 				curSysTime = HAL_GetTick();
+  86              		.loc 1 95 5 is_stmt 1 view .LVU16
+  87              		.loc 1 95 18 is_stmt 0 view .LVU17
+  88 003e FFF7FEFF 		bl	HAL_GetTick
+  89              	.LVL4:
+  96:Sdrive/key_drv.c **** 				if (curSysTime - g_keyInfo[keyIndex].firstReleaseSysTime > DOUBLE_CLICK_INTERVAL_TIME)
+  90              		.loc 1 96 5 is_stmt 1 view .LVU18
+  91              		.loc 1 96 41 is_stmt 0 view .LVU19
+  92 0042 04EB4402 		add	r2, r4, r4, lsl #1
+  93 0046 594B     		ldr	r3, .L21+4
+  94 0048 03EBC203 		add	r3, r3, r2, lsl #3
+  95 004c 1A69     		ldr	r2, [r3, #16]
+  96 004e 5B69     		ldr	r3, [r3, #20]
+  97              		.loc 1 96 20 view .LVU20
+  98 0050 801A     		subs	r0, r0, r2
+  99              	.LVL5:
+ 100              		.loc 1 96 20 view .LVU21
+ 101 0052 63EB4303 		sbc	r3, r3, r3, lsl #1
+ 102              		.loc 1 96 8 view .LVU22
+ 103 0056 40F22D12 		movw	r2, #301
+ 104 005a 9042     		cmp	r0, r2
+ 105 005c 73F10003 		sbcs	r3, r3, #0
+ 106 0060 11D2     		bcs	.L17
+  97:Sdrive/key_drv.c **** 				{
+  98:Sdrive/key_drv.c **** 					g_keyInfo[keyIndex].singleClickNum = 0;
+  99:Sdrive/key_drv.c **** 					return (keyIndex + 1); //  返回单击按键码值，四个按键短按对应0x01, 0x02, 0x03
+ 100:Sdrive/key_drv.c **** 				}
+ 101:Sdrive/key_drv.c **** 			}
+ 102:Sdrive/key_drv.c **** 
+ 103:Sdrive/key_drv.c **** 			break;
+ 104:Sdrive/key_drv.c **** 			
+ 105:Sdrive/key_drv.c **** 		case KEY_CONFIRM:
+ 106:Sdrive/key_drv.c **** 			if (!keyPress)
+ 107:Sdrive/key_drv.c **** 			{
+ 108:Sdrive/key_drv.c **** 				curSysTime = HAL_GetTick();
+ 109:Sdrive/key_drv.c **** 				if (curSysTime - g_keyInfo[keyIndex].firstIoChangeSysTime > CONFIRM_TIME) //  超过时间窗�
+ 110:Sdrive/key_drv.c **** 				{
+ 111:Sdrive/key_drv.c **** 					g_keyInfo[keyIndex].keyState = KEY_SHORTPRESS;
+ 112:Sdrive/key_drv.c **** 				}
+ 113:Sdrive/key_drv.c **** 			}
+ 114:Sdrive/key_drv.c **** 			else
+ 115:Sdrive/key_drv.c **** 			{
+ 116:Sdrive/key_drv.c **** 				g_keyInfo[keyIndex].keyState = KEY_RELEASE;
+ 117:Sdrive/key_drv.c **** 			}
+ 118:Sdrive/key_drv.c **** 			break;
+ 119:Sdrive/key_drv.c **** 			
+ 120:Sdrive/key_drv.c **** 		case KEY_SHORTPRESS:           //  短按状态：继续判定是短按，还是双击，还是�
+ 121:Sdrive/key_drv.c **** 			if (keyPress)
+ 122:Sdrive/key_drv.c **** 			{
+ 123:Sdrive/key_drv.c **** 				g_keyInfo[keyIndex].keyState = KEY_RELEASE;
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s 			page 5
+
+
+ 124:Sdrive/key_drv.c **** 				
+ 125:Sdrive/key_drv.c **** 				g_keyInfo[keyIndex].singleClickNum++;
+ 126:Sdrive/key_drv.c **** 				if (g_keyInfo[keyIndex].singleClickNum == 1)
+ 127:Sdrive/key_drv.c **** 				{
+ 128:Sdrive/key_drv.c **** 					g_keyInfo[keyIndex].firstReleaseSysTime = HAL_GetTick();
+ 129:Sdrive/key_drv.c **** 					break;
+ 130:Sdrive/key_drv.c **** 				}
+ 131:Sdrive/key_drv.c **** 				else
+ 132:Sdrive/key_drv.c **** 				{
+ 133:Sdrive/key_drv.c **** 					curSysTime = HAL_GetTick();
+ 134:Sdrive/key_drv.c **** 					if (curSysTime - g_keyInfo[keyIndex].firstReleaseSysTime <= DOUBLE_CLICK_INTERVAL_TIME) //  �
+ 135:Sdrive/key_drv.c **** 					{
+ 136:Sdrive/key_drv.c **** 						g_keyInfo[keyIndex].singleClickNum = 0;
+ 137:Sdrive/key_drv.c **** 						return (keyIndex + 0x51); //  返回按键码值，四个按键双击对应0x51, 0x52, 0x53, 
+ 138:Sdrive/key_drv.c **** 					}
+ 139:Sdrive/key_drv.c **** 				}
+ 140:Sdrive/key_drv.c **** 			}
+ 141:Sdrive/key_drv.c **** 			else
+ 142:Sdrive/key_drv.c **** 			{
+ 143:Sdrive/key_drv.c **** 				curSysTime = HAL_GetTick();
+ 144:Sdrive/key_drv.c **** 				if (curSysTime - g_keyInfo[keyIndex].firstIoChangeSysTime > LONGPRESS_TIME)
+ 145:Sdrive/key_drv.c **** 				{	
+ 146:Sdrive/key_drv.c **** 					g_keyInfo[keyIndex].keyState = KEY_LONGPRESS;
+ 147:Sdrive/key_drv.c **** 				}
+ 148:Sdrive/key_drv.c **** 			}
+ 149:Sdrive/key_drv.c **** 			break;
+ 150:Sdrive/key_drv.c **** 		case KEY_LONGPRESS:
+ 151:Sdrive/key_drv.c **** 			if (keyPress)
+ 152:Sdrive/key_drv.c **** 			{
+ 153:Sdrive/key_drv.c **** 				g_keyInfo[keyIndex].keyState = KEY_RELEASE;
+ 154:Sdrive/key_drv.c **** 				return (keyIndex + 0x81); //返回按键码值，四个按键长按对应0x81, 0x82, 0x83, 0x84
+ 155:Sdrive/key_drv.c **** 			}
+ 156:Sdrive/key_drv.c **** 			break;
+ 157:Sdrive/key_drv.c **** 		default:
+ 158:Sdrive/key_drv.c **** 			g_keyInfo[keyIndex].keyState = KEY_RELEASE;
+ 159:Sdrive/key_drv.c **** 			break;
+ 160:Sdrive/key_drv.c **** 	}
+ 161:Sdrive/key_drv.c **** 	return 0;
+ 107              		.loc 1 161 9 view .LVU23
+ 108 0062 3546     		mov	r5, r6
+ 109 0064 20E0     		b	.L9
+ 110              	.LVL6:
+ 111              	.L16:
+  88:Sdrive/key_drv.c **** 				g_keyInfo[keyIndex].firstIoChangeSysTime = HAL_GetTick();
+ 112              		.loc 1 88 5 is_stmt 1 view .LVU24
+  88:Sdrive/key_drv.c **** 				g_keyInfo[keyIndex].firstIoChangeSysTime = HAL_GetTick();
+ 113              		.loc 1 88 34 is_stmt 0 view .LVU25
+ 114 0066 514E     		ldr	r6, .L21+4
+ 115 0068 6700     		lsls	r7, r4, #1
+ 116 006a 04EB4403 		add	r3, r4, r4, lsl #1
+ 117 006e 0122     		movs	r2, #1
+ 118 0070 06F83320 		strb	r2, [r6, r3, lsl #3]
+  89:Sdrive/key_drv.c **** 				break;
+ 119              		.loc 1 89 5 is_stmt 1 view .LVU26
+  89:Sdrive/key_drv.c **** 				break;
+ 120              		.loc 1 89 48 is_stmt 0 view .LVU27
+ 121 0074 FFF7FEFF 		bl	HAL_GetTick
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s 			page 6
+
+
+ 122              	.LVL7:
+  89:Sdrive/key_drv.c **** 				break;
+ 123              		.loc 1 89 46 discriminator 1 view .LVU28
+ 124 0078 2744     		add	r7, r7, r4
+ 125 007a 06EBC706 		add	r6, r6, r7, lsl #3
+ 126 007e B060     		str	r0, [r6, #8]
+ 127 0080 0022     		movs	r2, #0
+ 128 0082 F260     		str	r2, [r6, #12]
+  90:Sdrive/key_drv.c **** 			}
+ 129              		.loc 1 90 5 is_stmt 1 view .LVU29
+ 130 0084 10E0     		b	.L9
+ 131              	.LVL8:
+ 132              	.L17:
+  98:Sdrive/key_drv.c **** 					return (keyIndex + 1); //  返回单击按键码值，四个按键短按对应0x01, 0x02, 0x03
+ 133              		.loc 1 98 6 view .LVU30
+  98:Sdrive/key_drv.c **** 					return (keyIndex + 1); //  返回单击按键码值，四个按键短按对应0x01, 0x02, 0x03
+ 134              		.loc 1 98 41 is_stmt 0 view .LVU31
+ 135 0086 04EB4402 		add	r2, r4, r4, lsl #1
+ 136 008a 484B     		ldr	r3, .L21+4
+ 137 008c 03EBC203 		add	r3, r3, r2, lsl #3
+ 138 0090 0022     		movs	r2, #0
+ 139 0092 5A70     		strb	r2, [r3, #1]
+  99:Sdrive/key_drv.c **** 				}
+ 140              		.loc 1 99 6 is_stmt 1 view .LVU32
+  99:Sdrive/key_drv.c **** 				}
+ 141              		.loc 1 99 23 is_stmt 0 view .LVU33
+ 142 0094 651C     		adds	r5, r4, #1
+ 143 0096 EDB2     		uxtb	r5, r5
+ 144 0098 06E0     		b	.L9
+ 145              	.LVL9:
+ 146              	.L6:
+ 106:Sdrive/key_drv.c **** 			{
+ 147              		.loc 1 106 4 is_stmt 1 view .LVU34
+ 106:Sdrive/key_drv.c **** 			{
+ 148              		.loc 1 106 7 is_stmt 0 view .LVU35
+ 149 009a 38B1     		cbz	r0, .L18
+ 116:Sdrive/key_drv.c **** 			}
+ 150              		.loc 1 116 5 is_stmt 1 view .LVU36
+ 116:Sdrive/key_drv.c **** 			}
+ 151              		.loc 1 116 34 is_stmt 0 view .LVU37
+ 152 009c 04EB4404 		add	r4, r4, r4, lsl #1
+ 153              	.LVL10:
+ 116:Sdrive/key_drv.c **** 			}
+ 154              		.loc 1 116 34 view .LVU38
+ 155 00a0 E400     		lsls	r4, r4, #3
+ 156 00a2 0025     		movs	r5, #0
+ 157 00a4 414B     		ldr	r3, .L21+4
+ 158 00a6 1D55     		strb	r5, [r3, r4]
+ 159              	.LVL11:
+ 160              	.L9:
+ 162:Sdrive/key_drv.c **** }
+ 161              		.loc 1 162 1 view .LVU39
+ 162 00a8 2846     		mov	r0, r5
+ 163 00aa F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 164              	.LVL12:
+ 165              	.L18:
+ 108:Sdrive/key_drv.c **** 				if (curSysTime - g_keyInfo[keyIndex].firstIoChangeSysTime > CONFIRM_TIME) //  超过时间窗�
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s 			page 7
+
+
+ 166              		.loc 1 108 5 is_stmt 1 view .LVU40
+ 108:Sdrive/key_drv.c **** 				if (curSysTime - g_keyInfo[keyIndex].firstIoChangeSysTime > CONFIRM_TIME) //  超过时间窗�
+ 167              		.loc 1 108 18 is_stmt 0 view .LVU41
+ 168 00ac FFF7FEFF 		bl	HAL_GetTick
+ 169              	.LVL13:
+ 109:Sdrive/key_drv.c **** 				{
+ 170              		.loc 1 109 5 is_stmt 1 view .LVU42
+ 109:Sdrive/key_drv.c **** 				{
+ 171              		.loc 1 109 41 is_stmt 0 view .LVU43
+ 172 00b0 04EB4402 		add	r2, r4, r4, lsl #1
+ 173 00b4 3D4B     		ldr	r3, .L21+4
+ 174 00b6 03EBC203 		add	r3, r3, r2, lsl #3
+ 175 00ba 9A68     		ldr	r2, [r3, #8]
+ 176 00bc DB68     		ldr	r3, [r3, #12]
+ 109:Sdrive/key_drv.c **** 				{
+ 177              		.loc 1 109 20 view .LVU44
+ 178 00be 801A     		subs	r0, r0, r2
+ 179              	.LVL14:
+ 109:Sdrive/key_drv.c **** 				{
+ 180              		.loc 1 109 20 view .LVU45
+ 181 00c0 63EB4303 		sbc	r3, r3, r3, lsl #1
+ 109:Sdrive/key_drv.c **** 				{
+ 182              		.loc 1 109 8 view .LVU46
+ 183 00c4 0B28     		cmp	r0, #11
+ 184 00c6 73F10003 		sbcs	r3, r3, #0
+ 185 00ca EDD3     		bcc	.L9
+ 111:Sdrive/key_drv.c **** 				}
+ 186              		.loc 1 111 6 is_stmt 1 view .LVU47
+ 111:Sdrive/key_drv.c **** 				}
+ 187              		.loc 1 111 35 is_stmt 0 view .LVU48
+ 188 00cc 04EB4404 		add	r4, r4, r4, lsl #1
+ 189 00d0 364B     		ldr	r3, .L21+4
+ 190 00d2 0222     		movs	r2, #2
+ 191 00d4 03F83420 		strb	r2, [r3, r4, lsl #3]
+ 192 00d8 E6E7     		b	.L9
+ 193              	.LVL15:
+ 194              	.L5:
+ 121:Sdrive/key_drv.c **** 			{
+ 195              		.loc 1 121 4 is_stmt 1 view .LVU49
+ 121:Sdrive/key_drv.c **** 			{
+ 196              		.loc 1 121 7 is_stmt 0 view .LVU50
+ 197 00da 0028     		cmp	r0, #0
+ 198 00dc 37D0     		beq	.L11
+ 123:Sdrive/key_drv.c **** 				
+ 199              		.loc 1 123 5 is_stmt 1 view .LVU51
+ 123:Sdrive/key_drv.c **** 				
+ 200              		.loc 1 123 34 is_stmt 0 view .LVU52
+ 201 00de 334B     		ldr	r3, .L21+4
+ 202 00e0 04EB4402 		add	r2, r4, r4, lsl #1
+ 203 00e4 D100     		lsls	r1, r2, #3
+ 204 00e6 03EBC202 		add	r2, r3, r2, lsl #3
+ 205 00ea 0020     		movs	r0, #0
+ 206              	.LVL16:
+ 123:Sdrive/key_drv.c **** 				
+ 207              		.loc 1 123 34 view .LVU53
+ 208 00ec 5854     		strb	r0, [r3, r1]
+ 125:Sdrive/key_drv.c **** 				if (g_keyInfo[keyIndex].singleClickNum == 1)
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s 			page 8
+
+
+ 209              		.loc 1 125 5 is_stmt 1 view .LVU54
+ 125:Sdrive/key_drv.c **** 				if (g_keyInfo[keyIndex].singleClickNum == 1)
+ 210              		.loc 1 125 24 is_stmt 0 view .LVU55
+ 211 00ee 5378     		ldrb	r3, [r2, #1]	@ zero_extendqisi2
+ 125:Sdrive/key_drv.c **** 				if (g_keyInfo[keyIndex].singleClickNum == 1)
+ 212              		.loc 1 125 39 view .LVU56
+ 213 00f0 0133     		adds	r3, r3, #1
+ 214 00f2 DBB2     		uxtb	r3, r3
+ 215 00f4 5370     		strb	r3, [r2, #1]
+ 126:Sdrive/key_drv.c **** 				{
+ 216              		.loc 1 126 5 is_stmt 1 view .LVU57
+ 126:Sdrive/key_drv.c **** 				{
+ 217              		.loc 1 126 8 is_stmt 0 view .LVU58
+ 218 00f6 012B     		cmp	r3, #1
+ 219 00f8 13D0     		beq	.L19
+ 133:Sdrive/key_drv.c **** 					if (curSysTime - g_keyInfo[keyIndex].firstReleaseSysTime <= DOUBLE_CLICK_INTERVAL_TIME) //  �
+ 220              		.loc 1 133 6 is_stmt 1 view .LVU59
+ 133:Sdrive/key_drv.c **** 					if (curSysTime - g_keyInfo[keyIndex].firstReleaseSysTime <= DOUBLE_CLICK_INTERVAL_TIME) //  �
+ 221              		.loc 1 133 19 is_stmt 0 view .LVU60
+ 222 00fa FFF7FEFF 		bl	HAL_GetTick
+ 223              	.LVL17:
+ 134:Sdrive/key_drv.c **** 					{
+ 224              		.loc 1 134 6 is_stmt 1 view .LVU61
+ 134:Sdrive/key_drv.c **** 					{
+ 225              		.loc 1 134 42 is_stmt 0 view .LVU62
+ 226 00fe 04EB4402 		add	r2, r4, r4, lsl #1
+ 227 0102 2A4B     		ldr	r3, .L21+4
+ 228 0104 03EBC203 		add	r3, r3, r2, lsl #3
+ 229 0108 1A69     		ldr	r2, [r3, #16]
+ 230 010a 5B69     		ldr	r3, [r3, #20]
+ 134:Sdrive/key_drv.c **** 					{
+ 231              		.loc 1 134 21 view .LVU63
+ 232 010c 801A     		subs	r0, r0, r2
+ 233              	.LVL18:
+ 134:Sdrive/key_drv.c **** 					{
+ 234              		.loc 1 134 21 view .LVU64
+ 235 010e 63EB4303 		sbc	r3, r3, r3, lsl #1
+ 134:Sdrive/key_drv.c **** 					{
+ 236              		.loc 1 134 9 view .LVU65
+ 237 0112 40F22D12 		movw	r2, #301
+ 238 0116 9042     		cmp	r0, r2
+ 239 0118 73F10003 		sbcs	r3, r3, #0
+ 240 011c 0CD3     		bcc	.L20
+ 161:Sdrive/key_drv.c **** }
+ 241              		.loc 1 161 9 view .LVU66
+ 242 011e 0025     		movs	r5, #0
+ 243 0120 C2E7     		b	.L9
+ 244              	.LVL19:
+ 245              	.L19:
+ 128:Sdrive/key_drv.c **** 					break;
+ 246              		.loc 1 128 6 is_stmt 1 view .LVU67
+ 128:Sdrive/key_drv.c **** 					break;
+ 247              		.loc 1 128 48 is_stmt 0 view .LVU68
+ 248 0122 FFF7FEFF 		bl	HAL_GetTick
+ 249              	.LVL20:
+ 128:Sdrive/key_drv.c **** 					break;
+ 250              		.loc 1 128 48 discriminator 1 view .LVU69
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s 			page 9
+
+
+ 251 0126 0025     		movs	r5, #0
+ 128:Sdrive/key_drv.c **** 					break;
+ 252              		.loc 1 128 46 discriminator 1 view .LVU70
+ 253 0128 04EB4404 		add	r4, r4, r4, lsl #1
+ 254 012c 1F4B     		ldr	r3, .L21+4
+ 255 012e 03EBC403 		add	r3, r3, r4, lsl #3
+ 256 0132 1861     		str	r0, [r3, #16]
+ 257 0134 5D61     		str	r5, [r3, #20]
+ 129:Sdrive/key_drv.c **** 				}
+ 258              		.loc 1 129 6 is_stmt 1 view .LVU71
+ 259 0136 B7E7     		b	.L9
+ 260              	.LVL21:
+ 261              	.L20:
+ 136:Sdrive/key_drv.c **** 						return (keyIndex + 0x51); //  返回按键码值，四个按键双击对应0x51, 0x52, 0x53, 
+ 262              		.loc 1 136 7 view .LVU72
+ 136:Sdrive/key_drv.c **** 						return (keyIndex + 0x51); //  返回按键码值，四个按键双击对应0x51, 0x52, 0x53, 
+ 263              		.loc 1 136 42 is_stmt 0 view .LVU73
+ 264 0138 04EB4402 		add	r2, r4, r4, lsl #1
+ 265 013c 1B4B     		ldr	r3, .L21+4
+ 266 013e 03EBC203 		add	r3, r3, r2, lsl #3
+ 267 0142 0022     		movs	r2, #0
+ 268 0144 5A70     		strb	r2, [r3, #1]
+ 137:Sdrive/key_drv.c **** 					}
+ 269              		.loc 1 137 7 is_stmt 1 view .LVU74
+ 137:Sdrive/key_drv.c **** 					}
+ 270              		.loc 1 137 24 is_stmt 0 view .LVU75
+ 271 0146 04F15105 		add	r5, r4, #81
+ 272 014a EDB2     		uxtb	r5, r5
+ 273 014c ACE7     		b	.L9
+ 274              	.LVL22:
+ 275              	.L11:
+ 143:Sdrive/key_drv.c **** 				if (curSysTime - g_keyInfo[keyIndex].firstIoChangeSysTime > LONGPRESS_TIME)
+ 276              		.loc 1 143 5 is_stmt 1 view .LVU76
+ 143:Sdrive/key_drv.c **** 				if (curSysTime - g_keyInfo[keyIndex].firstIoChangeSysTime > LONGPRESS_TIME)
+ 277              		.loc 1 143 18 is_stmt 0 view .LVU77
+ 278 014e FFF7FEFF 		bl	HAL_GetTick
+ 279              	.LVL23:
+ 144:Sdrive/key_drv.c **** 				{	
+ 280              		.loc 1 144 5 is_stmt 1 view .LVU78
+ 144:Sdrive/key_drv.c **** 				{	
+ 281              		.loc 1 144 41 is_stmt 0 view .LVU79
+ 282 0152 04EB4402 		add	r2, r4, r4, lsl #1
+ 283 0156 154B     		ldr	r3, .L21+4
+ 284 0158 03EBC203 		add	r3, r3, r2, lsl #3
+ 285 015c 9A68     		ldr	r2, [r3, #8]
+ 286 015e DB68     		ldr	r3, [r3, #12]
+ 144:Sdrive/key_drv.c **** 				{	
+ 287              		.loc 1 144 20 view .LVU80
+ 288 0160 801A     		subs	r0, r0, r2
+ 289              	.LVL24:
+ 144:Sdrive/key_drv.c **** 				{	
+ 290              		.loc 1 144 20 view .LVU81
+ 291 0162 63EB4303 		sbc	r3, r3, r3, lsl #1
+ 144:Sdrive/key_drv.c **** 				{	
+ 292              		.loc 1 144 8 view .LVU82
+ 293 0166 40F2D172 		movw	r2, #2001
+ 294 016a 9042     		cmp	r0, r2
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s 			page 10
+
+
+ 295 016c 73F10003 		sbcs	r3, r3, #0
+ 296 0170 9AD3     		bcc	.L9
+ 146:Sdrive/key_drv.c **** 				}
+ 297              		.loc 1 146 6 is_stmt 1 view .LVU83
+ 146:Sdrive/key_drv.c **** 				}
+ 298              		.loc 1 146 35 is_stmt 0 view .LVU84
+ 299 0172 04EB4404 		add	r4, r4, r4, lsl #1
+ 300 0176 0D4B     		ldr	r3, .L21+4
+ 301 0178 0322     		movs	r2, #3
+ 302 017a 03F83420 		strb	r2, [r3, r4, lsl #3]
+ 303 017e 93E7     		b	.L9
+ 304              	.LVL25:
+ 305              	.L3:
+ 151:Sdrive/key_drv.c **** 			{
+ 306              		.loc 1 151 4 is_stmt 1 view .LVU85
+ 151:Sdrive/key_drv.c **** 			{
+ 307              		.loc 1 151 7 is_stmt 0 view .LVU86
+ 308 0180 0028     		cmp	r0, #0
+ 309 0182 91D0     		beq	.L9
+ 153:Sdrive/key_drv.c **** 				return (keyIndex + 0x81); //返回按键码值，四个按键长按对应0x81, 0x82, 0x83, 0x84
+ 310              		.loc 1 153 5 is_stmt 1 view .LVU87
+ 153:Sdrive/key_drv.c **** 				return (keyIndex + 0x81); //返回按键码值，四个按键长按对应0x81, 0x82, 0x83, 0x84
+ 311              		.loc 1 153 34 is_stmt 0 view .LVU88
+ 312 0184 04EB4403 		add	r3, r4, r4, lsl #1
+ 313 0188 DB00     		lsls	r3, r3, #3
+ 314 018a 084A     		ldr	r2, .L21+4
+ 315 018c 0021     		movs	r1, #0
+ 316 018e D154     		strb	r1, [r2, r3]
+ 154:Sdrive/key_drv.c **** 			}
+ 317              		.loc 1 154 5 is_stmt 1 view .LVU89
+ 154:Sdrive/key_drv.c **** 			}
+ 318              		.loc 1 154 22 is_stmt 0 view .LVU90
+ 319 0190 A4F17F05 		sub	r5, r4, #127
+ 320 0194 EDB2     		uxtb	r5, r5
+ 321 0196 87E7     		b	.L9
+ 322              	.L2:
+ 158:Sdrive/key_drv.c **** 			break;
+ 323              		.loc 1 158 4 is_stmt 1 view .LVU91
+ 158:Sdrive/key_drv.c **** 			break;
+ 324              		.loc 1 158 33 is_stmt 0 view .LVU92
+ 325 0198 1823     		movs	r3, #24
+ 326 019a 03FB04F4 		mul	r4, r3, r4
+ 327 019e 0025     		movs	r5, #0
+ 328 01a0 024B     		ldr	r3, .L21+4
+ 329 01a2 1D55     		strb	r5, [r3, r4]
+ 159:Sdrive/key_drv.c **** 	}
+ 330              		.loc 1 159 4 is_stmt 1 view .LVU93
+ 331 01a4 80E7     		b	.L9
+ 332              	.L22:
+ 333 01a6 00BF     		.align	2
+ 334              	.L21:
+ 335 01a8 00000000 		.word	g_gpioList
+ 336 01ac 00000000 		.word	g_keyInfo
+ 337              		.cfi_endproc
+ 338              	.LFE240:
+ 340              		.section	.text.KeyDrvInit,"ax",%progbits
+ 341              		.align	1
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s 			page 11
+
+
+ 342              		.global	KeyDrvInit
+ 343              		.syntax unified
+ 344              		.thumb
+ 345              		.thumb_func
+ 347              	KeyDrvInit:
+ 348              	.LFB239:
+  53:Sdrive/key_drv.c **** 	__HAL_RCC_GPIOB_CLK_ENABLE();
+ 349              		.loc 1 53 1 view -0
+ 350              		.cfi_startproc
+ 351              		@ args = 0, pretend = 0, frame = 24
+ 352              		@ frame_needed = 0, uses_anonymous_args = 0
+ 353 0000 10B5     		push	{r4, lr}
+ 354              	.LCFI1:
+ 355              		.cfi_def_cfa_offset 8
+ 356              		.cfi_offset 4, -8
+ 357              		.cfi_offset 14, -4
+ 358 0002 86B0     		sub	sp, sp, #24
+ 359              	.LCFI2:
+ 360              		.cfi_def_cfa_offset 32
+  54:Sdrive/key_drv.c **** 	
+ 361              		.loc 1 54 2 view .LVU95
+ 362              	.LBB2:
+  54:Sdrive/key_drv.c **** 	
+ 363              		.loc 1 54 2 view .LVU96
+ 364 0004 0024     		movs	r4, #0
+ 365 0006 0094     		str	r4, [sp]
+  54:Sdrive/key_drv.c **** 	
+ 366              		.loc 1 54 2 view .LVU97
+ 367 0008 0E4B     		ldr	r3, .L27
+ 368 000a 1A6B     		ldr	r2, [r3, #48]
+ 369 000c 42F00202 		orr	r2, r2, #2
+ 370 0010 1A63     		str	r2, [r3, #48]
+  54:Sdrive/key_drv.c **** 	
+ 371              		.loc 1 54 2 view .LVU98
+ 372 0012 1B6B     		ldr	r3, [r3, #48]
+ 373 0014 03F00203 		and	r3, r3, #2
+ 374 0018 0093     		str	r3, [sp]
+  54:Sdrive/key_drv.c **** 	
+ 375              		.loc 1 54 2 view .LVU99
+ 376 001a 009B     		ldr	r3, [sp]
+ 377              	.LBE2:
+  54:Sdrive/key_drv.c **** 	
+ 378              		.loc 1 54 2 view .LVU100
+  56:Sdrive/key_drv.c **** 	gpioInitStruct.Mode = GPIO_MODE_INPUT;
+ 379              		.loc 1 56 2 view .LVU101
+  57:Sdrive/key_drv.c **** 	gpioInitStruct.Pull = GPIO_PULLUP;
+ 380              		.loc 1 57 2 view .LVU102
+  57:Sdrive/key_drv.c **** 	gpioInitStruct.Pull = GPIO_PULLUP;
+ 381              		.loc 1 57 22 is_stmt 0 view .LVU103
+ 382 001c 0294     		str	r4, [sp, #8]
+  58:Sdrive/key_drv.c **** 	
+ 383              		.loc 1 58 2 is_stmt 1 view .LVU104
+  58:Sdrive/key_drv.c **** 	
+ 384              		.loc 1 58 22 is_stmt 0 view .LVU105
+ 385 001e 0123     		movs	r3, #1
+ 386 0020 0393     		str	r3, [sp, #12]
+  60:Sdrive/key_drv.c **** 	{
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s 			page 12
+
+
+ 387              		.loc 1 60 2 is_stmt 1 view .LVU106
+ 388              	.LBB3:
+  60:Sdrive/key_drv.c **** 	{
+ 389              		.loc 1 60 7 view .LVU107
+ 390              	.LVL26:
+  60:Sdrive/key_drv.c **** 	{
+ 391              		.loc 1 60 2 is_stmt 0 view .LVU108
+ 392 0022 0BE0     		b	.L24
+ 393              	.LVL27:
+ 394              	.L25:
+  62:Sdrive/key_drv.c **** 		HAL_GPIO_Init(g_gpioList[i].gpio, &gpioInitStruct);
+ 395              		.loc 1 62 3 is_stmt 1 view .LVU109
+  62:Sdrive/key_drv.c **** 		HAL_GPIO_Init(g_gpioList[i].gpio, &gpioInitStruct);
+ 396              		.loc 1 62 37 is_stmt 0 view .LVU110
+ 397 0024 084B     		ldr	r3, .L27+4
+ 398 0026 03EBC402 		add	r2, r3, r4, lsl #3
+ 399 002a 5268     		ldr	r2, [r2, #4]
+  62:Sdrive/key_drv.c **** 		HAL_GPIO_Init(g_gpioList[i].gpio, &gpioInitStruct);
+ 400              		.loc 1 62 22 view .LVU111
+ 401 002c 0192     		str	r2, [sp, #4]
+  63:Sdrive/key_drv.c **** 	}
+ 402              		.loc 1 63 3 is_stmt 1 view .LVU112
+ 403 002e 01A9     		add	r1, sp, #4
+ 404 0030 53F83400 		ldr	r0, [r3, r4, lsl #3]
+ 405 0034 FFF7FEFF 		bl	HAL_GPIO_Init
+ 406              	.LVL28:
+  60:Sdrive/key_drv.c **** 	{
+ 407              		.loc 1 60 40 discriminator 3 view .LVU113
+ 408 0038 0134     		adds	r4, r4, #1
+ 409              	.LVL29:
+  60:Sdrive/key_drv.c **** 	{
+ 410              		.loc 1 60 40 is_stmt 0 discriminator 3 view .LVU114
+ 411 003a E4B2     		uxtb	r4, r4
+ 412              	.LVL30:
+ 413              	.L24:
+  60:Sdrive/key_drv.c **** 	{
+ 414              		.loc 1 60 24 is_stmt 1 discriminator 1 view .LVU115
+ 415 003c 032C     		cmp	r4, #3
+ 416 003e F1D9     		bls	.L25
+ 417              	.LBE3:
+  65:Sdrive/key_drv.c **** 
+ 418              		.loc 1 65 1 is_stmt 0 view .LVU116
+ 419 0040 06B0     		add	sp, sp, #24
+ 420              	.LCFI3:
+ 421              		.cfi_def_cfa_offset 8
+ 422              		@ sp needed
+ 423 0042 10BD     		pop	{r4, pc}
+ 424              	.LVL31:
+ 425              	.L28:
+  65:Sdrive/key_drv.c **** 
+ 426              		.loc 1 65 1 view .LVU117
+ 427              		.align	2
+ 428              	.L27:
+ 429 0044 00380240 		.word	1073887232
+ 430 0048 00000000 		.word	g_gpioList
+ 431              		.cfi_endproc
+ 432              	.LFE239:
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s 			page 13
+
+
+ 434              		.section	.text.GetKeyVal,"ax",%progbits
+ 435              		.align	1
+ 436              		.global	GetKeyVal
+ 437              		.syntax unified
+ 438              		.thumb
+ 439              		.thumb_func
+ 441              	GetKeyVal:
+ 442              	.LFB241:
+ 163:Sdrive/key_drv.c **** 
+ 164:Sdrive/key_drv.c **** /**
+ 165:Sdrive/key_drv.c ****  * @brief 依次扫描四个按键并返回第一个非零事件。
+ 166:Sdrive/key_drv.c ****  * @return 0 表示本轮无完整事件，否则返回 key_drv.h 定义的事件码。
+ 167:Sdrive/key_drv.c ****  * @note 同一扫描周期若多个按键同时产生事件，只返回数组顺序最靠前的一
+ 168:Sdrive/key_drv.c ****  */
+ 169:Sdrive/key_drv.c **** uint8_t GetKeyVal(void)
+ 170:Sdrive/key_drv.c **** {
+ 443              		.loc 1 170 1 is_stmt 1 view -0
+ 444              		.cfi_startproc
+ 445              		@ args = 0, pretend = 0, frame = 0
+ 446              		@ frame_needed = 0, uses_anonymous_args = 0
+ 447 0000 10B5     		push	{r4, lr}
+ 448              	.LCFI4:
+ 449              		.cfi_def_cfa_offset 8
+ 450              		.cfi_offset 4, -8
+ 451              		.cfi_offset 14, -4
+ 171:Sdrive/key_drv.c **** 	uint8_t res = 0;
+ 452              		.loc 1 171 2 view .LVU119
+ 453              	.LVL32:
+ 172:Sdrive/key_drv.c **** 
+ 173:Sdrive/key_drv.c **** 	for (uint8_t i = 0; i < KEY_NUM_MAX; i++)
+ 454              		.loc 1 173 2 view .LVU120
+ 455              	.LBB4:
+ 456              		.loc 1 173 7 view .LVU121
+ 457              		.loc 1 173 15 is_stmt 0 view .LVU122
+ 458 0002 0024     		movs	r4, #0
+ 459              	.LBE4:
+ 171:Sdrive/key_drv.c **** 	uint8_t res = 0;
+ 460              		.loc 1 171 10 view .LVU123
+ 461 0004 2346     		mov	r3, r4
+ 462              	.LVL33:
+ 463              	.L30:
+ 464              	.LBB5:
+ 465              		.loc 1 173 24 is_stmt 1 discriminator 1 view .LVU124
+ 466 0006 032C     		cmp	r4, #3
+ 467 0008 07D8     		bhi	.L31
+ 174:Sdrive/key_drv.c **** 	{
+ 175:Sdrive/key_drv.c **** 		res = KeyScan(i);
+ 468              		.loc 1 175 3 view .LVU125
+ 469              		.loc 1 175 9 is_stmt 0 view .LVU126
+ 470 000a 2046     		mov	r0, r4
+ 471 000c FFF7FEFF 		bl	KeyScan
+ 472              	.LVL34:
+ 176:Sdrive/key_drv.c **** 		if (res != 0)
+ 473              		.loc 1 176 3 is_stmt 1 view .LVU127
+ 474              		.loc 1 176 6 is_stmt 0 view .LVU128
+ 475 0010 0346     		mov	r3, r0
+ 476 0012 10B9     		cbnz	r0, .L31
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s 			page 14
+
+
+ 173:Sdrive/key_drv.c **** 	{
+ 477              		.loc 1 173 40 is_stmt 1 discriminator 2 view .LVU129
+ 478 0014 0134     		adds	r4, r4, #1
+ 479              	.LVL35:
+ 173:Sdrive/key_drv.c **** 	{
+ 480              		.loc 1 173 40 is_stmt 0 discriminator 2 view .LVU130
+ 481 0016 E4B2     		uxtb	r4, r4
+ 482              	.LVL36:
+ 173:Sdrive/key_drv.c **** 	{
+ 483              		.loc 1 173 40 discriminator 2 view .LVU131
+ 484 0018 F5E7     		b	.L30
+ 485              	.LVL37:
+ 486              	.L31:
+ 173:Sdrive/key_drv.c **** 	{
+ 487              		.loc 1 173 40 discriminator 2 view .LVU132
+ 488              	.LBE5:
+ 177:Sdrive/key_drv.c **** 		{
+ 178:Sdrive/key_drv.c **** 			break;
+ 179:Sdrive/key_drv.c **** 		}
+ 180:Sdrive/key_drv.c **** 	}
+ 181:Sdrive/key_drv.c **** 	return res;
+ 489              		.loc 1 181 2 is_stmt 1 view .LVU133
+ 182:Sdrive/key_drv.c **** }
+ 490              		.loc 1 182 1 is_stmt 0 view .LVU134
+ 491 001a 1846     		mov	r0, r3
+ 492 001c 10BD     		pop	{r4, pc}
+ 493              		.loc 1 182 1 view .LVU135
+ 494              		.cfi_endproc
+ 495              	.LFE241:
+ 497              		.section	.bss.g_keyInfo,"aw",%nobits
+ 498              		.align	3
+ 501              	g_keyInfo:
+ 502 0000 00000000 		.space	96
+ 502      00000000 
+ 502      00000000 
+ 502      00000000 
+ 502      00000000 
+ 503              		.section	.rodata.g_gpioList,"a"
+ 504              		.align	2
+ 507              	g_gpioList:
+ 508 0000 00040240 		.word	1073873920
+ 509 0004 00100000 		.word	4096
+ 510 0008 00040240 		.word	1073873920
+ 511 000c 00200000 		.word	8192
+ 512 0010 00040240 		.word	1073873920
+ 513 0014 00400000 		.word	16384
+ 514 0018 00040240 		.word	1073873920
+ 515 001c 00080000 		.word	2048
+ 516              		.text
+ 517              	.Letext0:
+ 518              		.file 2 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 519              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 520              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 521              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 522              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s 			page 15
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 key_drv.c
+C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s:21     .text.KeyScan:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s:26     .text.KeyScan:00000000 KeyScan
+C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s:69     .text.KeyScan:0000002a $d
+C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s:73     .text.KeyScan:0000002e $t
+C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s:335    .text.KeyScan:000001a8 $d
+C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s:507    .rodata.g_gpioList:00000000 g_gpioList
+C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s:501    .bss.g_keyInfo:00000000 g_keyInfo
+C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s:341    .text.KeyDrvInit:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s:347    .text.KeyDrvInit:00000000 KeyDrvInit
+C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s:429    .text.KeyDrvInit:00000044 $d
+C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s:435    .text.GetKeyVal:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s:441    .text.GetKeyVal:00000000 GetKeyVal
+C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s:498    .bss.g_keyInfo:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\cc5QeT8f.s:504    .rodata.g_gpioList:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_GPIO_ReadPin
+HAL_GetTick
+HAL_GPIO_Init

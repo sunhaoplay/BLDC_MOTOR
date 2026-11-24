@@ -71,6 +71,14 @@ void Error_Handler(void);
 #define SD1_GPIO_Port GPIOE
 #define PWR_Pin GPIO_PIN_10
 #define PWR_GPIO_Port GPIOB
+#define ONOFF_Pin GPIO_PIN_11
+#define ONOFF_GPIO_Port GPIOB
+#define KEY1_Pin GPIO_PIN_12
+#define KEY1_GPIO_Port GPIOB
+#define KEY2_Pin GPIO_PIN_13
+#define KEY2_GPIO_Port GPIOB
+#define KEY3_Pin GPIO_PIN_14
+#define KEY3_GPIO_Port GPIOB
 #define LED_B_Pin GPIO_PIN_11
 #define LED_B_GPIO_Port GPIOD
 #define LED_G_Pin GPIO_PIN_12

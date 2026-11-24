@@ -63,7 +63,7 @@ build/task.o: App/task.c App/task.h Core/Inc/main.h \
  Drivers/CMSIS/DSP/Include/dsp/support_functions.h \
  Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h MotorFoc/foc.h \
  MotorFoc/motor_para.h MotorFoc/pid.h MotorFoc/motor_ctrl.h \
- MotorFoc/sen.h Sdrive/foc_wave.h App/htmi_app.h
+ MotorFoc/sen.h Sdrive/foc_wave.h App/htmi_app.h Sdrive/key_drv.h
 App/task.h:
 Core/Inc/main.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -145,3 +145,4 @@ MotorFoc/motor_ctrl.h:
 MotorFoc/sen.h:
 Sdrive/foc_wave.h:
 App/htmi_app.h:
+Sdrive/key_drv.h:

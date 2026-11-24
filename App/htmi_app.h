@@ -39,6 +39,7 @@ void RecevToVofa(void);
  * @brief 根据当前控制模式把电位器 ADC 值换算成速度、电流或位置给定。
  */
 void VrTask(void);
+void HmiTask(void);
 
 
 

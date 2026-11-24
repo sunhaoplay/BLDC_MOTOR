@@ -63,7 +63,12 @@ void DMA2_Stream0_IRQHandler(void);
 void DMA2_Stream2_IRQHandler(void);
 void DMA2_Stream7_IRQHandler(void);
 /* USER CODE BEGIN EFP */
-
+/**
+ * @brief 注册由 SysTick 中断每 1 ms 调用的任务节拍回调。
+ * @param pFunc 无参数、无返回值的回调函数地址。
+ * @note 传入指针由中断上下文读取，应在系统初始化阶段完成注册。
+ */
+void TaskScheduleCbReg(void (*pFunc)(void));
 /* USER CODE END EFP */
 
 #ifdef __cplusplus

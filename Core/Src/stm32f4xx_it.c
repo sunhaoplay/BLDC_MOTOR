@@ -26,6 +26,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
+static void (*g_pTaskScheduleFunc)(void);
 
 /* USER CODE END TD */
 
@@ -194,7 +195,15 @@ void SysTick_Handler(void)
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
-
+    /*
+     * HAL_IncTick() 先维护 HAL 毫秒时基，再调用应用调度回调。这里只产生任务
+     * 就绪标志，不在中断中执行通信、按键或故障等耗时业务。
+     */
+    if (g_pTaskScheduleFunc == NULL)
+    {
+        return;
+    }
+    g_pTaskScheduleFunc();
   /* USER CODE END SysTick_IRQn 1 */
 }
 
@@ -303,5 +312,13 @@ void DMA2_Stream7_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
-
+/**
+ * @brief 注册 SysTick 每毫秒调用的应用任务调度回调。
+ * @param pFunc 无参数、无返回值的回调地址；task.c 传入 TaskScheduleCb()。
+ * @note 仅保存函数指针，实际调用发生在 SysTick_Handler()。
+ */
+void TaskScheduleCbReg(void (*pFunc)(void))
+{
+	g_pTaskScheduleFunc = pFunc;
+}
 /* USER CODE END 1 */

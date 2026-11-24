@@ -8,7 +8,7 @@
  */
 
 #include "motor_ctrl.h"
-
+#include "sen.h"
 // FOC 坐标变换与电机运行状态对象
 CLARKE /******************/ Clarke = CLARKE_DEFAULTS;
 PARK /********************/ Park = PARK_DEFAULTS;
@@ -59,7 +59,7 @@ void GradXieLv(p_GXieLv pv)
  */
 void MotorStop(void)
 {
-	Init_Over = false;
+	// Init_Over = false;
 	TIM1->CCER &= ~MOTOR_PWM_CHANNEL_MASK;
 	TIM1->CCR1 = TIM1_PERIOD_HALF;
 	TIM1->CCR2 = TIM1_PERIOD_HALF;
@@ -324,4 +324,159 @@ void VariableClear(void)
 	Para.CalTime = 0;
 	Para.ObsSwFlag = 0;
 	Para.SmoSwFlag = 0;
+}
+
+
+/**
+ * @brief 根据 Motor.CtrlMode 执行本周期对应的控制算法和 PWM 更新。
+ *
+ * 有感模式调用速度/电流/位置级联环；IF 模式选择查表强拖或 IF 电流闭环；HFI、
+ * HFI+SMO、HFI+Flux、IF+SMO、IF+Flux 分别进入对应启动与观测器状态机。
+ * 所有产生电压指令的模式最终调用 FocSvpwm()。未知模式执行 MotorStop()。
+ */
+void MotorModeSel(void)
+{
+	// ParamIdent_MonitorModeExit();
+
+	// 控制入口：根据 CtrlMode 执行对应闭环，再统一进入 SVPWM 输出
+	switch (Motor.CtrlMode)
+	{
+	case SPEED_LOOP:
+	{
+		SpeedCloseloop(Para.SpeedRef, 1);
+		FocSvpwm(); // SVPWM计算
+		break;
+	}
+
+	case CUR_LOOP:
+	{
+		CurCloseloop(Para.CurRef, Motor.E_theta);
+		FocSvpwm(); // SVPWM计算
+		break;
+	}
+
+	// case POS_LOOP:
+	// {
+	// 	PosCloseloop();
+	// 	FocSvpwm(); // SVPWM计算
+	// 	break;
+	// }
+
+	// case IF_CTRL:
+	// {
+	// 	switch (QT_IF_MODE)
+	// 	{
+	// 	case 1: // 强拖至角度
+	// 	{
+	// 		QtMotor();	// 电机强拖控制
+	// 		FocSvpwm(); // SVPWM计算
+	// 		if (Para.IfAngle == QT_ANGLE)
+	// 		{
+	// 			MotorStop(); // 停机
+	// 			Para.IfAngle = 0;
+	// 			Para.IfFrq = 0;
+	// 		}
+	// 		break;
+	// 	}
+	// 	case 2: // 强拖旋转
+	// 	{
+	// 		QtMotor();	// 电机强拖控制
+	// 		FocSvpwm(); // SVPWM计算
+	// 		break;
+	// 	}
+	// 	case 3: // IF启动
+	// 	{
+	// 		IFStartControl(); //	I/F流频比控制
+	// 		FocSvpwm();
+	// 		break;
+	// 	}
+	// 	default:
+	// 		break;
+	// 	}
+	// 	break;
+	// }
+
+	// case HFI_CTRL:
+	// {
+	// 	if (HFI_Init_Angle_flag) // 初始角度检测完毕后
+	// 	{
+	// 		HfiSpdCloseLoop(); // HFI速度闭环模式
+	// 	}
+	// 	else
+	// 	{
+	// 		HfiInitTheta(); // HFI初始角度检测
+	// 	}
+
+	// 	FocSvpwm(); // SVPWM计算
+	// 	break;
+	// }
+
+	// case HFI_SMO: // 低速HFI，高速SMO的全速域无感控制
+	// {
+	// 	LessHfiSmoControl();
+	// 	FocSvpwm(); // SVPWM计算
+	// 	break;
+	// }
+
+	// case HFI_FLUX: // 低速HFI，高速FLUX的全速域无感控制
+	// {
+	// 	LessHfiFluxControl();
+	// 	FocSvpwm();
+	// 	break;
+	// }
+
+	// case IF_SMO:
+	// {
+	// 	if (SensorLess.Observer == 1)
+	// 	{
+	// 		// 低速阶段使用 IF 开环角度和固定电流启动
+	// 		// IFObserverThetaRampCale();
+	// 		// CurCloseloop(1.0f, Para.FocAngle);
+	// 	}
+	// 	else
+	// 	{
+	// 		// 高速阶段使用 SMO 速度闭环
+	// 		// SensorLess.Speed_Ref = GetObserverSpeedRef();
+	// 		// SmoObserver(Park.Ds, Park.Qs);
+	// 	}
+	// 	FocSvpwm();
+	// 	Para.SpeedCalTime %= SPD_CAL_PERIOD;
+	// 	break;
+	// }
+
+	// case IF_FLUX:
+	// {
+	// 	if (SensorLess.Observer == 1)
+	// 	{
+	// 		// 低速阶段使用 IF 开环角度和固定电流启动
+	// 		// IFObserverThetaRampCale();
+	// 		// CurCloseloop(1.0f, Para.FocAngle);
+	// 	}
+	// 	else
+	// 	{
+	// 		// 高速阶段使用 Flux 速度闭环
+	// 		// SensorLess.Speed_Ref = GetObserverSpeedRef();
+	// 		// FluxObserver(Park.Ds, Park.Qs);
+	// 	}
+	// 	FocSvpwm();
+	// 	Para.SpeedCalTime %= SPD_CAL_PERIOD;
+	// 	break;
+	// }
+	case TO_ZERO:
+	{
+		break;
+	}
+
+	// case PARAM_IDENT:
+	// {
+	// 	// ParamIdent_Run20kHz();
+	// 	break;
+	// }
+
+	default:
+	{
+		MotorStop(); // 停机
+		break;
+	}
+	}
 }

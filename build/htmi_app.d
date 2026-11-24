@@ -61,7 +61,8 @@ build/htmi_app.o: App/htmi_app.c App/htmi_app.h Core/Inc/main.h \
  Drivers/CMSIS/DSP/Include/dsp/filtering_functions.h \
  Drivers/CMSIS/DSP/Include/dsp/support_functions.h \
  Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h MotorFoc/foc.h \
- MotorFoc/motor_para.h MotorFoc/pid.h MotorFoc/motor_ctrl.h
+ MotorFoc/motor_para.h MotorFoc/pid.h MotorFoc/motor_ctrl.h \
+ Sdrive/key_drv.h MotorFoc/sen.h
 App/htmi_app.h:
 Core/Inc/main.h:
 Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -136,3 +137,5 @@ MotorFoc/foc.h:
 MotorFoc/motor_para.h:
 MotorFoc/pid.h:
 MotorFoc/motor_ctrl.h:
+Sdrive/key_drv.h:
+MotorFoc/sen.h:

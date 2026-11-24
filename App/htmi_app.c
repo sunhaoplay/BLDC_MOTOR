@@ -11,7 +11,8 @@
 #include "led_drv.h"
 #include "string.h"
 #include "motor_ctrl.h"
-
+#include "key_drv.h"
+#include "sen.h"
 /**
  * @brief 按控制模式把电位器采样值映射为对应给定量。
  *
@@ -81,5 +82,115 @@ void VrTask(void)
 	}
 	default:
 		break;
+	}
+}
+
+/**
+ * @brief 把短按、双击和长按事件映射为启动、停机、调零和控制模式切换。
+ *
+ * 按键 1/2 选择控制模式，按键 3 提供停机、IF+磁链和调零功能，按键 4 长按
+ * 关闭 PWR 保持信号。位置模式使用有感速度 PI 参数，其余模式使用无感参数。
+ */
+void HmiTask(void)
+{
+	uint8_t keyVal;
+
+	keyVal = GetKeyVal();
+
+	switch (keyVal)
+	{
+	case KEY4_SHORT_PRESS:
+	{
+	}
+	break;
+
+	case KEY4_DOUBLE_PRESS:
+	{
+		// ParamIdent_Start();
+	}
+	break;
+
+	case KEY4_LONG_PRESS:
+	{
+		HAL_GPIO_WritePin(PWR_GPIO_Port, PWR_Pin, GPIO_PIN_RESET); // 长按关机
+	}
+	break;
+	case KEY1_SHORT_PRESS:
+	{
+		MotorRun();				  // 启动PWM
+		Motor.CtrlMode = HFI_SMO; // 低速HFI，高速滑膜
+	}
+	break;
+
+	case KEY1_DOUBLE_PRESS:
+	{
+		MotorRun();				 // 启动PWM
+		Motor.CtrlMode = IF_SMO; // 低速IF高速SMO
+	}
+	break;
+
+	case KEY1_LONG_PRESS:
+	{
+		MotorRun();				   // 启动PWM
+		Motor.CtrlMode = HFI_FLUX; // 低速HFI，高速磁链
+	}
+	break;
+
+	case KEY2_SHORT_PRESS:
+	{
+		MotorRun();					 // 启动PWM
+		Motor.CtrlMode = SPEED_LOOP; // 有感，速度&电流闭环
+	}
+	break;
+
+	case KEY2_DOUBLE_PRESS:
+	{
+		MotorRun();				   // 启动PWM
+		Motor.CtrlMode = CUR_LOOP; // 有感，电流闭环
+	}
+	break;
+
+	case KEY2_LONG_PRESS:
+	{
+		MotorRun();				   // 启动PWM
+		Motor.CtrlMode = POS_LOOP; // 有感，位置闭环
+	}
+	break;
+
+	case KEY3_SHORT_PRESS:
+	{
+		MotorStop();
+		Motor.CtrlMode = STOP;
+	}
+	break;
+
+	case KEY3_DOUBLE_PRESS:
+	{
+		MotorRun();				  // 启动PWM
+		Motor.CtrlMode = IF_FLUX; // 低速IF，高速FLUX
+	}
+	break;
+
+	case KEY3_LONG_PRESS:
+	{
+		Motor.CtrlMode = TO_ZERO;
+		PostionToZeroDouble(); // 二次调零
+		Motor.CtrlMode = STOP;
+	}
+	break;
+
+	default:
+		break;
+	}
+
+	if (Motor.CtrlMode == POS_LOOP)
+	{
+		pi_spd.Kp = Para.SpdSenKp;
+		pi_spd.Ki = Para.SpdSenKi;
+	}
+	else
+	{
+		pi_spd.Kp = Para.SpdLessKp;
+		pi_spd.Ki = Para.SpdLessKi;
 	}
 }

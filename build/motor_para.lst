@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
   27:MotorFoc/motor_para.c **** 	-0.383022f, -0.388573f, -0.394005f, -0.399318f, -0.404509f, -0.409576f, -0.414519f, -0.419335f, -0
   28:MotorFoc/motor_para.c **** 	-0.433013f, -0.437310f, -0.441474f, -0.445503f, -0.449397f, -0.453154f, -0.456773f, -0.460252f, -0
   29:MotorFoc/motor_para.c **** 	-0.469846f, -0.472759f, -0.475528f, -0.478152f, -0.480631f, -0.482963f, -0.485148f, -0.487185f, -0
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 2
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 2
 
 
   30:MotorFoc/motor_para.c **** 	-0.492404f, -0.493844f, -0.495134f, -0.496273f, -0.497261f, -0.498097f, -0.498782f, -0.499315f, -0
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
   84:MotorFoc/motor_para.c **** 	-0.321394f, -0.314660f, -0.307831f, -0.300908f, -0.293893f, -0.286788f, -0.279596f, -0.272320f, -0
   85:MotorFoc/motor_para.c **** 	-0.250000f, -0.242405f, -0.234736f, -0.226995f, -0.219186f, -0.211309f, -0.203368f, -0.195366f, -0
   86:MotorFoc/motor_para.c **** 	-0.171010f, -0.162784f, -0.154509f, -0.146186f, -0.137819f, -0.129410f, -0.120961f, -0.112476f, -0
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 3
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 3
 
 
   87:MotorFoc/motor_para.c **** 	-0.086824f, -0.078217f, -0.069587f, -0.060935f, -0.052264f, -0.043578f, -0.034878f, -0.026168f, -0
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  141:MotorFoc/motor_para.c **** 	0.784419f, 0.785398f};
  142:MotorFoc/motor_para.c **** 
  143:MotorFoc/motor_para.c **** /**
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 4
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 4
 
 
  144:MotorFoc/motor_para.c ****  * @brief 使用 512 点 atan 查找表近似计算 [0,2PI) 范围的二维矢量角度。
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
   65              		.loc 1 162 3 is_stmt 1 view .LVU14
   66              		.loc 1 162 21 is_stmt 0 view .LVU15
   67 0034 3B4A     		ldr	r2, .L26+4
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 5
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 5
 
 
   68 0036 02EB8303 		add	r3, r2, r3, lsl #2
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
   93 005a 7047     		bx	lr
   94              	.LVL9:
   95              	.L20:
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 6
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 6
 
 
  164:MotorFoc/motor_para.c **** 	{
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  177:MotorFoc/motor_para.c **** 	}
  137              		.loc 1 177 3 is_stmt 1 view .LVU37
  177:MotorFoc/motor_para.c **** 	}
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 7
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 7
 
 
  138              		.loc 1 177 22 is_stmt 0 view .LVU38
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  179              		.loc 1 171 3 is_stmt 1 view .LVU51
  171:MotorFoc/motor_para.c **** 		atan_val = -atanTab[idx];
  180              		.loc 1 171 13 is_stmt 0 view .LVU52
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 8
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 8
 
 
  181 00e8 DFED0D6A 		vldr.32	s13, .L26
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  223 0120 00000044 		.word	1140850688
  224 0124 00000000 		.word	atanTab
  225 0128 D80F493F 		.word	1061752792
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 9
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 9
 
 
  226 012c DC0F4940 		.word	1078530012
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  267 0026 17EE903A 		vmov	r3, s15	@ int
  268 002a 9BB2     		uxth	r3, r3
  269              	.LVL33:
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 10
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 10
 
 
  207:MotorFoc/motor_para.c **** 		atan_val = atanTab[idx] + 0.785398f;
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  309              		.loc 1 221 3 is_stmt 1 view .LVU88
  310              		.loc 1 221 16 is_stmt 0 view .LVU89
  311 0070 B1EE407A 		vneg.f32	s14, s0
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 11
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 11
 
 
  312              		.loc 1 221 19 view .LVU90
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  212:MotorFoc/motor_para.c **** 	}
  358              		.loc 1 212 3 is_stmt 1 view .LVU106
  212:MotorFoc/motor_para.c **** 	}
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 12
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 12
 
 
  359              		.loc 1 212 12 is_stmt 0 view .LVU107
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  404              		.global	Sign
  405              		.syntax unified
  406              		.thumb
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 13
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 13
 
 
  407              		.thumb_func
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  448              	.LVL55:
  449              	.LFB275:
  241:MotorFoc/motor_para.c **** /** @brief 计算浮点数绝对值。 @return |x|。 */
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 14
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 14
 
 
  242:MotorFoc/motor_para.c **** float my_abs(float x)
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  488              		@ frame_needed = 0, uses_anonymous_args = 0
  489              		@ link register save eliminated.
  490              		.loc 1 256 1 is_stmt 0 view .LVU135
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 15
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 15
 
 
  491 0000 F0EE407A 		vmov.f32	s15, s0
@@ -898,7 +898,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  264:MotorFoc/motor_para.c **** 
  265:MotorFoc/motor_para.c **** /** @brief 返回两个浮点数中较大者。 */
  266:MotorFoc/motor_para.c **** float my_max(float a, float b)
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 16
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 16
 
 
  267:MotorFoc/motor_para.c **** {
@@ -958,7 +958,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  292:MotorFoc/motor_para.c **** }
  293:MotorFoc/motor_para.c **** */
  294:MotorFoc/motor_para.c **** 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 17
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 17
 
 
  295:MotorFoc/motor_para.c **** /**
@@ -1018,7 +1018,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  604              		.loc 1 312 2 is_stmt 1 view .LVU167
  605              		.loc 1 312 11 is_stmt 0 view .LVU168
  606 0022 5A61     		str	r2, [r3, #20]	@ float
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 18
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 18
 
 
  313:MotorFoc/motor_para.c **** 	Motor.Ls = MOTOR_Ls; // 电机相电感
@@ -1078,7 +1078,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  642 0014 124D203C 		.word	1008749842
  643 0018 535D403C 		.word	1010851155
  644 001c 946D603C 		.word	1012952468
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 19
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 19
 
 
  645 0020 D13C803C 		.word	1015037137
@@ -1138,7 +1138,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  699 00f8 0F47F73D 		.word	1039615759
  700 00fc E239FB3D 		.word	1039874530
  701 0100 302CFF3D 		.word	1040133168
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 20
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 20
 
 
  702 0104 FC8E013E 		.word	1040289532
@@ -1198,7 +1198,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  756 01dc 494A6A3E 		.word	1047153225
  757 01e0 90306C3E 		.word	1047277712
  758 01e4 94166E3E 		.word	1047402132
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 21
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 21
 
 
  759 01e8 11FC6F3E 		.word	1047526417
@@ -1258,7 +1258,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  813 02c0 52D4A93E 		.word	1051317330
  814 02c4 6FB9AA3E 		.word	1051375983
  815 02c8 499EAB3E 		.word	1051434569
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 22
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 22
 
 
  816 02cc E082AC3E 		.word	1051493088
@@ -1318,7 +1318,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  870 03a4 6309DB3E 		.word	1054542179
  871 03a8 98DDDB3E 		.word	1054596504
  872 03ac 89B1DC3E 		.word	1054650761
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 23
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 23
 
 
  873 03b0 1685DD3E 		.word	1054704918
@@ -1378,7 +1378,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  927 0488 1825043F 		.word	1057236248
  928 048c 0586043F 		.word	1057261061
  929 0490 C1E6043F 		.word	1057285825
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 24
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 24
 
 
  930 0494 5A47053F 		.word	1057310554
@@ -1438,7 +1438,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  984 056c 74B6183F 		.word	1058584180
  985 0570 240E193F 		.word	1058606628
  986 0574 B265193F 		.word	1058629042
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 25
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 25
 
 
  987 0578 0EBD193F 		.word	1058651406
@@ -1498,7 +1498,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  1041 0650 BB422B3F 		.word	1059799739
  1042 0654 92912B3F 		.word	1059819922
  1043 0658 48E02B3F 		.word	1059840072
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 26
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 26
 
 
  1044 065c CB2E2C3F 		.word	1059860171
@@ -1558,7 +1558,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  1098 0734 9FE73B3F 		.word	1060890527
  1099 0738 452E3C3F 		.word	1060908613
  1100 073c C9743C3F 		.word	1060926665
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 27
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 27
 
 
  1101 0740 1BBB3C3F 		.word	1060944667
@@ -1618,7 +1618,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  1157 0008 4DF38E3C 		.word	1016001357
  1158 000c 465ED63C 		.word	1020681798
  1159 0010 3CDC0E3D 		.word	1024384060
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 28
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 28
 
 
  1160 0014 D87E323D 		.word	1026719448
@@ -1678,7 +1678,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  1214 00ec 5D6FDB3E 		.word	1054568285
  1215 00f0 E1B3DD3E 		.word	1054716897
  1216 00f4 19E7DF3E 		.word	1054861081
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 29
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 29
 
 
  1217 00f8 E108E23E 		.word	1055000801
@@ -1738,7 +1738,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  1271 01d0 5D17E63E 		.word	1055266653
  1272 01d4 F818E43E 		.word	1055135992
  1273 01d8 E108E23E 		.word	1055000801
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 30
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 30
 
 
  1274 01dc 19E7DF3E 		.word	1054861081
@@ -1798,7 +1798,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  1328 02b4 FB96793D 		.word	1031378683
  1329 02b8 C712563D 		.word	1029051079
  1330 02bc D87E323D 		.word	1026719448
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 31
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 31
 
 
  1331 02c0 3CDC0E3D 		.word	1024384060
@@ -1858,7 +1858,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  1385 0398 761BC4BE 		.word	-1094444170
  1386 039c 0AF3C6BE 		.word	-1094257910
  1387 03a0 06BBC9BE 		.word	-1094075642
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 32
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 32
 
 
  1388 03a4 6973CCBE 		.word	-1093897367
@@ -1918,7 +1918,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  1442 047c 57D0F4BE 		.word	-1091252137
  1443 0480 6878F3BE 		.word	-1091340184
  1444 0484 780DF2BE 		.word	-1091433096
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 33
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 33
 
 
  1445 0488 A88FF0BE 		.word	-1091530840
@@ -1978,7 +1978,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  1499 0560 6D200DBE 		.word	-1106435987
  1500 0564 0E8404BE 		.word	-1107000306
  1501 0568 67BAF7BD 		.word	-1107838361
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 34
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 34
 
 
  1502 056c D159E6BD 		.word	-1108977199
@@ -2038,7 +2038,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  1558 0094 6973CC3E 		.word	1053586281
  1559 0098 06BBC93E 		.word	1053408006
  1560 009c 0AF3C63E 		.word	1053225738
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 35
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 35
 
 
  1561 00a0 761BC43E 		.word	1053039478
@@ -2098,7 +2098,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  1615 0178 3CDC0EBD 		.word	-1123099588
  1616 017c D87E32BD 		.word	-1120764200
  1617 0180 C71256BD 		.word	-1118432569
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 36
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 36
 
 
  1618 0184 FB9679BD 		.word	-1116104965
@@ -2158,7 +2158,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  1672 025c 19E7DFBE 		.word	-1092622567
  1673 0260 E108E2BE 		.word	-1092482847
  1674 0264 F818E4BE 		.word	-1092347656
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 37
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 37
 
 
  1675 0268 5D17E6BE 		.word	-1092216995
@@ -2218,7 +2218,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  1729 0340 E108E2BE 		.word	-1092482847
  1730 0344 19E7DFBE 		.word	-1092622567
  1731 0348 E1B3DDBE 		.word	-1092766751
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 38
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 38
 
 
  1732 034c 5D6FDBBE 		.word	-1092915363
@@ -2278,7 +2278,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  1786 0424 D87E32BD 		.word	-1120764200
  1787 0428 3CDC0EBD 		.word	-1123099588
  1788 042c 465ED6BC 		.word	-1126801850
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 39
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 39
 
 
  1789 0430 4DF38EBC 		.word	-1131482291
@@ -2338,7 +2338,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  1843 0508 06BBC93E 		.word	1053408006
  1844 050c 6973CC3E 		.word	1053586281
  1845 0510 CE1BCF3E 		.word	1053760462
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 40
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 40
 
 
  1846 0514 F2B3D13E 		.word	1053930482
@@ -2382,34 +2382,34 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 1
  1884              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
  1885              		.file 4 "MotorFoc/motor_ctrl.h"
  1886              		.file 5 "MotorFoc/pid.h"
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s 			page 41
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s 			page 41
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 motor_para.c
-C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s:21     .text.my_atan2:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s:27     .text.my_atan2:00000000 my_atan2
-C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s:223    .text.my_atan2:00000120 $d
-C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s:636    .rodata.atanTab:00000000 atanTab
-C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s:232    .text.my_atan:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s:238    .text.my_atan:00000000 my_atan
-C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s:396    .text.my_atan:000000f0 $d
-C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s:403    .text.Sign:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s:409    .text.Sign:00000000 Sign
-C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s:441    .text.my_abs:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s:447    .text.my_abs:00000000 my_abs
-C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s:476    .text.Sat:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s:482    .text.Sat:00000000 Sat
-C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s:528    .text.my_max:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s:534    .text.my_max:00000000 my_max
-C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s:560    .text.MotorInit:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s:566    .text.MotorInit:00000000 MotorInit
-C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s:619    .text.MotorInit:00000030 $d
-C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s:633    .rodata.atanTab:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s:1154   .rodata.ubeta_tab:00000000 ubeta_tab
-C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s:1151   .rodata.ubeta_tab:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s:1520   .rodata.ualpha_tab:00000000 ualpha_tab
-C:\Users\sunhao\AppData\Local\Temp\cchlfgRV.s:1517   .rodata.ualpha_tab:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s:21     .text.my_atan2:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s:27     .text.my_atan2:00000000 my_atan2
+C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s:223    .text.my_atan2:00000120 $d
+C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s:636    .rodata.atanTab:00000000 atanTab
+C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s:232    .text.my_atan:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s:238    .text.my_atan:00000000 my_atan
+C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s:396    .text.my_atan:000000f0 $d
+C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s:403    .text.Sign:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s:409    .text.Sign:00000000 Sign
+C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s:441    .text.my_abs:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s:447    .text.my_abs:00000000 my_abs
+C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s:476    .text.Sat:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s:482    .text.Sat:00000000 Sat
+C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s:528    .text.my_max:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s:534    .text.my_max:00000000 my_max
+C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s:560    .text.MotorInit:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s:566    .text.MotorInit:00000000 MotorInit
+C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s:619    .text.MotorInit:00000030 $d
+C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s:633    .rodata.atanTab:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s:1154   .rodata.ubeta_tab:00000000 ubeta_tab
+C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s:1151   .rodata.ubeta_tab:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s:1520   .rodata.ualpha_tab:00000000 ualpha_tab
+C:\Users\sunhao\AppData\Local\Temp\cc77AnYO.s:1517   .rodata.ualpha_tab:00000000 $d
 
 UNDEFINED SYMBOLS
 PiParaInit

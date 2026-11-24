@@ -13,8 +13,11 @@
             "serverpath": "D:/JLINK/JLink_V976a/JLinkGDBServerCL.exe",
             "runToEntryPoint": "main",
             "showDevDebugOutput": "both",
-            "svdFile": "${workspaceFolder}/STM32F407xx.svd"
-            
+            "svdFile": "${workspaceFolder}/STM32F407xx.svd",
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 10
+            }
         }
     ]
 }
