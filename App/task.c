@@ -11,7 +11,7 @@
 #include "foc_wave.h"
 #include "htmi_app.h"
 #include "key_drv.h"
-
+#include "fault.h"
 typedef struct
 {
 	uint8_t run;                 /**< 就绪标志：1 表示等待主循环执行，0 表示未到期。 */
@@ -29,7 +29,7 @@ static TaskComps_t g_taskComps[] =
 #endif
 		{0, 5, 5, HmiTask},		 // 按键处理任务
 		//{0, 10, 10, SendToVofa}, // 发送数据任务
-		// {0, 1, 1, FaultCheck},	 // 故障检测任务
+		{0, 1, 1, FaultCheck},	 // 故障检测任务
 
 		/* 添加业务功能模块 */
 };
@@ -193,18 +193,5 @@ void task_loop(void)
     static uint32_t last_wave_led;
     FocWaveService();
     const uint32_t now = HAL_GetTick();
-    // if ((uint32_t)(now - last_wave_led) >= 100U)
-    // {
-    //     last_wave_led = now;
-    //     WaveLedService(now);
-    // }
-    if ((uint32_t)(now - last_led) >= 500U)
-    {
-        last_led = now;
-        // ToggleLed(LED_B);
-        LedTask(1,0,1);
-        // shell_send("%u,%.3f\r\n",TIM3->CNT,Motor.E_theta);
-
-    }
 	TaskHandler(); // 任务调度
 }

@@ -1,0 +1,32 @@
+# Keil MDK 编译产物与缓存
+*.axf
+*.elf
+*.bin
+*.hex
+*.uvoptx
+*.uvguix.*
+*.lnp
+*.crf
+*.o
+*.d
+*.i
+*.sct
+
+Listings/
+Objects/
+Debug/
+Release/
+RTE/
+*.pack
+
+# VSCode 本地配置
+.vscode/
+*.code-workspace
+
+# Windows 垃圾文件
+Thumbs.db
+.DS_Store
+
+# 日志、临时文件
+*.log
+*.tmp

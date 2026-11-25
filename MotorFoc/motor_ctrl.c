@@ -64,6 +64,7 @@ void MotorStop(void)
 	TIM1->CCR1 = TIM1_PERIOD_HALF;
 	TIM1->CCR2 = TIM1_PERIOD_HALF;
 	TIM1->CCR3 = TIM1_PERIOD_HALF;
+	VariableClear();
 }
 
 /**

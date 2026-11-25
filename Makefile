@@ -79,6 +79,8 @@ MotorFoc/motor_ctrl.c \
 MotorFoc/motor_para.c \
 MotorFoc/pid.c \
 MotorFoc/sen.c \
+MotorFoc/param_ident.c \
+MotorFoc/fault.c \
 MotorFoc/foc.c
 # ASM sources
 ASM_SOURCES =  \

@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -40,7 +40,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
   11:App/task.c    **** #include "foc_wave.h"
   12:App/task.c    **** #include "htmi_app.h"
   13:App/task.c    **** #include "key_drv.h"
-  14:App/task.c    **** 
+  14:App/task.c    **** #include "fault.h"
   15:App/task.c    **** typedef struct
   16:App/task.c    **** {
   17:App/task.c    **** 	uint8_t run;                 /**< 就绪标志：1 表示等待主循环执行，0 表示未到期
@@ -58,10 +58,10 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
   29:App/task.c    **** #endif
   30:App/task.c    **** 		{0, 5, 5, HmiTask},		 // 按键处理任务
   31:App/task.c    **** 		//{0, 10, 10, SendToVofa}, // 发送数据任务
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 2
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 2
 
 
-  32:App/task.c    **** 		// {0, 1, 1, FaultCheck},	 // 故障检测任务
+  32:App/task.c    **** 		{0, 1, 1, FaultCheck},	 // 故障检测任务
   33:App/task.c    **** 
   34:App/task.c    **** 		/* 添加业务功能模块 */
   35:App/task.c    **** };
@@ -105,7 +105,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
   52              	.LVL3:
   53              	.L2:
   54              		.loc 1 48 24 is_stmt 1 discriminator 1 view .LVU7
-  55 000a 012C     		cmp	r4, #1
+  55 000a 022C     		cmp	r4, #2
   56 000c 12D8     		bhi	.L6
   49:App/task.c    **** 	{
   50:App/task.c    **** 		if (g_taskComps[i].run) // 判断时间片标志
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
   63              		.loc 1 50 6 view .LVU10
   64 0018 002B     		cmp	r3, #0
   65 001a F4D0     		beq	.L3
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 3
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 3
 
 
   51:App/task.c    **** 		{
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
   68:App/task.c    ****  */
   69:App/task.c    **** static void TaskScheduleCb(void)
   70:App/task.c    **** {
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 4
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 4
 
 
  105              		.loc 1 70 1 is_stmt 1 view -0
@@ -205,7 +205,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  125              	.LVL9:
  126              	.L10:
  127              		.loc 1 71 24 is_stmt 1 discriminator 1 view .LVU26
- 128 0008 012B     		cmp	r3, #1
+ 128 0008 022B     		cmp	r3, #2
  129 000a 20D8     		bhi	.L13
   72:App/task.c    **** 	{
   73:App/task.c    **** 		if (g_taskComps[i].timCount)
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
   77:App/task.c    **** 			{
   78:App/task.c    **** 				g_taskComps[i].run = 1;
  153              		.loc 1 78 5 is_stmt 1 view .LVU34
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 5
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 5
 
 
  154              		.loc 1 78 24 is_stmt 0 view .LVU35
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  197 0002 0248     		ldr	r0, .L18
  198 0004 FFF7FEFF 		bl	TaskScheduleCbReg
  199              	.LVL10:
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 6
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 6
 
 
   92:App/task.c    **** }
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  130:App/task.c    ****             pattern_start = now;
  131:App/task.c    ****         }
  132:App/task.c    ****     }
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 7
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 7
 
 
  133:App/task.c    **** 
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  251 0020 33D0     		beq	.L26
  252              	.L21:
  153:App/task.c    ****         AdcSamplingStart() != HAL_OK)
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 8
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 8
 
 
  154:App/task.c    ****     {
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  289              		.loc 1 171 5 is_stmt 1 view .LVU66
  290 004c FFF7FEFF 		bl	VariableClear
  291              	.LVL22:
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 9
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 9
 
 
  172:App/task.c    ****     EnCoSpeed.EncoLastCnt = TIM3->CNT;
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
   20:Drivers/CMSIS/Include/cmsis_gcc.h ****  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   21:Drivers/CMSIS/Include/cmsis_gcc.h ****  * See the License for the specific language governing permissions and
   22:Drivers/CMSIS/Include/cmsis_gcc.h ****  * limitations under the License.
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 10
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 10
 
 
   23:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
   77:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
   78:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT16_WRITE
   79:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 11
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 11
 
 
   80:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  134:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  135:Drivers/CMSIS/Include/cmsis_gcc.h ****   typedef struct {
  136:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t const* src;
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 12
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 12
 
 
  137:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t* dest;
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  191:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __TZ_STACK_SEAL_SIZE      8U
  192:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
  193:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 13
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 13
 
 
  194:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __TZ_STACK_SEAL_VALUE
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  248:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  249:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __SEV()                             __ASM volatile ("sev")
  250:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 14
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 14
 
 
  251:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  305:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  306:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Reverse byte order (16 bit)
  307:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Reverses the byte order within each halfword of a word. For example, 0x12345678 becomes 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 15
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 15
 
 
  308:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    value  Value to reverse
@@ -898,7 +898,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  362:Drivers/CMSIS/Include/cmsis_gcc.h ****                  If required, a debugger can use it to store additional information about the break
  363:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  364:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __BKPT(value)                       __ASM volatile ("bkpt "#value)
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 16
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 16
 
 
  365:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -958,7 +958,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  419:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  420:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  421:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 17
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 17
 
 
  422:Drivers/CMSIS/Include/cmsis_gcc.h **** #if ((defined (__ARM_ARCH_7M__      ) && (__ARM_ARCH_7M__      == 1)) || \
@@ -1018,7 +1018,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  476:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __LDREXW(volatile uint32_t *addr)
  477:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  478:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t result;
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 18
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 18
 
 
  479:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -1078,7 +1078,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  533:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  534:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  535:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 19
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 19
 
 
  536:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
@@ -1138,7 +1138,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  590:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    value  Value to rotate
  591:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return               Rotated value
  592:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 20
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 20
 
 
  593:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __RRX(uint32_t value)
@@ -1198,7 +1198,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  647:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   LDRT Unprivileged (32 bit)
  648:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a Unprivileged LDRT instruction for 32 bit values.
  649:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 21
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 21
 
 
  650:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return        value of type uint32_t at (*ptr)
@@ -1258,7 +1258,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  704:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    sat  Bit position to saturate to (1..32)
  705:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return             Saturated value
  706:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 22
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 22
 
 
  707:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE int32_t __SSAT(int32_t val, uint32_t sat)
@@ -1318,7 +1318,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  761:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  762:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint8_t __LDAB(volatile uint8_t *ptr)
  763:Drivers/CMSIS/Include/cmsis_gcc.h **** {
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 23
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 23
 
 
  764:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t result;
@@ -1378,7 +1378,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  818:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  819:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __STLH(uint16_t value, volatile uint16_t *ptr)
  820:Drivers/CMSIS/Include/cmsis_gcc.h **** {
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 24
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 24
 
 
  821:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("stlh %1, %0" : "=Q" (*ptr) : "r" ((uint32_t)value) : "memory" );
@@ -1438,7 +1438,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  875:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t result;
  876:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  877:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldaex %0, %1" : "=r" (result) : "Q" (*ptr) : "memory" );
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 25
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 25
 
 
  878:Drivers/CMSIS/Include/cmsis_gcc.h ****    return(result);
@@ -1498,7 +1498,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  932:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif /* ((defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) || \
  933:Drivers/CMSIS/Include/cmsis_gcc.h ****            (defined (__ARM_ARCH_8M_BASE__ ) && (__ARM_ARCH_8M_BASE__ == 1))    ) */
  934:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 26
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 26
 
 
  935:Drivers/CMSIS/Include/cmsis_gcc.h **** /*@}*/ /* end of group CMSIS_Core_InstructionInterface */
@@ -1558,7 +1558,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  989:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  990:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MRS %0, control_ns" : "=r" (result) );
  991:Drivers/CMSIS/Include/cmsis_gcc.h ****   return(result);
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 27
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 27
 
 
  992:Drivers/CMSIS/Include/cmsis_gcc.h **** }
@@ -1618,7 +1618,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
 1046:Drivers/CMSIS/Include/cmsis_gcc.h ****   return(result);
 1047:Drivers/CMSIS/Include/cmsis_gcc.h **** }
 1048:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 28
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 28
 
 
 1049:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -1678,7 +1678,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
 1103:Drivers/CMSIS/Include/cmsis_gcc.h **** 
 1104:Drivers/CMSIS/Include/cmsis_gcc.h **** 
 1105:Drivers/CMSIS/Include/cmsis_gcc.h **** #if (defined (__ARM_FEATURE_CMSE ) && (__ARM_FEATURE_CMSE == 3))
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 29
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 29
 
 
 1106:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
@@ -1738,7 +1738,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
 1160:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
 1161:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Set Main Stack Pointer (non-secure)
 1162:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Assigns the given value to the non-secure Main Stack Pointer (MSP) when in secure state.
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 30
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 30
 
 
 1163:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    topOfMainStack  Main Stack Pointer value to set
@@ -1798,7 +1798,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  329              	.LVL25:
 1209:Drivers/CMSIS/Include/cmsis_gcc.h ****   return(result);
  330              		.loc 2 1209 3 view .LVU81
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 31
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 31
 
 
  331              		.loc 2 1209 3 is_stmt 0 view .LVU82
@@ -1858,7 +1858,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  372              		.loc 1 186 15 is_stmt 0 view .LVU93
  373 007e 0B4B     		ldr	r3, .L29
  374 0080 0122     		movs	r2, #1
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 32
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 32
 
 
  375 0082 1A70     		strb	r2, [r3]
@@ -1918,7 +1918,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  399              	.LVL29:
  152:App/task.c    ****         AdcSamplingStart() != HAL_OK)
  400              		.loc 1 152 66 view .LVU100
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 33
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 33
 
 
  401 008e 0028     		cmp	r0, #0
@@ -1978,7 +1978,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  450              		.section	.text.task_loop,"ax",%progbits
  451              		.align	1
  452              		.global	task_loop
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 34
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 34
 
 
  453              		.syntax unified
@@ -2011,133 +2011,81 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 1
  474              		.loc 1 195 26 is_stmt 0 view .LVU114
  475 0006 FFF7FEFF 		bl	HAL_GetTick
  476              	.LVL37:
- 196:App/task.c    ****     // if ((uint32_t)(now - last_wave_led) >= 100U)
- 197:App/task.c    ****     // {
- 198:App/task.c    ****     //     last_wave_led = now;
- 199:App/task.c    ****     //     WaveLedService(now);
- 200:App/task.c    ****     // }
- 201:App/task.c    ****     if ((uint32_t)(now - last_led) >= 500U)
- 477              		.loc 1 201 5 is_stmt 1 view .LVU115
- 478              		.loc 1 201 24 is_stmt 0 view .LVU116
- 479 000a 084B     		ldr	r3, .L35
- 480 000c 1B68     		ldr	r3, [r3]
- 481 000e C31A     		subs	r3, r0, r3
- 482              		.loc 1 201 8 view .LVU117
- 483 0010 B3F5FA7F 		cmp	r3, #500
- 484 0014 02D2     		bcs	.L34
- 485              	.LVL38:
- 486              	.L32:
- 202:App/task.c    ****     {
- 203:App/task.c    ****         last_led = now;
- 204:App/task.c    ****         // ToggleLed(LED_B);
- 205:App/task.c    ****         LedTask(1,0,1);
- 206:App/task.c    ****         // shell_send("%u,%.3f\r\n",TIM3->CNT,Motor.E_theta);
- 207:App/task.c    **** 
- 208:App/task.c    ****     }
- 209:App/task.c    **** 	TaskHandler(); // 任务调度
- 487              		.loc 1 209 2 is_stmt 1 view .LVU118
- 488 0016 FFF7FEFF 		bl	TaskHandler
- 489              	.LVL39:
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 35
+ 196:App/task.c    **** 	TaskHandler(); // 任务调度
+ 477              		.loc 1 196 2 is_stmt 1 view .LVU115
+ 478 000a FFF7FEFF 		bl	TaskHandler
+ 479              	.LVL38:
+ 197:App/task.c    **** }
+ 480              		.loc 1 197 1 is_stmt 0 view .LVU116
+ 481 000e 08BD     		pop	{r3, pc}
+ 482              		.cfi_endproc
+ 483              	.LFE277:
+ 485              		.section	.data.g_taskComps,"aw"
+ 486              		.align	2
+ 489              	g_taskComps:
+ 490 0000 00       		.byte	0
+ 491 0001 00       		.space	1
+ 492 0002 0100     		.short	1
+ 493 0004 0100     		.short	1
+ 494 0006 0000     		.space	2
+ 495 0008 00000000 		.word	VrTask
+ 496 000c 00       		.byte	0
+ 497 000d 00       		.space	1
+ 498 000e 0500     		.short	5
+ 499 0010 0500     		.short	5
+ 500 0012 0000     		.space	2
+ 501 0014 00000000 		.word	HmiTask
+ 502 0018 00       		.byte	0
+ 503 0019 00       		.space	1
+ 504 001a 0100     		.short	1
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 35
 
 
- 210:App/task.c    **** }
- 490              		.loc 1 210 1 is_stmt 0 view .LVU119
- 491 001a 08BD     		pop	{r3, pc}
- 492              	.LVL40:
- 493              	.L34:
- 203:App/task.c    ****         // ToggleLed(LED_B);
- 494              		.loc 1 203 9 is_stmt 1 view .LVU120
- 203:App/task.c    ****         // ToggleLed(LED_B);
- 495              		.loc 1 203 18 is_stmt 0 view .LVU121
- 496 001c 034B     		ldr	r3, .L35
- 497 001e 1860     		str	r0, [r3]
- 205:App/task.c    ****         // shell_send("%u,%.3f\r\n",TIM3->CNT,Motor.E_theta);
- 498              		.loc 1 205 9 is_stmt 1 view .LVU122
- 499 0020 0122     		movs	r2, #1
- 500 0022 0021     		movs	r1, #0
- 501 0024 1046     		mov	r0, r2
- 502              	.LVL41:
- 205:App/task.c    ****         // shell_send("%u,%.3f\r\n",TIM3->CNT,Motor.E_theta);
- 503              		.loc 1 205 9 is_stmt 0 view .LVU123
- 504 0026 FFF7FEFF 		bl	LedTask
- 505              	.LVL42:
- 205:App/task.c    ****         // shell_send("%u,%.3f\r\n",TIM3->CNT,Motor.E_theta);
- 506              		.loc 1 205 9 view .LVU124
- 507 002a F4E7     		b	.L32
- 508              	.L36:
- 509              		.align	2
- 510              	.L35:
- 511 002c 00000000 		.word	last_led.0
- 512              		.cfi_endproc
- 513              	.LFE277:
- 515              		.section	.bss.last_led.0,"aw",%nobits
- 516              		.align	2
- 519              	last_led.0:
- 520 0000 00000000 		.space	4
- 521              		.section	.data.g_taskComps,"aw"
- 522              		.align	2
- 525              	g_taskComps:
- 526 0000 00       		.byte	0
- 527 0001 00       		.space	1
- 528 0002 0100     		.short	1
- 529 0004 0100     		.short	1
- 530 0006 0000     		.space	2
- 531 0008 00000000 		.word	VrTask
- 532 000c 00       		.byte	0
- 533 000d 00       		.space	1
- 534 000e 0500     		.short	5
- 535 0010 0500     		.short	5
- 536 0012 0000     		.space	2
- 537 0014 00000000 		.word	HmiTask
- 538              		.text
- 539              	.Letext0:
- 540              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
- 541              		.file 4 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
- 542              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
- 543              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
- 544              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
- 545              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 36
-
-
- 546              		.file 9 "Sdrive/tim_drv.h"
- 547              		.file 10 "Sdrive/adc_drv.h"
- 548              		.file 11 "App/task.h"
- 549              		.file 12 "MotorFoc/foc.h"
- 550              		.file 13 "MotorFoc/motor_ctrl.h"
- 551              		.file 14 "Sdrive/foc_wave.h"
- 552              		.file 15 "App/htmi_app.h"
- 553              		.file 16 "Sdrive/led_drv.h"
- 554              		.file 17 "Core/Inc/stm32f4xx_it.h"
- 555              		.file 18 "MotorFoc/sen.h"
- 556              		.file 19 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
- 557              		.file 20 "Core/Inc/main.h"
- 558              		.file 21 "Core/Inc/usart.h"
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s 			page 37
+ 505 001c 0100     		.short	1
+ 506 001e 0000     		.space	2
+ 507 0020 00000000 		.word	FaultCheck
+ 508              		.text
+ 509              	.Letext0:
+ 510              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 511              		.file 4 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 512              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 513              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 514              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 515              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 516              		.file 9 "Sdrive/tim_drv.h"
+ 517              		.file 10 "Sdrive/adc_drv.h"
+ 518              		.file 11 "App/task.h"
+ 519              		.file 12 "MotorFoc/foc.h"
+ 520              		.file 13 "MotorFoc/motor_ctrl.h"
+ 521              		.file 14 "Sdrive/foc_wave.h"
+ 522              		.file 15 "MotorFoc/fault.h"
+ 523              		.file 16 "App/htmi_app.h"
+ 524              		.file 17 "Core/Inc/stm32f4xx_it.h"
+ 525              		.file 18 "MotorFoc/sen.h"
+ 526              		.file 19 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 527              		.file 20 "Core/Inc/main.h"
+ 528              		.file 21 "Core/Inc/usart.h"
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s 			page 36
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 task.c
-C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s:21     .text.TaskHandler:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s:26     .text.TaskHandler:00000000 TaskHandler
-C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s:93     .text.TaskHandler:00000038 $d
-C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s:525    .data.g_taskComps:00000000 g_taskComps
-C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s:98     .text.TaskScheduleCb:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s:103    .text.TaskScheduleCb:00000000 TaskScheduleCb
-C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s:175    .text.TaskScheduleCb:00000050 $d
-C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s:180    .text.AppInit:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s:185    .text.AppInit:00000000 AppInit
-C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s:205    .text.AppInit:0000000c $d
-C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s:210    .text.task_init:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s:216    .text.task_init:00000000 task_init
-C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s:440    .text.task_init:000000ac $d
-C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s:451    .text.task_loop:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s:457    .text.task_loop:00000000 task_loop
-C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s:511    .text.task_loop:0000002c $d
-C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s:519    .bss.last_led.0:00000000 last_led.0
-C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s:516    .bss.last_led.0:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccde5Mza.s:522    .data.g_taskComps:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s:21     .text.TaskHandler:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s:26     .text.TaskHandler:00000000 TaskHandler
+C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s:93     .text.TaskHandler:00000038 $d
+C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s:489    .data.g_taskComps:00000000 g_taskComps
+C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s:98     .text.TaskScheduleCb:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s:103    .text.TaskScheduleCb:00000000 TaskScheduleCb
+C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s:175    .text.TaskScheduleCb:00000050 $d
+C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s:180    .text.AppInit:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s:185    .text.AppInit:00000000 AppInit
+C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s:205    .text.AppInit:0000000c $d
+C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s:210    .text.task_init:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s:216    .text.task_init:00000000 task_init
+C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s:440    .text.task_init:000000ac $d
+C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s:451    .text.task_loop:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s:457    .text.task_loop:00000000 task_loop
+C:\Users\sunhao\AppData\Local\Temp\ccNjcXhs.s:486    .data.g_taskComps:00000000 $d
 
 UNDEFINED SYMBOLS
 TaskScheduleCbReg
@@ -2161,6 +2109,6 @@ EnCoSpeed
 Svpwm
 FocWaveService
 HAL_GetTick
-LedTask
 VrTask
 HmiTask
+FaultCheck

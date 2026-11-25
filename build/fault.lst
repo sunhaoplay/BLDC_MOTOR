@@ -1,0 +1,916 @@
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"fault.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "MotorFoc/fault.c"
+  20              		.section	.text.FaultCheck,"ax",%progbits
+  21              		.align	1
+  22              		.global	FaultCheck
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	FaultCheck:
+  28              	.LFB272:
+   1:MotorFoc/fault.c **** /**
+   2:MotorFoc/fault.c ****  * @file fault.c
+   3:MotorFoc/fault.c ****  * @brief 实现带时间确认的母线电压、堵转、转速方向和功率级温度保护。
+   4:MotorFoc/fault.c ****  *
+   5:MotorFoc/fault.c ****  * FaultCheck() 由 1 ms 后台任务调用，所以各计数阈值按毫秒理解。确认故障�
+   6:MotorFoc/fault.c ****  * 立即关闭 PWM、设置 M_ERR 模式并用 RGB 灯提示；过温具有独立恢复阈值和�
+   7:MotorFoc/fault.c ****  */
+   8:MotorFoc/fault.c **** #include "motor_para.h"
+   9:MotorFoc/fault.c **** #include "motor_ctrl.h"
+  10:MotorFoc/fault.c **** #include "fault.h"
+  11:MotorFoc/fault.c **** DiagFlag Fault;
+  12:MotorFoc/fault.c **** 
+  13:MotorFoc/fault.c **** uint32_t MotorOVState = 0;     /**< 母线过压连续计数。 */
+  14:MotorFoc/fault.c **** uint32_t MotorLVState = 0;     /**< 母线欠压连续计数。 */
+  15:MotorFoc/fault.c **** uint32_t Locktime = 0;         /**< 堵转条件连续计数。 */
+  16:MotorFoc/fault.c **** uint32_t OverSpeedTime = 0;    /**< 超速条件连续计数。 */
+  17:MotorFoc/fault.c **** uint32_t DownSpeedTime = 0;    /**< 实际转向相反的连续计数。 */
+  18:MotorFoc/fault.c **** uint32_t MotorOtpState = 0;    /**< 过温条件连续计数。 */
+  19:MotorFoc/fault.c **** uint32_t MotorDisOtoState = 0; /**< 从过温状态恢复的连续计数。 */
+  20:MotorFoc/fault.c **** 
+  21:MotorFoc/fault.c **** /**
+  22:MotorFoc/fault.c ****  * @brief 对所有软件保护条件执行一次采样、延时确认和故障处置。
+  23:MotorFoc/fault.c ****  *
+  24:MotorFoc/fault.c ****  * 过压/欠压、堵转、超速/反向和过温均要求连续满足条件一定次数。Init_Ov
+  25:MotorFoc/fault.c ****  * 置位前不检查电压和堵转，避免上电校准阶段误报。正常状态下 Fault.Byte 
+  26:MotorFoc/fault.c ****  * 绿色 LED 以 400 ms 周期、约 50% 占空比闪烁。
+  27:MotorFoc/fault.c ****  * @note 调用周期必须保持约 1 ms，否则所有时间阈值都会按比例变化。
+  28:MotorFoc/fault.c ****  */
+  29:MotorFoc/fault.c **** void FaultCheck(void)
+  30:MotorFoc/fault.c **** {
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 2
+
+
+  29              		.loc 1 30 1 view -0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 0, uses_anonymous_args = 0
+  33 0000 38B5     		push	{r3, r4, r5, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 16
+  36              		.cfi_offset 3, -16
+  37              		.cfi_offset 4, -12
+  38              		.cfi_offset 5, -8
+  39              		.cfi_offset 14, -4
+  40 0002 2DED028B 		vpush.64	{d8}
+  41              	.LCFI1:
+  42              		.cfi_def_cfa_offset 24
+  43              		.cfi_offset 80, -24
+  44              		.cfi_offset 81, -20
+  31:MotorFoc/fault.c ****     static uint16_t i;
+  45              		.loc 1 31 5 view .LVU1
+  32:MotorFoc/fault.c **** 
+  33:MotorFoc/fault.c ****     if (Init_Over) // ADC 零点和电机初始化完成后才启用运行保护。
+  46              		.loc 1 33 5 view .LVU2
+  47              		.loc 1 33 9 is_stmt 0 view .LVU3
+  48 0006 AF4B     		ldr	r3, .L47
+  49 0008 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  50              		.loc 1 33 8 view .LVU4
+  51 000a 002B     		cmp	r3, #0
+  52 000c 67D0     		beq	.L2
+  34:MotorFoc/fault.c ****     {
+  35:MotorFoc/fault.c ****         // 母线电压连续高于上限 OV_PROTECT_TIME ms 后触发过压停机。
+  36:MotorFoc/fault.c ****         if (AdcPara.Vbus > HIHG_VOLTAGE_V)
+  53              		.loc 1 36 9 is_stmt 1 view .LVU5
+  54              		.loc 1 36 20 is_stmt 0 view .LVU6
+  55 000e AE4B     		ldr	r3, .L47+4
+  56 0010 93ED007A 		vldr.32	s14, [r3]
+  57              		.loc 1 36 12 view .LVU7
+  58 0014 F2EE0E7A 		vmov.f32	s15, #1.5e+1
+  59 0018 B4EEE77A 		vcmpe.f32	s14, s15
+  60 001c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+  61 0020 18DD     		ble	.L39
+  37:MotorFoc/fault.c ****         {
+  38:MotorFoc/fault.c ****             if (MotorOVState < OV_PROTECT_TIME)
+  62              		.loc 1 38 13 is_stmt 1 view .LVU8
+  63              		.loc 1 38 30 is_stmt 0 view .LVU9
+  64 0022 AA4B     		ldr	r3, .L47+8
+  65 0024 1B68     		ldr	r3, [r3]
+  66              		.loc 1 38 16 view .LVU10
+  67 0026 B3F5FA7F 		cmp	r3, #500
+  68 002a 03D2     		bcs	.L5
+  39:MotorFoc/fault.c ****             {
+  40:MotorFoc/fault.c ****                 MotorOVState++;
+  69              		.loc 1 40 17 is_stmt 1 view .LVU11
+  70              		.loc 1 40 29 is_stmt 0 view .LVU12
+  71 002c 0133     		adds	r3, r3, #1
+  72 002e A74A     		ldr	r2, .L47+8
+  73 0030 1360     		str	r3, [r2]
+  74 0032 12E0     		b	.L6
+  75              	.L5:
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 3
+
+
+  41:MotorFoc/fault.c ****             }
+  42:MotorFoc/fault.c ****             else
+  43:MotorFoc/fault.c ****             {
+  44:MotorFoc/fault.c ****                 Fault.bit.OverVbusFlag = 1;
+  76              		.loc 1 44 17 is_stmt 1 view .LVU13
+  77              		.loc 1 44 40 is_stmt 0 view .LVU14
+  78 0034 A64A     		ldr	r2, .L47+12
+  79 0036 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+  80 0038 43F00103 		orr	r3, r3, #1
+  81 003c 1370     		strb	r3, [r2]
+  45:MotorFoc/fault.c ****                 MotorStop();
+  82              		.loc 1 45 17 is_stmt 1 view .LVU15
+  83 003e FFF7FEFF 		bl	MotorStop
+  84              	.LVL0:
+  46:MotorFoc/fault.c ****                 Motor.CtrlMode = M_ERR;
+  85              		.loc 1 46 17 view .LVU16
+  86              		.loc 1 46 32 is_stmt 0 view .LVU17
+  87 0042 A44B     		ldr	r3, .L47+16
+  88 0044 0B22     		movs	r2, #11
+  89 0046 1A74     		strb	r2, [r3, #16]
+  47:MotorFoc/fault.c ****                 LedTask(1, 0, 1); // 紫色表示过压。
+  90              		.loc 1 47 17 is_stmt 1 view .LVU18
+  91 0048 0122     		movs	r2, #1
+  92 004a 0021     		movs	r1, #0
+  93 004c 1046     		mov	r0, r2
+  94 004e FFF7FEFF 		bl	LedTask
+  95              	.LVL1:
+  96 0052 02E0     		b	.L6
+  97              	.L39:
+  48:MotorFoc/fault.c ****             }
+  49:MotorFoc/fault.c ****         }
+  50:MotorFoc/fault.c ****         else
+  51:MotorFoc/fault.c ****         {
+  52:MotorFoc/fault.c ****             MotorOVState = 0;
+  98              		.loc 1 52 13 view .LVU19
+  99              		.loc 1 52 26 is_stmt 0 view .LVU20
+ 100 0054 9D4B     		ldr	r3, .L47+8
+ 101 0056 0022     		movs	r2, #0
+ 102 0058 1A60     		str	r2, [r3]
+ 103              	.L6:
+  53:MotorFoc/fault.c ****         }
+  54:MotorFoc/fault.c **** 
+  55:MotorFoc/fault.c ****         // 母线电压连续低于下限 LV_PROTECT_TIME ms 后触发欠压停机。
+  56:MotorFoc/fault.c ****         if (AdcPara.Vbus < LOW_VOLTAGE_V)
+ 104              		.loc 1 56 9 is_stmt 1 view .LVU21
+ 105              		.loc 1 56 20 is_stmt 0 view .LVU22
+ 106 005a 9B4B     		ldr	r3, .L47+4
+ 107 005c 93ED007A 		vldr.32	s14, [r3]
+ 108              		.loc 1 56 12 view .LVU23
+ 109 0060 F2EE027A 		vmov.f32	s15, #9.0e+0
+ 110 0064 B4EEE77A 		vcmpe.f32	s14, s15
+ 111 0068 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 112 006c 18D5     		bpl	.L40
+  57:MotorFoc/fault.c ****         {
+  58:MotorFoc/fault.c ****             if (MotorLVState < LV_PROTECT_TIME)
+ 113              		.loc 1 58 13 is_stmt 1 view .LVU24
+ 114              		.loc 1 58 30 is_stmt 0 view .LVU25
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 4
+
+
+ 115 006e 9A4B     		ldr	r3, .L47+20
+ 116 0070 1B68     		ldr	r3, [r3]
+ 117              		.loc 1 58 16 view .LVU26
+ 118 0072 B3F5FA7F 		cmp	r3, #500
+ 119 0076 03D2     		bcs	.L9
+  59:MotorFoc/fault.c ****             {
+  60:MotorFoc/fault.c ****                 MotorLVState++;
+ 120              		.loc 1 60 17 is_stmt 1 view .LVU27
+ 121              		.loc 1 60 29 is_stmt 0 view .LVU28
+ 122 0078 0133     		adds	r3, r3, #1
+ 123 007a 974A     		ldr	r2, .L47+20
+ 124 007c 1360     		str	r3, [r2]
+ 125 007e 12E0     		b	.L10
+ 126              	.L9:
+  61:MotorFoc/fault.c ****             }
+  62:MotorFoc/fault.c ****             else
+  63:MotorFoc/fault.c ****             {
+  64:MotorFoc/fault.c ****                 Fault.bit.UnderVbusFlag = 1;
+ 127              		.loc 1 64 17 is_stmt 1 view .LVU29
+ 128              		.loc 1 64 41 is_stmt 0 view .LVU30
+ 129 0080 934A     		ldr	r2, .L47+12
+ 130 0082 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 131 0084 43F00203 		orr	r3, r3, #2
+ 132 0088 1370     		strb	r3, [r2]
+  65:MotorFoc/fault.c ****                 MotorStop();
+ 133              		.loc 1 65 17 is_stmt 1 view .LVU31
+ 134 008a FFF7FEFF 		bl	MotorStop
+ 135              	.LVL2:
+  66:MotorFoc/fault.c ****                 Motor.CtrlMode = M_ERR;
+ 136              		.loc 1 66 17 view .LVU32
+ 137              		.loc 1 66 32 is_stmt 0 view .LVU33
+ 138 008e 914B     		ldr	r3, .L47+16
+ 139 0090 0B22     		movs	r2, #11
+ 140 0092 1A74     		strb	r2, [r3, #16]
+  67:MotorFoc/fault.c ****                 LedTask(1, 1, 0); // 黄色表示欠压。
+ 141              		.loc 1 67 17 is_stmt 1 view .LVU34
+ 142 0094 0022     		movs	r2, #0
+ 143 0096 0121     		movs	r1, #1
+ 144 0098 0846     		mov	r0, r1
+ 145 009a FFF7FEFF 		bl	LedTask
+ 146              	.LVL3:
+ 147 009e 02E0     		b	.L10
+ 148              	.L40:
+  68:MotorFoc/fault.c ****             }
+  69:MotorFoc/fault.c ****         }
+  70:MotorFoc/fault.c ****         else
+  71:MotorFoc/fault.c ****         {
+  72:MotorFoc/fault.c ****             MotorLVState = 0;
+ 149              		.loc 1 72 13 view .LVU35
+ 150              		.loc 1 72 26 is_stmt 0 view .LVU36
+ 151 00a0 8D4B     		ldr	r3, .L47+20
+ 152 00a2 0022     		movs	r2, #0
+ 153 00a4 1A60     		str	r2, [r3]
+ 154              	.L10:
+  73:MotorFoc/fault.c ****         }
+  74:MotorFoc/fault.c **** 
+  75:MotorFoc/fault.c ****         // 反馈速度低于给定一半且 q 轴电流很大，视为可能堵转并开始累计�
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 5
+
+
+  76:MotorFoc/fault.c ****         if (my_abs(pi_spd.Fbk) < my_abs(pi_spd.Ref / 2))
+ 155              		.loc 1 76 9 is_stmt 1 view .LVU37
+ 156              		.loc 1 76 13 is_stmt 0 view .LVU38
+ 157 00a6 8D4C     		ldr	r4, .L47+24
+ 158 00a8 94ED010A 		vldr.32	s0, [r4, #4]
+ 159 00ac FFF7FEFF 		bl	my_abs
+ 160              	.LVL4:
+ 161 00b0 B0EE408A 		vmov.f32	s16, s0
+ 162              		.loc 1 76 47 discriminator 1 view .LVU39
+ 163 00b4 94ED000A 		vldr.32	s0, [r4]
+ 164              		.loc 1 76 34 discriminator 1 view .LVU40
+ 165 00b8 F6EE007A 		vmov.f32	s15, #5.0e-1
+ 166 00bc 20EE270A 		vmul.f32	s0, s0, s15
+ 167 00c0 FFF7FEFF 		bl	my_abs
+ 168              	.LVL5:
+ 169              		.loc 1 76 12 discriminator 2 view .LVU41
+ 170 00c4 B4EEC80A 		vcmpe.f32	s0, s16
+ 171 00c8 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 172 00cc 38DC     		bgt	.L44
+  77:MotorFoc/fault.c ****         {
+  78:MotorFoc/fault.c ****             if (my_abs(Park.Qs) >= LOCK_CUR)
+  79:MotorFoc/fault.c ****             {
+  80:MotorFoc/fault.c ****                 Locktime++;
+  81:MotorFoc/fault.c ****             }
+  82:MotorFoc/fault.c ****         }
+  83:MotorFoc/fault.c ****         else
+  84:MotorFoc/fault.c ****         {
+  85:MotorFoc/fault.c ****             Locktime = 0;
+ 173              		.loc 1 85 13 is_stmt 1 view .LVU42
+ 174              		.loc 1 85 22 is_stmt 0 view .LVU43
+ 175 00ce 844B     		ldr	r3, .L47+28
+ 176 00d0 0022     		movs	r2, #0
+ 177 00d2 1A60     		str	r2, [r3]
+ 178              	.L13:
+  86:MotorFoc/fault.c ****         }
+  87:MotorFoc/fault.c **** 
+  88:MotorFoc/fault.c ****         if (Locktime == LOCK_TIME)
+ 179              		.loc 1 88 9 is_stmt 1 view .LVU44
+ 180              		.loc 1 88 22 is_stmt 0 view .LVU45
+ 181 00d4 824B     		ldr	r3, .L47+28
+ 182 00d6 1B68     		ldr	r3, [r3]
+ 183              		.loc 1 88 12 view .LVU46
+ 184 00d8 B3F5FA7F 		cmp	r3, #500
+ 185 00dc 41D0     		beq	.L45
+ 186              	.L2:
+  89:MotorFoc/fault.c ****         {
+  90:MotorFoc/fault.c ****             MotorStop();
+  91:MotorFoc/fault.c ****             Fault.bit.LockedFlag = 1;
+  92:MotorFoc/fault.c ****             Locktime = 0;
+  93:MotorFoc/fault.c ****             Motor.CtrlMode = M_ERR;
+  94:MotorFoc/fault.c ****             LedTask(1, 0, 0); // 红色表示堵转。
+  95:MotorFoc/fault.c ****         }
+  96:MotorFoc/fault.c ****     }
+  97:MotorFoc/fault.c **** 
+  98:MotorFoc/fault.c ****     // 速度足够高时才检测严重超调和实际转向相反，避开零速附近噪声。
+  99:MotorFoc/fault.c ****     if (my_abs(pi_spd.Fbk) > 400 * Motor.P)
+ 187              		.loc 1 99 5 is_stmt 1 view .LVU47
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 6
+
+
+ 188              		.loc 1 99 9 is_stmt 0 view .LVU48
+ 189 00de 7F4B     		ldr	r3, .L47+24
+ 190 00e0 93ED010A 		vldr.32	s0, [r3, #4]
+ 191 00e4 FFF7FEFF 		bl	my_abs
+ 192              	.LVL6:
+ 193              		.loc 1 99 41 discriminator 1 view .LVU49
+ 194 00e8 7A4B     		ldr	r3, .L47+16
+ 195 00ea 93F82430 		ldrb	r3, [r3, #36]	@ zero_extendqisi2
+ 196              		.loc 1 99 34 discriminator 1 view .LVU50
+ 197 00ee 4FF4C872 		mov	r2, #400
+ 198 00f2 02FB03F3 		mul	r3, r2, r3
+ 199              		.loc 1 99 28 discriminator 1 view .LVU51
+ 200 00f6 07EE903A 		vmov	s15, r3	@ int
+ 201 00fa F8EEE77A 		vcvt.f32.s32	s15, s15
+ 202              		.loc 1 99 8 discriminator 1 view .LVU52
+ 203 00fe B4EEE70A 		vcmpe.f32	s0, s15
+ 204 0102 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 205 0106 7BDD     		ble	.L15
+ 100:MotorFoc/fault.c ****     {
+ 101:MotorFoc/fault.c ****         if (pi_spd.err < 0) // 负误差表示反馈速度高于给定。
+ 206              		.loc 1 101 9 is_stmt 1 view .LVU53
+ 207              		.loc 1 101 19 is_stmt 0 view .LVU54
+ 208 0108 744B     		ldr	r3, .L47+24
+ 209 010a 93ED080A 		vldr.32	s0, [r3, #32]
+ 210              		.loc 1 101 12 view .LVU55
+ 211 010e B5EEC00A 		vcmpe.f32	s0, #0
+ 212 0112 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 213 0116 36D4     		bmi	.L46
+ 214              	.L17:
+ 102:MotorFoc/fault.c ****         {
+ 103:MotorFoc/fault.c ****             if (my_abs(pi_spd.err) > my_abs(pi_spd.Ref))
+ 104:MotorFoc/fault.c ****             {
+ 105:MotorFoc/fault.c ****                 if (OverSpeedTime < SPEED_PRO_TIME)
+ 106:MotorFoc/fault.c ****                 {
+ 107:MotorFoc/fault.c ****                     OverSpeedTime++;
+ 108:MotorFoc/fault.c ****                 }
+ 109:MotorFoc/fault.c ****                 else
+ 110:MotorFoc/fault.c ****                 {
+ 111:MotorFoc/fault.c ****                     MotorStop();
+ 112:MotorFoc/fault.c ****                     Fault.bit.OverSpeedFlag = 1;
+ 113:MotorFoc/fault.c ****                     Motor.CtrlMode = M_ERR;
+ 114:MotorFoc/fault.c ****                     LedTask(0, 0, 1); // 蓝色表示速度异常。
+ 115:MotorFoc/fault.c ****                 }
+ 116:MotorFoc/fault.c ****             }
+ 117:MotorFoc/fault.c ****             else
+ 118:MotorFoc/fault.c ****             {
+ 119:MotorFoc/fault.c ****                 OverSpeedTime = 0;
+ 120:MotorFoc/fault.c ****             }
+ 121:MotorFoc/fault.c ****         }
+ 122:MotorFoc/fault.c ****         if ((Sign(pi_spd.Ref) + Sign(pi_spd.Fbk)) == 0) // 给定与反馈符号相反。
+ 215              		.loc 1 122 9 is_stmt 1 view .LVU56
+ 216              		.loc 1 122 14 is_stmt 0 view .LVU57
+ 217 0118 704D     		ldr	r5, .L47+24
+ 218 011a 95ED000A 		vldr.32	s0, [r5]
+ 219 011e FFF7FEFF 		bl	Sign
+ 220              	.LVL7:
+ 221 0122 0446     		mov	r4, r0
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 7
+
+
+ 222              		.loc 1 122 33 discriminator 1 view .LVU58
+ 223 0124 95ED010A 		vldr.32	s0, [r5, #4]
+ 224 0128 FFF7FEFF 		bl	Sign
+ 225              	.LVL8:
+ 226              		.loc 1 122 12 discriminator 2 view .LVU59
+ 227 012c C442     		cmn	r4, r0
+ 228 012e 64D1     		bne	.L22
+ 123:MotorFoc/fault.c ****         {
+ 124:MotorFoc/fault.c ****             if (DownSpeedTime < SPEED_PRO_TIME)
+ 229              		.loc 1 124 13 is_stmt 1 view .LVU60
+ 230              		.loc 1 124 31 is_stmt 0 view .LVU61
+ 231 0130 6C4B     		ldr	r3, .L47+32
+ 232 0132 1B68     		ldr	r3, [r3]
+ 233              		.loc 1 124 16 view .LVU62
+ 234 0134 632B     		cmp	r3, #99
+ 235 0136 50D8     		bhi	.L23
+ 125:MotorFoc/fault.c ****             {
+ 126:MotorFoc/fault.c ****                 DownSpeedTime++;
+ 236              		.loc 1 126 17 is_stmt 1 view .LVU63
+ 237              		.loc 1 126 30 is_stmt 0 view .LVU64
+ 238 0138 0133     		adds	r3, r3, #1
+ 239 013a 6A4A     		ldr	r2, .L47+32
+ 240 013c 1360     		str	r3, [r2]
+ 241 013e 5FE0     		b	.L15
+ 242              	.L44:
+  78:MotorFoc/fault.c ****             {
+ 243              		.loc 1 78 13 is_stmt 1 view .LVU65
+  78:MotorFoc/fault.c ****             {
+ 244              		.loc 1 78 17 is_stmt 0 view .LVU66
+ 245 0140 694B     		ldr	r3, .L47+36
+ 246 0142 93ED040A 		vldr.32	s0, [r3, #16]
+ 247 0146 FFF7FEFF 		bl	my_abs
+ 248              	.LVL9:
+  78:MotorFoc/fault.c ****             {
+ 249              		.loc 1 78 16 discriminator 1 view .LVU67
+ 250 014a F0EE007A 		vmov.f32	s15, #2.0e+0
+ 251 014e B4EEE70A 		vcmpe.f32	s0, s15
+ 252 0152 F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 253 0156 BDDB     		blt	.L13
+  80:MotorFoc/fault.c ****             }
+ 254              		.loc 1 80 17 is_stmt 1 view .LVU68
+  80:MotorFoc/fault.c ****             }
+ 255              		.loc 1 80 25 is_stmt 0 view .LVU69
+ 256 0158 614A     		ldr	r2, .L47+28
+ 257 015a 1368     		ldr	r3, [r2]
+ 258 015c 0133     		adds	r3, r3, #1
+ 259 015e 1360     		str	r3, [r2]
+ 260 0160 B8E7     		b	.L13
+ 261              	.L45:
+  90:MotorFoc/fault.c ****             Fault.bit.LockedFlag = 1;
+ 262              		.loc 1 90 13 is_stmt 1 view .LVU70
+ 263 0162 FFF7FEFF 		bl	MotorStop
+ 264              	.LVL10:
+  91:MotorFoc/fault.c ****             Locktime = 0;
+ 265              		.loc 1 91 13 view .LVU71
+  91:MotorFoc/fault.c ****             Locktime = 0;
+ 266              		.loc 1 91 34 is_stmt 0 view .LVU72
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 8
+
+
+ 267 0166 5A4A     		ldr	r2, .L47+12
+ 268 0168 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 269 016a 43F01003 		orr	r3, r3, #16
+ 270 016e 1370     		strb	r3, [r2]
+  92:MotorFoc/fault.c ****             Motor.CtrlMode = M_ERR;
+ 271              		.loc 1 92 13 is_stmt 1 view .LVU73
+  92:MotorFoc/fault.c ****             Motor.CtrlMode = M_ERR;
+ 272              		.loc 1 92 22 is_stmt 0 view .LVU74
+ 273 0170 0021     		movs	r1, #0
+ 274 0172 5B4B     		ldr	r3, .L47+28
+ 275 0174 1960     		str	r1, [r3]
+  93:MotorFoc/fault.c ****             LedTask(1, 0, 0); // 红色表示堵转。
+ 276              		.loc 1 93 13 is_stmt 1 view .LVU75
+  93:MotorFoc/fault.c ****             LedTask(1, 0, 0); // 红色表示堵转。
+ 277              		.loc 1 93 28 is_stmt 0 view .LVU76
+ 278 0176 574B     		ldr	r3, .L47+16
+ 279 0178 0B22     		movs	r2, #11
+ 280 017a 1A74     		strb	r2, [r3, #16]
+  94:MotorFoc/fault.c ****         }
+ 281              		.loc 1 94 13 is_stmt 1 view .LVU77
+ 282 017c 0A46     		mov	r2, r1
+ 283 017e 0120     		movs	r0, #1
+ 284 0180 FFF7FEFF 		bl	LedTask
+ 285              	.LVL11:
+ 286 0184 ABE7     		b	.L2
+ 287              	.L46:
+ 103:MotorFoc/fault.c ****             {
+ 288              		.loc 1 103 13 view .LVU78
+ 103:MotorFoc/fault.c ****             {
+ 289              		.loc 1 103 17 is_stmt 0 view .LVU79
+ 290 0186 FFF7FEFF 		bl	my_abs
+ 291              	.LVL12:
+ 292 018a B0EE408A 		vmov.f32	s16, s0
+ 103:MotorFoc/fault.c ****             {
+ 293              		.loc 1 103 38 discriminator 1 view .LVU80
+ 294 018e 534B     		ldr	r3, .L47+24
+ 295 0190 93ED000A 		vldr.32	s0, [r3]
+ 296 0194 FFF7FEFF 		bl	my_abs
+ 297              	.LVL13:
+ 103:MotorFoc/fault.c ****             {
+ 298              		.loc 1 103 16 discriminator 2 view .LVU81
+ 299 0198 B4EEC08A 		vcmpe.f32	s16, s0
+ 300 019c F1EE10FA 		vmrs	APSR_nzcv, FPSCR
+ 301 01a0 17DD     		ble	.L42
+ 105:MotorFoc/fault.c ****                 {
+ 302              		.loc 1 105 17 is_stmt 1 view .LVU82
+ 105:MotorFoc/fault.c ****                 {
+ 303              		.loc 1 105 35 is_stmt 0 view .LVU83
+ 304 01a2 524B     		ldr	r3, .L47+40
+ 305 01a4 1B68     		ldr	r3, [r3]
+ 105:MotorFoc/fault.c ****                 {
+ 306              		.loc 1 105 20 view .LVU84
+ 307 01a6 632B     		cmp	r3, #99
+ 308 01a8 03D8     		bhi	.L21
+ 107:MotorFoc/fault.c ****                 }
+ 309              		.loc 1 107 21 is_stmt 1 view .LVU85
+ 107:MotorFoc/fault.c ****                 }
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 9
+
+
+ 310              		.loc 1 107 34 is_stmt 0 view .LVU86
+ 311 01aa 0133     		adds	r3, r3, #1
+ 312 01ac 4F4A     		ldr	r2, .L47+40
+ 313 01ae 1360     		str	r3, [r2]
+ 314 01b0 B2E7     		b	.L17
+ 315              	.L21:
+ 111:MotorFoc/fault.c ****                     Fault.bit.OverSpeedFlag = 1;
+ 316              		.loc 1 111 21 is_stmt 1 view .LVU87
+ 317 01b2 FFF7FEFF 		bl	MotorStop
+ 318              	.LVL14:
+ 112:MotorFoc/fault.c ****                     Motor.CtrlMode = M_ERR;
+ 319              		.loc 1 112 21 view .LVU88
+ 112:MotorFoc/fault.c ****                     Motor.CtrlMode = M_ERR;
+ 320              		.loc 1 112 45 is_stmt 0 view .LVU89
+ 321 01b6 464A     		ldr	r2, .L47+12
+ 322 01b8 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 323 01ba 43F02003 		orr	r3, r3, #32
+ 324 01be 1370     		strb	r3, [r2]
+ 113:MotorFoc/fault.c ****                     LedTask(0, 0, 1); // 蓝色表示速度异常。
+ 325              		.loc 1 113 21 is_stmt 1 view .LVU90
+ 113:MotorFoc/fault.c ****                     LedTask(0, 0, 1); // 蓝色表示速度异常。
+ 326              		.loc 1 113 36 is_stmt 0 view .LVU91
+ 327 01c0 444B     		ldr	r3, .L47+16
+ 328 01c2 0B22     		movs	r2, #11
+ 329 01c4 1A74     		strb	r2, [r3, #16]
+ 114:MotorFoc/fault.c ****                 }
+ 330              		.loc 1 114 21 is_stmt 1 view .LVU92
+ 331 01c6 0122     		movs	r2, #1
+ 332 01c8 0021     		movs	r1, #0
+ 333 01ca 0846     		mov	r0, r1
+ 334 01cc FFF7FEFF 		bl	LedTask
+ 335              	.LVL15:
+ 336 01d0 A2E7     		b	.L17
+ 337              	.L42:
+ 119:MotorFoc/fault.c ****             }
+ 338              		.loc 1 119 17 view .LVU93
+ 119:MotorFoc/fault.c ****             }
+ 339              		.loc 1 119 31 is_stmt 0 view .LVU94
+ 340 01d2 464B     		ldr	r3, .L47+40
+ 341 01d4 0022     		movs	r2, #0
+ 342 01d6 1A60     		str	r2, [r3]
+ 343 01d8 9EE7     		b	.L17
+ 344              	.L23:
+ 127:MotorFoc/fault.c ****             }
+ 128:MotorFoc/fault.c ****             else
+ 129:MotorFoc/fault.c ****             {
+ 130:MotorFoc/fault.c ****                 MotorStop();
+ 345              		.loc 1 130 17 is_stmt 1 view .LVU95
+ 346 01da FFF7FEFF 		bl	MotorStop
+ 347              	.LVL16:
+ 131:MotorFoc/fault.c ****                 Fault.bit.OverSpeedFlag = 1;
+ 348              		.loc 1 131 17 view .LVU96
+ 349              		.loc 1 131 41 is_stmt 0 view .LVU97
+ 350 01de 3C4A     		ldr	r2, .L47+12
+ 351 01e0 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 352 01e2 43F02003 		orr	r3, r3, #32
+ 353 01e6 1370     		strb	r3, [r2]
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 10
+
+
+ 132:MotorFoc/fault.c ****                 Motor.CtrlMode = M_ERR;
+ 354              		.loc 1 132 17 is_stmt 1 view .LVU98
+ 355              		.loc 1 132 32 is_stmt 0 view .LVU99
+ 356 01e8 3A4B     		ldr	r3, .L47+16
+ 357 01ea 0B22     		movs	r2, #11
+ 358 01ec 1A74     		strb	r2, [r3, #16]
+ 133:MotorFoc/fault.c ****                 LedTask(0, 0, 1);
+ 359              		.loc 1 133 17 is_stmt 1 view .LVU100
+ 360 01ee 0122     		movs	r2, #1
+ 361 01f0 0021     		movs	r1, #0
+ 362 01f2 0846     		mov	r0, r1
+ 363 01f4 FFF7FEFF 		bl	LedTask
+ 364              	.LVL17:
+ 365 01f8 02E0     		b	.L15
+ 366              	.L22:
+ 134:MotorFoc/fault.c ****             }
+ 135:MotorFoc/fault.c ****         }
+ 136:MotorFoc/fault.c ****          else
+ 137:MotorFoc/fault.c ****         {
+ 138:MotorFoc/fault.c ****             DownSpeedTime = 0;
+ 367              		.loc 1 138 13 view .LVU101
+ 368              		.loc 1 138 27 is_stmt 0 view .LVU102
+ 369 01fa 3A4B     		ldr	r3, .L47+32
+ 370 01fc 0022     		movs	r2, #0
+ 371 01fe 1A60     		str	r2, [r3]
+ 372              	.L15:
+ 139:MotorFoc/fault.c ****         }
+ 140:MotorFoc/fault.c ****     }
+ 141:MotorFoc/fault.c **** 
+ 142:MotorFoc/fault.c ****     // NTC 温度升高时分压 ADC 码值下降；低于阈值并持续后判为过温。
+ 143:MotorFoc/fault.c ****     if (AdcPara.Temp < MOS_TEMP_OVER_THD_ADC)
+ 373              		.loc 1 143 5 is_stmt 1 view .LVU103
+ 374              		.loc 1 143 16 is_stmt 0 view .LVU104
+ 375 0200 314B     		ldr	r3, .L47+4
+ 376 0202 1B89     		ldrh	r3, [r3, #8]
+ 377              		.loc 1 143 8 view .LVU105
+ 378 0204 B3F5B67F 		cmp	r3, #364
+ 379 0208 36D8     		bhi	.L24
+ 144:MotorFoc/fault.c ****     {
+ 145:MotorFoc/fault.c ****         if (MotorOtpState < MOS_TEMP_OVER_TIME)
+ 380              		.loc 1 145 9 is_stmt 1 view .LVU106
+ 381              		.loc 1 145 27 is_stmt 0 view .LVU107
+ 382 020a 394B     		ldr	r3, .L47+44
+ 383 020c 1B68     		ldr	r3, [r3]
+ 384              		.loc 1 145 12 view .LVU108
+ 385 020e B3F5FA7F 		cmp	r3, #500
+ 386 0212 23D2     		bcs	.L25
+ 146:MotorFoc/fault.c ****         {
+ 147:MotorFoc/fault.c ****             MotorOtpState++;
+ 387              		.loc 1 147 13 is_stmt 1 view .LVU109
+ 388              		.loc 1 147 26 is_stmt 0 view .LVU110
+ 389 0214 0133     		adds	r3, r3, #1
+ 390 0216 364A     		ldr	r2, .L47+44
+ 391 0218 1360     		str	r3, [r2]
+ 392              	.L26:
+ 148:MotorFoc/fault.c ****         }
+ 149:MotorFoc/fault.c ****         else
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 11
+
+
+ 150:MotorFoc/fault.c ****         {
+ 151:MotorFoc/fault.c ****             MotorStop();
+ 152:MotorFoc/fault.c ****             Fault.bit.OverTempFlag = 1;
+ 153:MotorFoc/fault.c ****             Motor.CtrlMode = M_ERR;
+ 154:MotorFoc/fault.c ****             MotorDisOtoState = 0;
+ 155:MotorFoc/fault.c ****         }
+ 156:MotorFoc/fault.c ****     }
+ 157:MotorFoc/fault.c ****     else if (AdcPara.Temp > RSM_MOS_TEMP_OVER_THD_ADC) // 较低温度恢复阈值形成迟滞。
+ 158:MotorFoc/fault.c ****     {
+ 159:MotorFoc/fault.c ****         if (Fault.bit.OverTempFlag == 1)
+ 160:MotorFoc/fault.c ****         {
+ 161:MotorFoc/fault.c ****             if (MotorDisOtoState < MOS_TEMP_OVER_TIME)
+ 162:MotorFoc/fault.c ****             {
+ 163:MotorFoc/fault.c ****                 MotorDisOtoState++;
+ 164:MotorFoc/fault.c ****             }
+ 165:MotorFoc/fault.c ****             else
+ 166:MotorFoc/fault.c ****             {
+ 167:MotorFoc/fault.c ****                 Fault.bit.OverTempFlag = 0;
+ 168:MotorFoc/fault.c ****                 MotorOtpState = 0;
+ 169:MotorFoc/fault.c ****             }
+ 170:MotorFoc/fault.c ****         }
+ 171:MotorFoc/fault.c ****         else
+ 172:MotorFoc/fault.c ****         {
+ 173:MotorFoc/fault.c ****             MotorOtpState = 0;
+ 174:MotorFoc/fault.c ****         }
+ 175:MotorFoc/fault.c ****     }
+ 176:MotorFoc/fault.c **** 
+ 177:MotorFoc/fault.c ****     if (Motor.CtrlMode != M_ERR)
+ 393              		.loc 1 177 5 is_stmt 1 view .LVU111
+ 394              		.loc 1 177 14 is_stmt 0 view .LVU112
+ 395 021a 2E4B     		ldr	r3, .L47+16
+ 396 021c 1B7C     		ldrb	r3, [r3, #16]	@ zero_extendqisi2
+ 397              		.loc 1 177 8 view .LVU113
+ 398 021e 0B2B     		cmp	r3, #11
+ 399 0220 19D0     		beq	.L1
+ 178:MotorFoc/fault.c ****     {
+ 179:MotorFoc/fault.c ****         i++;
+ 400              		.loc 1 179 9 is_stmt 1 view .LVU114
+ 401              		.loc 1 179 10 is_stmt 0 view .LVU115
+ 402 0222 344A     		ldr	r2, .L47+48
+ 403 0224 1388     		ldrh	r3, [r2]
+ 404 0226 0133     		adds	r3, r3, #1
+ 405 0228 9BB2     		uxth	r3, r3
+ 406 022a 1380     		strh	r3, [r2]	@ movhi
+ 180:MotorFoc/fault.c ****         Fault.Byte = 0;
+ 407              		.loc 1 180 9 is_stmt 1 view .LVU116
+ 408              		.loc 1 180 20 is_stmt 0 view .LVU117
+ 409 022c 284A     		ldr	r2, .L47+12
+ 410 022e 0021     		movs	r1, #0
+ 411 0230 1180     		strh	r1, [r2]	@ movhi
+ 181:MotorFoc/fault.c **** 
+ 182:MotorFoc/fault.c ****         if (i < 200)
+ 412              		.loc 1 182 9 is_stmt 1 view .LVU118
+ 413              		.loc 1 182 12 is_stmt 0 view .LVU119
+ 414 0232 C72B     		cmp	r3, #199
+ 415 0234 3FD8     		bhi	.L30
+ 183:MotorFoc/fault.c ****             LedTask(0, 1, 0); // 系统正常时绿色 LED 闪烁。
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 12
+
+
+ 416              		.loc 1 183 13 is_stmt 1 view .LVU120
+ 417 0236 0A46     		mov	r2, r1
+ 418 0238 0121     		movs	r1, #1
+ 419 023a 1046     		mov	r0, r2
+ 420 023c FFF7FEFF 		bl	LedTask
+ 421              	.LVL18:
+ 422              	.L31:
+ 184:MotorFoc/fault.c ****         else
+ 185:MotorFoc/fault.c ****             LedTask(0, 0, 0);
+ 186:MotorFoc/fault.c **** 
+ 187:MotorFoc/fault.c ****         i %= 400;
+ 423              		.loc 1 187 9 view .LVU121
+ 424              		.loc 1 187 11 is_stmt 0 view .LVU122
+ 425 0240 2C49     		ldr	r1, .L47+48
+ 426 0242 0A88     		ldrh	r2, [r1]
+ 427 0244 2C4B     		ldr	r3, .L47+52
+ 428 0246 A3FB0203 		umull	r0, r3, r3, r2
+ 429 024a DB09     		lsrs	r3, r3, #7
+ 430 024c 4FF4C870 		mov	r0, #400
+ 431 0250 00FB1322 		mls	r2, r0, r3, r2
+ 432 0254 0A80     		strh	r2, [r1]	@ movhi
+ 433              	.L1:
+ 188:MotorFoc/fault.c ****     }
+ 189:MotorFoc/fault.c **** }
+ 434              		.loc 1 189 1 view .LVU123
+ 435 0256 BDEC028B 		vldm	sp!, {d8}
+ 436              	.LCFI2:
+ 437              		.cfi_remember_state
+ 438              		.cfi_restore 80
+ 439              		.cfi_restore 81
+ 440              		.cfi_def_cfa_offset 16
+ 441 025a 38BD     		pop	{r3, r4, r5, pc}
+ 442              	.L25:
+ 443              	.LCFI3:
+ 444              		.cfi_restore_state
+ 151:MotorFoc/fault.c ****             Fault.bit.OverTempFlag = 1;
+ 445              		.loc 1 151 13 is_stmt 1 view .LVU124
+ 446 025c FFF7FEFF 		bl	MotorStop
+ 447              	.LVL19:
+ 152:MotorFoc/fault.c ****             Motor.CtrlMode = M_ERR;
+ 448              		.loc 1 152 13 view .LVU125
+ 152:MotorFoc/fault.c ****             Motor.CtrlMode = M_ERR;
+ 449              		.loc 1 152 36 is_stmt 0 view .LVU126
+ 450 0260 1B4A     		ldr	r2, .L47+12
+ 451 0262 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 452 0264 43F00403 		orr	r3, r3, #4
+ 453 0268 1370     		strb	r3, [r2]
+ 153:MotorFoc/fault.c ****             MotorDisOtoState = 0;
+ 454              		.loc 1 153 13 is_stmt 1 view .LVU127
+ 153:MotorFoc/fault.c ****             MotorDisOtoState = 0;
+ 455              		.loc 1 153 28 is_stmt 0 view .LVU128
+ 456 026a 1A4B     		ldr	r3, .L47+16
+ 457 026c 0B22     		movs	r2, #11
+ 458 026e 1A74     		strb	r2, [r3, #16]
+ 154:MotorFoc/fault.c ****         }
+ 459              		.loc 1 154 13 is_stmt 1 view .LVU129
+ 154:MotorFoc/fault.c ****         }
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 13
+
+
+ 460              		.loc 1 154 30 is_stmt 0 view .LVU130
+ 461 0270 224B     		ldr	r3, .L47+56
+ 462 0272 0022     		movs	r2, #0
+ 463 0274 1A60     		str	r2, [r3]
+ 464 0276 D0E7     		b	.L26
+ 465              	.L24:
+ 157:MotorFoc/fault.c ****     {
+ 466              		.loc 1 157 10 is_stmt 1 view .LVU131
+ 157:MotorFoc/fault.c ****     {
+ 467              		.loc 1 157 13 is_stmt 0 view .LVU132
+ 468 0278 40F24622 		movw	r2, #582
+ 469 027c 9342     		cmp	r3, r2
+ 470 027e CCD9     		bls	.L26
+ 159:MotorFoc/fault.c ****         {
+ 471              		.loc 1 159 9 is_stmt 1 view .LVU133
+ 159:MotorFoc/fault.c ****         {
+ 472              		.loc 1 159 36 is_stmt 0 view .LVU134
+ 473 0280 134B     		ldr	r3, .L47+12
+ 474 0282 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 159:MotorFoc/fault.c ****         {
+ 475              		.loc 1 159 12 view .LVU135
+ 476 0284 13F0040F 		tst	r3, #4
+ 477 0288 11D0     		beq	.L27
+ 161:MotorFoc/fault.c ****             {
+ 478              		.loc 1 161 13 is_stmt 1 view .LVU136
+ 161:MotorFoc/fault.c ****             {
+ 479              		.loc 1 161 34 is_stmt 0 view .LVU137
+ 480 028a 1C4B     		ldr	r3, .L47+56
+ 481 028c 1B68     		ldr	r3, [r3]
+ 161:MotorFoc/fault.c ****             {
+ 482              		.loc 1 161 16 view .LVU138
+ 483 028e B3F5FA7F 		cmp	r3, #500
+ 484 0292 03D2     		bcs	.L28
+ 163:MotorFoc/fault.c ****             }
+ 485              		.loc 1 163 17 is_stmt 1 view .LVU139
+ 163:MotorFoc/fault.c ****             }
+ 486              		.loc 1 163 33 is_stmt 0 view .LVU140
+ 487 0294 0133     		adds	r3, r3, #1
+ 488 0296 194A     		ldr	r2, .L47+56
+ 489 0298 1360     		str	r3, [r2]
+ 490 029a BEE7     		b	.L26
+ 491              	.L28:
+ 167:MotorFoc/fault.c ****                 MotorOtpState = 0;
+ 492              		.loc 1 167 17 is_stmt 1 view .LVU141
+ 167:MotorFoc/fault.c ****                 MotorOtpState = 0;
+ 493              		.loc 1 167 40 is_stmt 0 view .LVU142
+ 494 029c 0C4A     		ldr	r2, .L47+12
+ 495 029e 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 496 02a0 23F00403 		bic	r3, r3, #4
+ 497 02a4 1370     		strb	r3, [r2]
+ 168:MotorFoc/fault.c ****             }
+ 498              		.loc 1 168 17 is_stmt 1 view .LVU143
+ 168:MotorFoc/fault.c ****             }
+ 499              		.loc 1 168 31 is_stmt 0 view .LVU144
+ 500 02a6 124B     		ldr	r3, .L47+44
+ 501 02a8 0022     		movs	r2, #0
+ 502 02aa 1A60     		str	r2, [r3]
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 14
+
+
+ 503 02ac B5E7     		b	.L26
+ 504              	.L27:
+ 173:MotorFoc/fault.c ****         }
+ 505              		.loc 1 173 13 is_stmt 1 view .LVU145
+ 173:MotorFoc/fault.c ****         }
+ 506              		.loc 1 173 27 is_stmt 0 view .LVU146
+ 507 02ae 104B     		ldr	r3, .L47+44
+ 508 02b0 0022     		movs	r2, #0
+ 509 02b2 1A60     		str	r2, [r3]
+ 510 02b4 B1E7     		b	.L26
+ 511              	.L30:
+ 185:MotorFoc/fault.c **** 
+ 512              		.loc 1 185 13 is_stmt 1 view .LVU147
+ 513 02b6 0022     		movs	r2, #0
+ 514 02b8 1146     		mov	r1, r2
+ 515 02ba 1046     		mov	r0, r2
+ 516 02bc FFF7FEFF 		bl	LedTask
+ 517              	.LVL20:
+ 518 02c0 BEE7     		b	.L31
+ 519              	.L48:
+ 520 02c2 00BF     		.align	2
+ 521              	.L47:
+ 522 02c4 00000000 		.word	Init_Over
+ 523 02c8 00000000 		.word	AdcPara
+ 524 02cc 00000000 		.word	MotorOVState
+ 525 02d0 00000000 		.word	Fault
+ 526 02d4 00000000 		.word	Motor
+ 527 02d8 00000000 		.word	MotorLVState
+ 528 02dc 00000000 		.word	pi_spd
+ 529 02e0 00000000 		.word	Locktime
+ 530 02e4 00000000 		.word	DownSpeedTime
+ 531 02e8 00000000 		.word	Park
+ 532 02ec 00000000 		.word	OverSpeedTime
+ 533 02f0 00000000 		.word	MotorOtpState
+ 534 02f4 00000000 		.word	i.0
+ 535 02f8 1F85EB51 		.word	1374389535
+ 536 02fc 00000000 		.word	MotorDisOtoState
+ 537              		.cfi_endproc
+ 538              	.LFE272:
+ 540              		.section	.bss.i.0,"aw",%nobits
+ 541              		.align	1
+ 544              	i.0:
+ 545 0000 0000     		.space	2
+ 546              		.global	MotorDisOtoState
+ 547              		.section	.bss.MotorDisOtoState,"aw",%nobits
+ 548              		.align	2
+ 551              	MotorDisOtoState:
+ 552 0000 00000000 		.space	4
+ 553              		.global	MotorOtpState
+ 554              		.section	.bss.MotorOtpState,"aw",%nobits
+ 555              		.align	2
+ 558              	MotorOtpState:
+ 559 0000 00000000 		.space	4
+ 560              		.global	DownSpeedTime
+ 561              		.section	.bss.DownSpeedTime,"aw",%nobits
+ 562              		.align	2
+ 565              	DownSpeedTime:
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 15
+
+
+ 566 0000 00000000 		.space	4
+ 567              		.global	OverSpeedTime
+ 568              		.section	.bss.OverSpeedTime,"aw",%nobits
+ 569              		.align	2
+ 572              	OverSpeedTime:
+ 573 0000 00000000 		.space	4
+ 574              		.global	Locktime
+ 575              		.section	.bss.Locktime,"aw",%nobits
+ 576              		.align	2
+ 579              	Locktime:
+ 580 0000 00000000 		.space	4
+ 581              		.global	MotorLVState
+ 582              		.section	.bss.MotorLVState,"aw",%nobits
+ 583              		.align	2
+ 586              	MotorLVState:
+ 587 0000 00000000 		.space	4
+ 588              		.global	MotorOVState
+ 589              		.section	.bss.MotorOVState,"aw",%nobits
+ 590              		.align	2
+ 593              	MotorOVState:
+ 594 0000 00000000 		.space	4
+ 595              		.global	Fault
+ 596              		.section	.bss.Fault,"aw",%nobits
+ 597              		.align	2
+ 600              	Fault:
+ 601 0000 00000000 		.space	4
+ 602              		.text
+ 603              	.Letext0:
+ 604              		.file 2 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 605              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 606              		.file 4 "Sdrive/adc_drv.h"
+ 607              		.file 5 "MotorFoc/foc.h"
+ 608              		.file 6 "MotorFoc/pid.h"
+ 609              		.file 7 "MotorFoc/motor_ctrl.h"
+ 610              		.file 8 "MotorFoc/fault.h"
+ 611              		.file 9 "Sdrive/led_drv.h"
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 16
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 fault.c
+C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:21     .text.FaultCheck:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:27     .text.FaultCheck:00000000 FaultCheck
+C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:522    .text.FaultCheck:000002c4 $d
+C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:593    .bss.MotorOVState:00000000 MotorOVState
+C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:600    .bss.Fault:00000000 Fault
+C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:586    .bss.MotorLVState:00000000 MotorLVState
+C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:579    .bss.Locktime:00000000 Locktime
+C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:565    .bss.DownSpeedTime:00000000 DownSpeedTime
+C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:572    .bss.OverSpeedTime:00000000 OverSpeedTime
+C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:558    .bss.MotorOtpState:00000000 MotorOtpState
+C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:544    .bss.i.0:00000000 i.0
+C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:551    .bss.MotorDisOtoState:00000000 MotorDisOtoState
+C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:541    .bss.i.0:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:548    .bss.MotorDisOtoState:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:555    .bss.MotorOtpState:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:562    .bss.DownSpeedTime:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:569    .bss.OverSpeedTime:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:576    .bss.Locktime:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:583    .bss.MotorLVState:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:590    .bss.MotorOVState:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:597    .bss.Fault:00000000 $d
+
+UNDEFINED SYMBOLS
+MotorStop
+LedTask
+my_abs
+Sign
+Init_Over
+AdcPara
+Motor
+pi_spd
+Park

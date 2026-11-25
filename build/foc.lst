@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 1
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 1
   33              		@ frame_needed = 0, uses_anonymous_args = 0
   34              		@ link register save eliminated.
   24:MotorFoc/foc.c ****     pv->Alpha = pv->Iu;
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 2
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s 			page 2
 
 
   35              		.loc 1 24 5 view .LVU1
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 1
   79              	.LCFI0:
   80              		.cfi_def_cfa_offset 8
   81              		.cfi_offset 4, -8
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 3
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s 			page 3
 
 
   82              		.cfi_offset 14, -4
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 1
  133              	.LCFI2:
  134              		.cfi_restore 80
  135              		.cfi_restore 81
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 4
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s 			page 4
 
 
  136              		.cfi_def_cfa_offset 8
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 1
  181              		.loc 1 50 78 discriminator 2 view .LVU40
  182 0020 D4ED047A 		vldr.32	s15, [r4, #16]
  183              		.loc 1 50 74 discriminator 2 view .LVU41
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 5
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s 			page 5
 
 
  184 0024 20EE270A 		vmul.f32	s0, s0, s15
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 1
   60:MotorFoc/foc.c ****  * SVPWM_KM_BACKW 归一化，再按实际 ARR 映射比较值；饱和时统一缩放三相，
   61:MotorFoc/foc.c ****  * 保持电压矢量方向并在峰顶附近保留固定采样窗口。
   62:MotorFoc/foc.c ****  */
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 6
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s 			page 6
 
 
   63:MotorFoc/foc.c **** void SvpwmCal(M_SVPWM pv)
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 1
  276              		.loc 1 71 19 is_stmt 0 view .LVU70
  277 0032 0323     		movs	r3, #3
  278 0034 80F82430 		strb	r3, [r0, #36]
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 7
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s 			page 7
 
 
   72:MotorFoc/foc.c ****     pv->VecSector = (pv->u2 > 0) ? (pv->VecSector - 1) : pv->VecSector;
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 1
  324 008e 37EE667A 		vsub.f32	s14, s14, s13
  325              		.loc 1 80 16 view .LVU87
  326 0092 80ED037A 		vstr.32	s14, [r0, #12]
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 8
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s 			page 8
 
 
   81:MotorFoc/foc.c ****         pv->Tc = -pv->u2;
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 1
  353 00bc 9FED5D7A 		vldr.32	s14, .L34+12
  354 00c0 68EE878A 		vmul.f32	s17, s17, s14
  355              		.loc 1 108 11 view .LVU101
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 9
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s 			page 9
 
 
  356 00c4 68EEA98A 		vmul.f32	s17, s17, s19
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 1
  405 012a F1EE10FA 		vmrs	APSR_nzcv, FPSCR
  406 012e 6DD8     		bhi	.L25
  407              		.loc 1 113 76 discriminator 4 view .LVU119
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 10
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s 			page 10
 
 
  408 0130 B5EEC0AA 		vcmpe.f32	s20, #0
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 1
  449              		.loc 1 85 25 is_stmt 0 view .LVU135
  450 0162 77EEA67A 		vadd.f32	s15, s15, s13
   85:MotorFoc/foc.c ****         pv->Tb = pv->u1;
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 11
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s 			page 11
 
 
  451              		.loc 1 85 16 view .LVU136
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 1
   99:MotorFoc/foc.c ****     }
  487              		.loc 1 99 9 is_stmt 1 view .LVU155
   99:MotorFoc/foc.c ****     }
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 12
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s 			page 12
 
 
  488              		.loc 1 99 16 is_stmt 0 view .LVU156
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 1
  534              		.loc 1 127 18 view .LVU173
  535 01de BCEEC88A 		vcvt.u32.f32	s16, s16
  536 01e2 18EE103A 		vmov	r3, s16	@ int
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 13
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s 			page 13
 
 
  537 01e6 9BB2     		uxth	r3, r3
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 1
  582              		.loc 1 115 12 view .LVU184
  583 020a CDE7     		b	.L19
  584              	.LVL39:
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 14
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s 			page 14
 
 
  585              	.L25:
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 1
  630              	.Letext0:
  631              		.file 2 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
  632              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 15
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s 			page 15
 
 
  633              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
@@ -846,23 +846,23 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 1
  635              		.file 6 "MotorFoc/foc.h"
  636              		.file 7 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
  637              		.file 8 "Drivers/CMSIS/DSP/Include/dsp/fast_math_functions.h"
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s 			page 16
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s 			page 16
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 foc.c
-C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s:21     .text.ClarkeCale:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s:27     .text.ClarkeCale:00000000 ClarkeCale
-C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s:58     .text.ClarkeCale:00000028 $d
-C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s:64     .text.ParkCale:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s:70     .text.ParkCale:00000000 ParkCale
-C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s:143    .text.IPARK_Cale:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s:149    .text.IPARK_Cale:00000000 IPARK_Cale
-C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s:222    .text.SvpwmCal:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s:228    .text.SvpwmCal:00000000 SvpwmCal
-C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s:613    .text.SvpwmCal:00000228 $d
-C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s:627    .bss.Svpwm:00000000 Svpwm
-C:\Users\sunhao\AppData\Local\Temp\ccmcDbzf.s:624    .bss.Svpwm:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s:21     .text.ClarkeCale:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s:27     .text.ClarkeCale:00000000 ClarkeCale
+C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s:58     .text.ClarkeCale:00000028 $d
+C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s:64     .text.ParkCale:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s:70     .text.ParkCale:00000000 ParkCale
+C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s:143    .text.IPARK_Cale:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s:149    .text.IPARK_Cale:00000000 IPARK_Cale
+C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s:222    .text.SvpwmCal:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s:228    .text.SvpwmCal:00000000 SvpwmCal
+C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s:613    .text.SvpwmCal:00000228 $d
+C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s:627    .bss.Svpwm:00000000 Svpwm
+C:\Users\sunhao\AppData\Local\Temp\cczdZbA2.s:624    .bss.Svpwm:00000000 $d
 
 UNDEFINED SYMBOLS
 arm_cos_f32
