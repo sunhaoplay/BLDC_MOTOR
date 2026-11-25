@@ -357,12 +357,12 @@ void MotorModeSel(void)
 		break;
 	}
 
-	// case POS_LOOP:
-	// {
-	// 	PosCloseloop();
-	// 	FocSvpwm(); // SVPWM计算
-	// 	break;
-	// }
+	case POS_LOOP:
+	{
+		PosCloseloop();
+		FocSvpwm(); // SVPWM计算
+		break;
+	}
 
 	// case IF_CTRL:
 	// {

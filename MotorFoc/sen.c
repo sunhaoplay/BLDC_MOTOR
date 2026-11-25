@@ -172,7 +172,7 @@ void PosCloseloop(void)
         int32_t half = ENC_RANGE / 2;
         if (err > half)
             err -= ENC_RANGE;
-        else if (err < -half)
+        else if (err < -half) 
             err += ENC_RANGE;
 
         float up = Pos.Kp * (float)err;

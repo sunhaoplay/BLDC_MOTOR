@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 1
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 1
   36              		.cfi_offset 4, -8
   37              		.cfi_offset 14, -4
   21:MotorFoc/sen.c ****     MotorRun();
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 2
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s 			page 2
 
 
   38              		.loc 1 21 5 view .LVU1
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 1
   80              	.LVL6:
   34:MotorFoc/sen.c **** }
   81              		.loc 1 34 1 is_stmt 0 view .LVU16
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 3
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s 			page 3
 
 
   82 0042 10BD     		pop	{r4, pc}
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 1
  123 0010 2560     		str	r5, [r4]	@ float
   50:MotorFoc/sen.c ****     Svpwm.Ubeta = 0.5f; // 第一次沿 beta 轴吸合。
  124              		.loc 1 50 5 is_stmt 1 view .LVU22
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 4
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s 			page 4
 
 
  125              		.loc 1 50 17 is_stmt 0 view .LVU23
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 1
   64:MotorFoc/sen.c **** }
  166              		.loc 1 64 1 is_stmt 0 view .LVU38
  167 004c 70BD     		pop	{r4, r5, r6, pc}
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 5
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s 			page 5
 
 
  168              	.L8:
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 1
  211 0016 D8F80C30 		ldr	r3, [r8, #12]	@ float
  212              		.loc 1 77 15 view .LVU45
  213 001a 6B60     		str	r3, [r5, #4]	@ float
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 6
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s 			page 6
 
 
   78:MotorFoc/sen.c ****     PiController((M_PI_Control)&pi_id);
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 1
  257 0050 00000000 		.word	Ipark
  258 0054 00000000 		.word	Park
  259              		.cfi_endproc
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 7
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s 			page 7
 
 
  260              	.LFE274:
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 1
  298              		.loc 1 106 9 is_stmt 1 view .LVU73
  299              		.loc 1 106 30 is_stmt 0 view .LVU74
  300 0014 B8EEC00A 		vcvt.f32.s32	s0, s0
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 8
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s 			page 8
 
 
  301 0018 83ED000A 		vstr.32	s0, [r3]
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 1
  345 005c 244B     		ldr	r3, .L24
  346 005e 93ED010A 		vldr.32	s0, [r3, #4]
  347 0062 FFF7FEFF 		bl	Limit_Sat
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 9
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s 			page 9
 
 
  348              	.LVL23:
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 1
  114:MotorFoc/sen.c ****         }
  379              		.loc 1 114 13 is_stmt 1 view .LVU100
  380 008c FFF7FEFF 		bl	GradXieLv
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 10
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s 			page 10
 
 
  381              	.LVL27:
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 1
  420              		.loc 1 132 9 is_stmt 1 view .LVU115
  421 00c6 2046     		mov	r0, r4
  422 00c8 FFF7FEFF 		bl	PiController
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 11
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s 			page 11
 
 
  423              	.LVL32:
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 1
  143:MotorFoc/sen.c **** #define POS_MAX_SPEED 3000
  144:MotorFoc/sen.c **** #define POS_I_LIMIT 500
  145:MotorFoc/sen.c **** 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 12
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s 			page 12
 
 
  146:MotorFoc/sen.c **** /**
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 1
  166:MotorFoc/sen.c ****         uint32_t t = ((uint32_t)Para.PosRef * (ENC_RANGE - 1)) >> 12;
  501              		.loc 1 166 9 is_stmt 1 view .LVU134
  502              		.loc 1 166 37 is_stmt 0 view .LVU135
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 13
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s 			page 13
 
 
  503 001c 1D4B     		ldr	r3, .L31+12
@@ -764,7 +764,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 1
  535 0040 A3F69F73 		subw	r3, r3, #3999
  536              	.LVL39:
  537              	.L29:
- 175:MotorFoc/sen.c ****         else if (err < -half)
+ 175:MotorFoc/sen.c ****         else if (err < -half) 
  176:MotorFoc/sen.c ****             err += ENC_RANGE;
  177:MotorFoc/sen.c **** 
  178:MotorFoc/sen.c ****         float up = Pos.Kp * (float)err;
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 1
  545              	.LVL40:
  179:MotorFoc/sen.c **** 
  180:MotorFoc/sen.c ****         /*
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 14
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s 			page 14
 
 
  181:MotorFoc/sen.c ****         Pos.P_Integral += Pos.Ki * (float)err;
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 1
  584              		.loc 1 176 17 view .LVU166
  585 0084 DEE7     		b	.L29
  586              	.L32:
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 15
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s 			page 15
 
 
  587 0086 00BF     		.align	2
@@ -865,28 +865,28 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 1
  611              		.file 6 "MotorFoc/pid.h"
  612              		.file 7 "MotorFoc/motor_ctrl.h"
  613              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s 			page 16
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s 			page 16
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 sen.c
-C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s:21     .text.PositionToZero:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s:27     .text.PositionToZero:00000000 PositionToZero
-C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s:86     .text.PositionToZero:00000044 $d
-C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s:93     .text.PostionToZeroDouble:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s:99     .text.PostionToZeroDouble:00000000 PostionToZeroDouble
-C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s:171    .text.PostionToZeroDouble:00000050 $d
-C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s:178    .text.CurCloseloop:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s:184    .text.CurCloseloop:00000000 CurCloseloop
-C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s:255    .text.CurCloseloop:00000048 $d
-C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s:263    .text.SpeedCloseloop:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s:269    .text.SpeedCloseloop:00000000 SpeedCloseloop
-C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s:443    .text.SpeedCloseloop:000000f0 $d
-C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s:459    .text.PosCloseloop:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s:465    .text.PosCloseloop:00000000 PosCloseloop
-C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s:589    .text.PosCloseloop:00000088 $d
-C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s:603    .bss.PosLoopDivCnt.0:00000000 PosLoopDivCnt.0
-C:\Users\sunhao\AppData\Local\Temp\ccKAJW0M.s:600    .bss.PosLoopDivCnt.0:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s:21     .text.PositionToZero:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s:27     .text.PositionToZero:00000000 PositionToZero
+C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s:86     .text.PositionToZero:00000044 $d
+C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s:93     .text.PostionToZeroDouble:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s:99     .text.PostionToZeroDouble:00000000 PostionToZeroDouble
+C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s:171    .text.PostionToZeroDouble:00000050 $d
+C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s:178    .text.CurCloseloop:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s:184    .text.CurCloseloop:00000000 CurCloseloop
+C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s:255    .text.CurCloseloop:00000048 $d
+C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s:263    .text.SpeedCloseloop:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s:269    .text.SpeedCloseloop:00000000 SpeedCloseloop
+C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s:443    .text.SpeedCloseloop:000000f0 $d
+C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s:459    .text.PosCloseloop:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s:465    .text.PosCloseloop:00000000 PosCloseloop
+C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s:589    .text.PosCloseloop:00000088 $d
+C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s:603    .bss.PosLoopDivCnt.0:00000000 PosLoopDivCnt.0
+C:\Users\sunhao\AppData\Local\Temp\cchoHisc.s:600    .bss.PosLoopDivCnt.0:00000000 $d
 
 UNDEFINED SYMBOLS
 MotorRun

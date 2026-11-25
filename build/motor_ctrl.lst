@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
   27:MotorFoc/motor_ctrl.c **** PARA /********************/ Para;
   28:MotorFoc/motor_ctrl.c **** POS_DRV /*****************/ Pos;
   29:MotorFoc/motor_ctrl.c **** 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 2
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 2
 
 
   30:MotorFoc/motor_ctrl.c **** // FLUX_DRV                 flux = FLUX_DEFAULTS;
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
   63 0032 7047     		bx	lr
   64              	.L10:
   51:MotorFoc/motor_ctrl.c **** 	}
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 3
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 3
 
 
   52:MotorFoc/motor_ctrl.c **** 	else
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
    5:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @date     27. May 2021
    6:Drivers/CMSIS/Include/cmsis_gcc.h ****  ******************************************************************************/
    7:Drivers/CMSIS/Include/cmsis_gcc.h **** /*
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 4
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 4
 
 
    8:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Copyright (c) 2009-2021 Arm Limited. All rights reserved.
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
   62:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __PACKED                               __attribute__((packed, aligned(1)))
   63:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
   64:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __PACKED_STRUCT
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 5
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 5
 
 
   65:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __PACKED_STRUCT                        struct __attribute__((packed, aligned(1)))
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  119:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  120:Drivers/CMSIS/Include/cmsis_gcc.h **** /* #########################  Startup and Lowlevel Init  ######################## */
  121:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 6
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 6
 
 
  122:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __PROGRAM_START
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  176:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  177:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __VECTOR_TABLE
  178:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __VECTOR_TABLE            __Vectors
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 7
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 7
 
 
  179:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  233:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  234:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __WFI()                             __ASM volatile ("wfi":::"memory")
  235:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 8
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 8
 
 
  236:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  290:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return               Reversed value
  291:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  292:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __REV(uint32_t value)
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 9
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 9
 
 
  293:Drivers/CMSIS/Include/cmsis_gcc.h **** {
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  347:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  348:Drivers/CMSIS/Include/cmsis_gcc.h ****   op2 %= 32U;
  349:Drivers/CMSIS/Include/cmsis_gcc.h ****   if (op2 == 0U)
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 10
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 10
 
 
  350:Drivers/CMSIS/Include/cmsis_gcc.h ****   {
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  404:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  405:Drivers/CMSIS/Include/cmsis_gcc.h ****   /* Even though __builtin_clz produces a CLZ instruction on ARM, formally
  406:Drivers/CMSIS/Include/cmsis_gcc.h ****      __builtin_clz(0) is undefined behaviour, so handle this case specially.
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 11
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 11
 
 
  407:Drivers/CMSIS/Include/cmsis_gcc.h ****      This guarantees ARM-compatible results if happening to compile on a non-ARM
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  461:Drivers/CMSIS/Include/cmsis_gcc.h ****     /* Prior to GCC 4.8, "Q" will be expanded to [rx, #0] which is not
  462:Drivers/CMSIS/Include/cmsis_gcc.h ****        accepted by assembler. So has to use following less efficient pattern.
  463:Drivers/CMSIS/Include/cmsis_gcc.h ****     */
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 12
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 12
 
 
  464:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldrexh %0, [%1]" : "=r" (result) : "r" (addr) : "memory" );
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  518:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  519:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  520:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   STR Exclusive (32 bit)
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 13
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 13
 
 
  521:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a exclusive STR instruction for 32 bit values.
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  575:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return             Saturated value
  576:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  577:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __USAT(ARG1, ARG2) \
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 14
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 14
 
 
  578:Drivers/CMSIS/Include/cmsis_gcc.h **** __extension__ \
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  632:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t result;
  633:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  634:Drivers/CMSIS/Include/cmsis_gcc.h **** #if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 15
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 15
 
 
  635:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldrht %0, %1" : "=r" (result) : "Q" (*ptr) );
@@ -898,7 +898,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  689:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
  690:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  691:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __STRT(uint32_t value, volatile uint32_t *ptr)
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 16
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 16
 
 
  692:Drivers/CMSIS/Include/cmsis_gcc.h **** {
@@ -958,7 +958,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  746:Drivers/CMSIS/Include/cmsis_gcc.h ****   return (uint32_t)val;
  747:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  748:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 17
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 17
 
 
  749:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif /* ((defined (__ARM_ARCH_7M__      ) && (__ARM_ARCH_7M__      == 1)) || \
@@ -1018,7 +1018,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  803:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a STLB instruction for 8 bit values.
  804:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to store
  805:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 18
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 18
 
 
  806:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
@@ -1078,7 +1078,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  860:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t result;
  861:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  862:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldaexh %0, %1" : "=r" (result) : "Q" (*ptr) : "memory" );
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 19
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 19
 
 
  863:Drivers/CMSIS/Include/cmsis_gcc.h ****    return ((uint16_t) result);
@@ -1138,7 +1138,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  917:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Store-Release Exclusive (32 bit)
  918:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a STL exclusive instruction for 32 bit values.
  919:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to store
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 20
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 20
 
 
  920:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
@@ -1198,7 +1198,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  974:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  975:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MRS %0, control" : "=r" (result) );
  976:Drivers/CMSIS/Include/cmsis_gcc.h ****   return(result);
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 21
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 21
 
 
  977:Drivers/CMSIS/Include/cmsis_gcc.h **** }
@@ -1258,7 +1258,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
 1031:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MRS %0, ipsr" : "=r" (result) );
 1032:Drivers/CMSIS/Include/cmsis_gcc.h ****   return(result);
 1033:Drivers/CMSIS/Include/cmsis_gcc.h **** }
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 22
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 22
 
 
 1034:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -1318,7 +1318,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
 1088:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MRS %0, psp_ns"  : "=r" (result) );
 1089:Drivers/CMSIS/Include/cmsis_gcc.h ****   return(result);
 1090:Drivers/CMSIS/Include/cmsis_gcc.h **** }
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 23
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 23
 
 
 1091:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
@@ -1378,7 +1378,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
 1145:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
 1146:Drivers/CMSIS/Include/cmsis_gcc.h **** 
 1147:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 24
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 24
 
 
 1148:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
@@ -1438,7 +1438,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
 1202:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return               Priority Mask value
 1203:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
 1204:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __get_PRIMASK(void)
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 25
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 25
 
 
   91              		.loc 2 1204 31 view .LVU19
@@ -1498,7 +1498,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  130              		.loc 1 85 13 view .LVU32
  131 0010 43F4AA63 		orr	r3, r3, #1360
  132 0014 43F00503 		orr	r3, r3, #5
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 26
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 26
 
 
  133 0018 0B62     		str	r3, [r1, #32]
@@ -1558,7 +1558,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  157              		.loc 1 88 1 view .LVU38
  158 002a 7047     		bx	lr
  159              	.L14:
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 27
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 27
 
 
   81:MotorFoc/motor_ctrl.c **** 		return;
@@ -1618,7 +1618,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  203              		.loc 1 98 6 is_stmt 0 view .LVU46
  204 0000 0F4A     		ldr	r2, .L20
  205 0002 1388     		ldrh	r3, [r2]
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 28
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 28
 
 
  206              		.loc 1 98 12 view .LVU47
@@ -1678,7 +1678,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  104:MotorFoc/motor_ctrl.c **** 		if (Para.IfAngle > 359)
  240              		.loc 1 104 15 is_stmt 0 view .LVU61
  241 002c 0133     		adds	r3, r3, #1
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 29
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 29
 
 
  242 002e 9BB2     		uxth	r3, r3
@@ -1738,7 +1738,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  283              		.loc 1 119 2 view .LVU68
  284              		.loc 1 119 22 is_stmt 0 view .LVU69
  285 0002 044B     		ldr	r3, .L24
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 30
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 30
 
 
  286 0004 1A68     		ldr	r2, [r3]	@ float
@@ -1798,7 +1798,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  136:MotorFoc/motor_ctrl.c **** 	Para.SpeedCalTime++;
  326              		.loc 1 136 2 view .LVU77
  327              		.loc 1 136 6 is_stmt 0 view .LVU78
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 31
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 31
 
 
  328 0002 0E4A     		ldr	r2, .L28
@@ -1858,7 +1858,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  162:MotorFoc/motor_ctrl.c **** 	// else if (Motor.CtrlMode == IF_SMO)
  163:MotorFoc/motor_ctrl.c **** 	// {
  164:MotorFoc/motor_ctrl.c **** 	// 	Process_IF_SMO();
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 32
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 32
 
 
  165:MotorFoc/motor_ctrl.c **** 	// }
@@ -1918,7 +1918,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  378 0038 10BD     		pop	{r4, pc}
  379              	.L29:
  380 003a 00BF     		.align	2
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 33
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 33
 
 
  381              	.L28:
@@ -1978,7 +1978,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  420 0014 8360     		str	r3, [r0, #8]	@ float
  215:MotorFoc/motor_ctrl.c **** 	Motor.speed_E_rpm = 0; // 电机电角速度清零
  421              		.loc 1 215 2 is_stmt 1 view .LVU111
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 34
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 34
 
 
  422              		.loc 1 215 20 is_stmt 0 view .LVU112
@@ -2038,7 +2038,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  233:MotorFoc/motor_ctrl.c **** 	pi_id.Out = 0;
  459              		.loc 1 233 2 is_stmt 1 view .LVU135
  460              		.loc 1 233 12 is_stmt 0 view .LVU136
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 35
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 35
 
 
  461 0032 8360     		str	r3, [r0, #8]	@ float
@@ -2098,7 +2098,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  500              		.loc 1 248 2 is_stmt 1 view .LVU161
  501              		.loc 1 248 13 is_stmt 0 view .LVU162
  502 0050 0362     		str	r3, [r0, #32]	@ float
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 36
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 36
 
 
  249:MotorFoc/motor_ctrl.c **** 	pi_pos.Out = 0;
@@ -2158,7 +2158,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  540              		.loc 1 265 14 is_stmt 0 view .LVU186
  541 006e 1948     		ldr	r0, .L31+44
  542 0070 0360     		str	r3, [r0]	@ float
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 37
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 37
 
 
  266:MotorFoc/motor_ctrl.c **** 	Ipark.Beta = 0;
@@ -2218,7 +2218,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  304:MotorFoc/motor_ctrl.c **** 	// AngleSmoPara.Ialpha_Err = 0;
  305:MotorFoc/motor_ctrl.c **** 	// AngleSmoPara.Ibeta_Err = 0;
  306:MotorFoc/motor_ctrl.c **** 	// AngleSmoPara.Zalpha = 0;
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 38
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 38
 
 
  307:MotorFoc/motor_ctrl.c **** 	// AngleSmoPara.Zbeta = 0;
@@ -2278,7 +2278,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  592              		.loc 1 327 17 is_stmt 0 view .LVU218
  593 009e 82F83D10 		strb	r1, [r2, #61]
  328:MotorFoc/motor_ctrl.c **** 	Para.SmoSwFlag = 0;
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 39
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 39
 
 
  594              		.loc 1 328 2 is_stmt 1 view .LVU219
@@ -2338,7 +2338,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
   65:MotorFoc/motor_ctrl.c **** 	TIM1->CCR2 = TIM1_PERIOD_HALF;
  645              		.loc 1 65 2 is_stmt 1 view .LVU226
   65:MotorFoc/motor_ctrl.c **** 	TIM1->CCR2 = TIM1_PERIOD_HALF;
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 40
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 40
 
 
  646              		.loc 1 65 13 is_stmt 0 view .LVU227
@@ -2398,7 +2398,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  341:MotorFoc/motor_ctrl.c **** 	ParamIdent_MonitorModeExit();
  685              		.loc 1 341 2 view .LVU235
  686 0002 FFF7FEFF 		bl	ParamIdent_MonitorModeExit
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 41
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 41
 
 
  687              	.LVL11:
@@ -2407,35 +2407,35 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  344:MotorFoc/motor_ctrl.c **** 	switch (Motor.CtrlMode)
  688              		.loc 1 344 2 view .LVU236
  689              		.loc 1 344 15 is_stmt 0 view .LVU237
- 690 0006 134B     		ldr	r3, .L46
+ 690 0006 164B     		ldr	r3, .L47
  691 0008 1B7C     		ldrb	r3, [r3, #16]	@ zero_extendqisi2
  692              		.loc 1 344 2 view .LVU238
  693 000a 013B     		subs	r3, r3, #1
  694 000c 0B2B     		cmp	r3, #11
- 695 000e 1ED8     		bhi	.L38
+ 695 000e 23D8     		bhi	.L38
  696 0010 DFE803F0 		tbb	[pc, r3]
  697              	.L40:
- 698 0014 06       		.byte	(.L43-.L40)/2
- 699 0015 0F       		.byte	(.L42-.L40)/2
- 700 0016 1D       		.byte	(.L38-.L40)/2
- 701 0017 1D       		.byte	(.L38-.L40)/2
- 702 0018 1D       		.byte	(.L38-.L40)/2
- 703 0019 1D       		.byte	(.L38-.L40)/2
- 704 001a 1D       		.byte	(.L38-.L40)/2
- 705 001b 1D       		.byte	(.L38-.L40)/2
- 706 001c 1D       		.byte	(.L38-.L40)/2
- 707 001d 1F       		.byte	(.L37-.L40)/2
- 708 001e 1D       		.byte	(.L38-.L40)/2
- 709 001f 1A       		.byte	(.L39-.L40)/2
+ 698 0014 06       		.byte	(.L44-.L40)/2
+ 699 0015 0F       		.byte	(.L43-.L40)/2
+ 700 0016 1A       		.byte	(.L42-.L40)/2
+ 701 0017 22       		.byte	(.L38-.L40)/2
+ 702 0018 22       		.byte	(.L38-.L40)/2
+ 703 0019 22       		.byte	(.L38-.L40)/2
+ 704 001a 22       		.byte	(.L38-.L40)/2
+ 705 001b 22       		.byte	(.L38-.L40)/2
+ 706 001c 22       		.byte	(.L38-.L40)/2
+ 707 001d 24       		.byte	(.L37-.L40)/2
+ 708 001e 22       		.byte	(.L38-.L40)/2
+ 709 001f 1F       		.byte	(.L39-.L40)/2
  710              		.p2align 1
- 711              	.L43:
+ 711              	.L44:
  345:MotorFoc/motor_ctrl.c **** 	{
  346:MotorFoc/motor_ctrl.c **** 	case SPEED_LOOP:
  347:MotorFoc/motor_ctrl.c **** 	{
  348:MotorFoc/motor_ctrl.c **** 		SpeedCloseloop(Para.SpeedRef, 1);
  712              		.loc 1 348 3 is_stmt 1 view .LVU239
  713 0020 0121     		movs	r1, #1
- 714 0022 0D4B     		ldr	r3, .L46+4
+ 714 0022 104B     		ldr	r3, .L47+4
  715 0024 B3F91000 		ldrsh	r0, [r3, #16]
  716 0028 FFF7FEFF 		bl	SpeedCloseloop
  717              	.LVL12:
@@ -2445,20 +2445,20 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  720              	.LVL13:
  350:MotorFoc/motor_ctrl.c **** 		break;
  721              		.loc 1 350 3 view .LVU241
- 722 0030 0FE0     		b	.L37
- 723              	.L42:
+ 722 0030 14E0     		b	.L37
+ 723              	.L43:
  351:MotorFoc/motor_ctrl.c **** 	}
  352:MotorFoc/motor_ctrl.c **** 
  353:MotorFoc/motor_ctrl.c **** 	case CUR_LOOP:
  354:MotorFoc/motor_ctrl.c **** 	{
  355:MotorFoc/motor_ctrl.c **** 		CurCloseloop(Para.CurRef, Motor.E_theta);
  724              		.loc 1 355 3 view .LVU242
- 725 0032 084B     		ldr	r3, .L46
+ 725 0032 0B4B     		ldr	r3, .L47
  726 0034 D3ED010A 		vldr.32	s1, [r3, #4]
- 727 0038 074B     		ldr	r3, .L46+4
+ 727 0038 0A4B     		ldr	r3, .L47+4
  728 003a 93ED050A 		vldr.32	s0, [r3, #20]
  729 003e FFF7FEFF 		bl	CurCloseloop
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 42
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 42
 
 
  730              	.LVL14:
@@ -2468,16 +2468,25 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  733              	.LVL15:
  357:MotorFoc/motor_ctrl.c **** 		break;
  734              		.loc 1 357 3 view .LVU244
- 735 0046 04E0     		b	.L37
- 736              	.L39:
+ 735 0046 09E0     		b	.L37
+ 736              	.L42:
  358:MotorFoc/motor_ctrl.c **** 	}
  359:MotorFoc/motor_ctrl.c **** 
- 360:MotorFoc/motor_ctrl.c **** 	// case POS_LOOP:
- 361:MotorFoc/motor_ctrl.c **** 	// {
- 362:MotorFoc/motor_ctrl.c **** 	// 	PosCloseloop();
- 363:MotorFoc/motor_ctrl.c **** 	// 	FocSvpwm(); // SVPWM计算
- 364:MotorFoc/motor_ctrl.c **** 	// 	break;
- 365:MotorFoc/motor_ctrl.c **** 	// }
+ 360:MotorFoc/motor_ctrl.c **** 	case POS_LOOP:
+ 361:MotorFoc/motor_ctrl.c **** 	{
+ 362:MotorFoc/motor_ctrl.c **** 		PosCloseloop();
+ 737              		.loc 1 362 3 view .LVU245
+ 738 0048 FFF7FEFF 		bl	PosCloseloop
+ 739              	.LVL16:
+ 363:MotorFoc/motor_ctrl.c **** 		FocSvpwm(); // SVPWM计算
+ 740              		.loc 1 363 3 view .LVU246
+ 741 004c FFF7FEFF 		bl	FocSvpwm
+ 742              	.LVL17:
+ 364:MotorFoc/motor_ctrl.c **** 		break;
+ 743              		.loc 1 364 3 view .LVU247
+ 744 0050 04E0     		b	.L37
+ 745              	.L39:
+ 365:MotorFoc/motor_ctrl.c **** 	}
  366:MotorFoc/motor_ctrl.c **** 
  367:MotorFoc/motor_ctrl.c **** 	// case IF_CTRL:
  368:MotorFoc/motor_ctrl.c **** 	// {
@@ -2509,6 +2518,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  394:MotorFoc/motor_ctrl.c **** 	// 	}
  395:MotorFoc/motor_ctrl.c **** 	// 	default:
  396:MotorFoc/motor_ctrl.c **** 	// 		break;
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 43
+
+
  397:MotorFoc/motor_ctrl.c **** 	// 	}
  398:MotorFoc/motor_ctrl.c **** 	// 	break;
  399:MotorFoc/motor_ctrl.c **** 	// }
@@ -2518,9 +2530,6 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  403:MotorFoc/motor_ctrl.c **** 	// 	if (HFI_Init_Angle_flag) // 初始角度检测完毕后
  404:MotorFoc/motor_ctrl.c **** 	// 	{
  405:MotorFoc/motor_ctrl.c **** 	// 		HfiSpdCloseLoop(); // HFI速度闭环模式
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 43
-
-
  406:MotorFoc/motor_ctrl.c **** 	// 	}
  407:MotorFoc/motor_ctrl.c **** 	// 	else
  408:MotorFoc/motor_ctrl.c **** 	// 	{
@@ -2569,6 +2578,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  451:MotorFoc/motor_ctrl.c **** 	// 	if (SensorLess.Observer == 1)
  452:MotorFoc/motor_ctrl.c **** 	// 	{
  453:MotorFoc/motor_ctrl.c **** 	// 		// 低速阶段使用 IF 开环角度和固定电流启动
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 44
+
+
  454:MotorFoc/motor_ctrl.c **** 	// 		// IFObserverThetaRampCale();
  455:MotorFoc/motor_ctrl.c **** 	// 		// CurCloseloop(1.0f, Para.FocAngle);
  456:MotorFoc/motor_ctrl.c **** 	// 	}
@@ -2578,9 +2590,6 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  460:MotorFoc/motor_ctrl.c **** 	// 		// SensorLess.Speed_Ref = GetObserverSpeedRef();
  461:MotorFoc/motor_ctrl.c **** 	// 		// FluxObserver(Park.Ds, Park.Qs);
  462:MotorFoc/motor_ctrl.c **** 	// 	}
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 44
-
-
  463:MotorFoc/motor_ctrl.c **** 	// 	FocSvpwm();
  464:MotorFoc/motor_ctrl.c **** 	// 	Para.SpeedCalTime %= SPD_CAL_PERIOD;
  465:MotorFoc/motor_ctrl.c **** 	// 	break;
@@ -2593,229 +2602,232 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 1
  472:MotorFoc/motor_ctrl.c **** 	case PARAM_IDENT:
  473:MotorFoc/motor_ctrl.c **** 	{
  474:MotorFoc/motor_ctrl.c **** 		ParamIdent_Run20kHz();
- 737              		.loc 1 474 3 view .LVU245
- 738 0048 FFF7FEFF 		bl	ParamIdent_Run20kHz
- 739              	.LVL16:
+ 746              		.loc 1 474 3 view .LVU248
+ 747 0052 FFF7FEFF 		bl	ParamIdent_Run20kHz
+ 748              	.LVL18:
  475:MotorFoc/motor_ctrl.c **** 		break;
- 740              		.loc 1 475 3 view .LVU246
- 741 004c 01E0     		b	.L37
- 742              	.L38:
+ 749              		.loc 1 475 3 view .LVU249
+ 750 0056 01E0     		b	.L37
+ 751              	.L38:
  476:MotorFoc/motor_ctrl.c **** 	}
  477:MotorFoc/motor_ctrl.c **** 
  478:MotorFoc/motor_ctrl.c **** 	default:
  479:MotorFoc/motor_ctrl.c **** 	{
  480:MotorFoc/motor_ctrl.c **** 		MotorStop(); // 停机
- 743              		.loc 1 480 3 view .LVU247
- 744 004e FFF7FEFF 		bl	MotorStop
- 745              	.LVL17:
+ 752              		.loc 1 480 3 view .LVU250
+ 753 0058 FFF7FEFF 		bl	MotorStop
+ 754              	.LVL19:
  481:MotorFoc/motor_ctrl.c **** 		break;
- 746              		.loc 1 481 3 view .LVU248
- 747              	.L37:
+ 755              		.loc 1 481 3 view .LVU251
+ 756              	.L37:
  482:MotorFoc/motor_ctrl.c **** 	}
  483:MotorFoc/motor_ctrl.c **** 	}
  484:MotorFoc/motor_ctrl.c **** }...
- 748              		.loc 1 484 1 is_stmt 0 view .LVU249
- 749 0052 08BD     		pop	{r3, pc}
- 750              	.L47:
- 751              		.align	2
- 752              	.L46:
- 753 0054 00000000 		.word	Motor
- 754 0058 00000000 		.word	Para
- 755              		.cfi_endproc
- 756              	.LFE279:
- 758              		.global	HFI_Init_Angle_flag
- 759              		.section	.bss.HFI_Init_Angle_flag,"aw",%nobits
- 762              	HFI_Init_Angle_flag:
- 763 0000 00       		.space	1
- 764              		.global	Init_Over
- 765              		.section	.bss.Init_Over,"aw",%nobits
- 768              	Init_Over:
- 769 0000 00       		.space	1
- 770              		.global	Pos
- 771              		.section	.bss.Pos,"aw",%nobits
- 772              		.align	2
- 775              	Pos:
- 776 0000 00000000 		.space	36
- 776      00000000 
- 776      00000000 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 45
+ 757              		.loc 1 484 1 is_stmt 0 view .LVU252
+ 758 005c 08BD     		pop	{r3, pc}
+ 759              	.L48:
+ 760 005e 00BF     		.align	2
+ 761              	.L47:
+ 762 0060 00000000 		.word	Motor
+ 763 0064 00000000 		.word	Para
+ 764              		.cfi_endproc
+ 765              	.LFE279:
+ 767              		.global	HFI_Init_Angle_flag
+ 768              		.section	.bss.HFI_Init_Angle_flag,"aw",%nobits
+ 771              	HFI_Init_Angle_flag:
+ 772 0000 00       		.space	1
+ 773              		.global	Init_Over
+ 774              		.section	.bss.Init_Over,"aw",%nobits
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 45
 
 
- 776      00000000 
- 776      00000000 
- 777              		.global	Para
- 778              		.section	.bss.Para,"aw",%nobits
- 779              		.align	3
- 782              	Para:
- 783 0000 00000000 		.space	80
- 783      00000000 
- 783      00000000 
- 783      00000000 
- 783      00000000 
- 784              		.global	IparkSmoPv
- 785              		.section	.bss.IparkSmoPv,"aw",%nobits
- 786              		.align	2
- 789              	IparkSmoPv:
- 790 0000 00000000 		.space	20
- 790      00000000 
- 790      00000000 
- 790      00000000 
- 790      00000000 
- 791              		.global	SensorLess
- 792              		.section	.data.SensorLess,"aw"
- 793              		.align	2
- 796              	SensorLess:
- 797 0000 01       		.byte	1
- 798 0001 01       		.byte	1
- 799 0002 0000     		.space	2
- 800 0004 00000000 		.word	0
- 801 0008 00000000 		.word	0
- 802 000c 00000000 		.word	0
- 803 0010 00000000 		.word	0
- 804 0014 0000     		.short	0
- 805 0016 0000     		.short	0
- 806 0018 0000     		.short	0
- 807 001a 0000     		.space	2
- 808              		.global	IdqRefGXieLv
- 809              		.section	.bss.IdqRefGXieLv,"aw",%nobits
- 810              		.align	2
- 813              	IdqRefGXieLv:
- 814 0000 00000000 		.space	16
- 814      00000000 
- 814      00000000 
- 814      00000000 
- 815              		.global	SpdRefGXieLv
- 816              		.section	.bss.SpdRefGXieLv,"aw",%nobits
- 817              		.align	2
- 820              	SpdRefGXieLv:
- 821 0000 00000000 		.space	16
- 821      00000000 
- 821      00000000 
- 821      00000000 
- 822              		.global	IfFreqGXieLv
- 823              		.section	.bss.IfFreqGXieLv,"aw",%nobits
- 824              		.align	2
- 827              	IfFreqGXieLv:
- 828 0000 00000000 		.space	16
- 828      00000000 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 46
+ 777              	Init_Over:
+ 778 0000 00       		.space	1
+ 779              		.global	Pos
+ 780              		.section	.bss.Pos,"aw",%nobits
+ 781              		.align	2
+ 784              	Pos:
+ 785 0000 00000000 		.space	36
+ 785      00000000 
+ 785      00000000 
+ 785      00000000 
+ 785      00000000 
+ 786              		.global	Para
+ 787              		.section	.bss.Para,"aw",%nobits
+ 788              		.align	3
+ 791              	Para:
+ 792 0000 00000000 		.space	80
+ 792      00000000 
+ 792      00000000 
+ 792      00000000 
+ 792      00000000 
+ 793              		.global	IparkSmoPv
+ 794              		.section	.bss.IparkSmoPv,"aw",%nobits
+ 795              		.align	2
+ 798              	IparkSmoPv:
+ 799 0000 00000000 		.space	20
+ 799      00000000 
+ 799      00000000 
+ 799      00000000 
+ 799      00000000 
+ 800              		.global	SensorLess
+ 801              		.section	.data.SensorLess,"aw"
+ 802              		.align	2
+ 805              	SensorLess:
+ 806 0000 01       		.byte	1
+ 807 0001 01       		.byte	1
+ 808 0002 0000     		.space	2
+ 809 0004 00000000 		.word	0
+ 810 0008 00000000 		.word	0
+ 811 000c 00000000 		.word	0
+ 812 0010 00000000 		.word	0
+ 813 0014 0000     		.short	0
+ 814 0016 0000     		.short	0
+ 815 0018 0000     		.short	0
+ 816 001a 0000     		.space	2
+ 817              		.global	IdqRefGXieLv
+ 818              		.section	.bss.IdqRefGXieLv,"aw",%nobits
+ 819              		.align	2
+ 822              	IdqRefGXieLv:
+ 823 0000 00000000 		.space	16
+ 823      00000000 
+ 823      00000000 
+ 823      00000000 
+ 824              		.global	SpdRefGXieLv
+ 825              		.section	.bss.SpdRefGXieLv,"aw",%nobits
+ 826              		.align	2
+ 829              	SpdRefGXieLv:
+ 830 0000 00000000 		.space	16
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 46
 
 
- 828      00000000 
- 828      00000000 
- 829              		.global	Motor
- 830              		.section	.bss.Motor,"aw",%nobits
- 831              		.align	2
- 834              	Motor:
- 835 0000 00000000 		.space	40
- 835      00000000 
- 835      00000000 
- 835      00000000 
- 835      00000000 
- 836              		.global	Ipark
- 837              		.section	.bss.Ipark,"aw",%nobits
- 838              		.align	2
- 841              	Ipark:
- 842 0000 00000000 		.space	20
- 842      00000000 
- 842      00000000 
- 842      00000000 
- 842      00000000 
- 843              		.global	Park
- 844              		.section	.bss.Park,"aw",%nobits
- 845              		.align	2
- 848              	Park:
- 849 0000 00000000 		.space	20
- 849      00000000 
- 849      00000000 
- 849      00000000 
- 849      00000000 
- 850              		.global	Clarke
- 851              		.section	.bss.Clarke,"aw",%nobits
- 852              		.align	2
- 855              	Clarke:
- 856 0000 00000000 		.space	20
- 856      00000000 
- 856      00000000 
- 856      00000000 
- 856      00000000 
- 857              		.text
- 858              	.Letext0:
- 859              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
- 860              		.file 4 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
- 861              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
- 862              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
- 863              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
- 864              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
- 865              		.file 9 "Sdrive/adc_drv.h"
- 866              		.file 10 "App/task.h"
- 867              		.file 11 "MotorFoc/foc.h"
- 868              		.file 12 "MotorFoc/pid.h"
- 869              		.file 13 "MotorFoc/motor_ctrl.h"
- 870              		.file 14 "MotorFoc/sen.h"
- 871              		.file 15 "MotorFoc/param_ident.h"
- 872              		.file 16 "Sdrive/tim_drv.h"
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 47
+ 830      00000000 
+ 830      00000000 
+ 830      00000000 
+ 831              		.global	IfFreqGXieLv
+ 832              		.section	.bss.IfFreqGXieLv,"aw",%nobits
+ 833              		.align	2
+ 836              	IfFreqGXieLv:
+ 837 0000 00000000 		.space	16
+ 837      00000000 
+ 837      00000000 
+ 837      00000000 
+ 838              		.global	Motor
+ 839              		.section	.bss.Motor,"aw",%nobits
+ 840              		.align	2
+ 843              	Motor:
+ 844 0000 00000000 		.space	40
+ 844      00000000 
+ 844      00000000 
+ 844      00000000 
+ 844      00000000 
+ 845              		.global	Ipark
+ 846              		.section	.bss.Ipark,"aw",%nobits
+ 847              		.align	2
+ 850              	Ipark:
+ 851 0000 00000000 		.space	20
+ 851      00000000 
+ 851      00000000 
+ 851      00000000 
+ 851      00000000 
+ 852              		.global	Park
+ 853              		.section	.bss.Park,"aw",%nobits
+ 854              		.align	2
+ 857              	Park:
+ 858 0000 00000000 		.space	20
+ 858      00000000 
+ 858      00000000 
+ 858      00000000 
+ 858      00000000 
+ 859              		.global	Clarke
+ 860              		.section	.bss.Clarke,"aw",%nobits
+ 861              		.align	2
+ 864              	Clarke:
+ 865 0000 00000000 		.space	20
+ 865      00000000 
+ 865      00000000 
+ 865      00000000 
+ 865      00000000 
+ 866              		.text
+ 867              	.Letext0:
+ 868              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 869              		.file 4 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 870              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 871              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 872              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 873              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 874              		.file 9 "Sdrive/adc_drv.h"
+ 875              		.file 10 "App/task.h"
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 47
+
+
+ 876              		.file 11 "MotorFoc/foc.h"
+ 877              		.file 12 "MotorFoc/pid.h"
+ 878              		.file 13 "MotorFoc/motor_ctrl.h"
+ 879              		.file 14 "MotorFoc/param_ident.h"
+ 880              		.file 15 "MotorFoc/sen.h"
+ 881              		.file 16 "Sdrive/tim_drv.h"
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 48
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 motor_ctrl.c
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:21     .text.GradXieLv:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:27     .text.GradXieLv:00000000 GradXieLv
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:74     .text.MotorRun:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:80     .text.MotorRun:00000000 MotorRun
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:182    .text.MotorRun:00000034 $d
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:189    .text.QtMotor:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:195    .text.QtMotor:00000000 QtMotor
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:258    .text.QtMotor:00000040 $d
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:782    .bss.Para:00000000 Para
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:841    .bss.Ipark:00000000 Ipark
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:266    .text.FocSvpwm:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:272    .text.FocSvpwm:00000000 FocSvpwm
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:303    .text.FocSvpwm:00000014 $d
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:309    .text.AxisDq:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:315    .text.AxisDq:00000000 AxisDq
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:382    .text.AxisDq:0000003c $d
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:855    .bss.Clarke:00000000 Clarke
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:834    .bss.Motor:00000000 Motor
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:848    .bss.Park:00000000 Park
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:391    .text.VariableClear:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:397    .text.VariableClear:00000000 VariableClear
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:602    .text.VariableClear:000000a8 $d
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:827    .bss.IfFreqGXieLv:00000000 IfFreqGXieLv
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:820    .bss.SpdRefGXieLv:00000000 SpdRefGXieLv
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:813    .bss.IdqRefGXieLv:00000000 IdqRefGXieLv
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:796    .data.SensorLess:00000000 SensorLess
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:620    .text.MotorStop:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:626    .text.MotorStop:00000000 MotorStop
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:663    .text.MotorStop:00000020 $d
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:668    .text.MotorModeSel:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:674    .text.MotorModeSel:00000000 MotorModeSel
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:698    .text.MotorModeSel:00000014 $d
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:710    .text.MotorModeSel:00000020 $t
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:753    .text.MotorModeSel:00000054 $d
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:762    .bss.HFI_Init_Angle_flag:00000000 HFI_Init_Angle_flag
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:763    .bss.HFI_Init_Angle_flag:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:768    .bss.Init_Over:00000000 Init_Over
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:769    .bss.Init_Over:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:775    .bss.Pos:00000000 Pos
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:772    .bss.Pos:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:779    .bss.Para:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:789    .bss.IparkSmoPv:00000000 IparkSmoPv
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:786    .bss.IparkSmoPv:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:793    .data.SensorLess:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:810    .bss.IdqRefGXieLv:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:817    .bss.SpdRefGXieLv:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:824    .bss.IfFreqGXieLv:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:831    .bss.Motor:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:838    .bss.Ipark:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:845    .bss.Park:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s:852    .bss.Clarke:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:21     .text.GradXieLv:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:27     .text.GradXieLv:00000000 GradXieLv
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:74     .text.MotorRun:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:80     .text.MotorRun:00000000 MotorRun
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:182    .text.MotorRun:00000034 $d
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:189    .text.QtMotor:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:195    .text.QtMotor:00000000 QtMotor
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:258    .text.QtMotor:00000040 $d
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:791    .bss.Para:00000000 Para
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:850    .bss.Ipark:00000000 Ipark
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:266    .text.FocSvpwm:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:272    .text.FocSvpwm:00000000 FocSvpwm
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:303    .text.FocSvpwm:00000014 $d
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:309    .text.AxisDq:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:315    .text.AxisDq:00000000 AxisDq
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:382    .text.AxisDq:0000003c $d
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:864    .bss.Clarke:00000000 Clarke
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:843    .bss.Motor:00000000 Motor
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:857    .bss.Park:00000000 Park
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:391    .text.VariableClear:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:397    .text.VariableClear:00000000 VariableClear
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:602    .text.VariableClear:000000a8 $d
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:836    .bss.IfFreqGXieLv:00000000 IfFreqGXieLv
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:829    .bss.SpdRefGXieLv:00000000 SpdRefGXieLv
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:822    .bss.IdqRefGXieLv:00000000 IdqRefGXieLv
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:805    .data.SensorLess:00000000 SensorLess
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:620    .text.MotorStop:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:626    .text.MotorStop:00000000 MotorStop
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:663    .text.MotorStop:00000020 $d
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:668    .text.MotorModeSel:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:674    .text.MotorModeSel:00000000 MotorModeSel
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:698    .text.MotorModeSel:00000014 $d
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:710    .text.MotorModeSel:00000020 $t
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:762    .text.MotorModeSel:00000060 $d
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:771    .bss.HFI_Init_Angle_flag:00000000 HFI_Init_Angle_flag
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:772    .bss.HFI_Init_Angle_flag:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:777    .bss.Init_Over:00000000 Init_Over
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:778    .bss.Init_Over:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:784    .bss.Pos:00000000 Pos
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:781    .bss.Pos:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:788    .bss.Para:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:798    .bss.IparkSmoPv:00000000 IparkSmoPv
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:795    .bss.IparkSmoPv:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:802    .data.SensorLess:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:819    .bss.IdqRefGXieLv:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:826    .bss.SpdRefGXieLv:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:833    .bss.IfFreqGXieLv:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:840    .bss.Motor:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:847    .bss.Ipark:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:854    .bss.Park:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s:861    .bss.Clarke:00000000 $d
 
 UNDEFINED SYMBOLS
 AdcFault
 htim1
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cczJtdSL.s 			page 48
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccqnXaPW.s 			page 49
 
 
 ualpha_tab
@@ -2833,4 +2845,5 @@ pi_pos
 ParamIdent_MonitorModeExit
 SpeedCloseloop
 CurCloseloop
+PosCloseloop
 ParamIdent_Run20kHz
