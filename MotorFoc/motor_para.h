@@ -71,9 +71,9 @@
 
 /* 参数辨识算法配置（20kHz 控制周期）。 */
 #define PARAM_IDENT_RS_POINT_NUM /******/ 3U                                /**< Rs 辨识的电流点数。 */
-#define PARAM_IDENT_RS_CURRENT_1 /******/ 0.3f                              /**< 第 1 个 Rs 辨识 d 轴电流点，单位 A。 */
-#define PARAM_IDENT_RS_CURRENT_2 /******/ 0.6f                              /**< 第 2 个 Rs 辨识 d 轴电流点，单位 A。 */
-#define PARAM_IDENT_RS_CURRENT_3 /******/ 0.9f                              /**< 第 3 个 Rs 辨识 d 轴电流点，单位 A。 */
+#define PARAM_IDENT_RS_CURRENT_1 /******/ 1.0f                              /**< 第 1 个 Rs 辨识 d 轴电流点，单位 A。 */
+#define PARAM_IDENT_RS_CURRENT_2 /******/ 1.5f                              /**< 第 2 个 Rs 辨识 d 轴电流点，单位 A。 */
+#define PARAM_IDENT_RS_CURRENT_3 /******/ 2.0f                              /**< 第 3 个 Rs 辨识 d 轴电流点，单位 A。 */
 #define PARAM_IDENT_CURRENT_RAMP_STEP /**/ 0.01f                            /**< 每个 20kHz 控制周期的电流给定变化量，单位 A。 */
 #define PARAM_IDENT_INIT_COUNT /********/ ((uint16_t)(PWM_FRQ / 50U))       /**< 初始化零电压等待计数，对应 20ms。 */
 #define PARAM_IDENT_RS_SETTLE_COUNT /***/ ((uint16_t)(PWM_FRQ / 10U))       /**< 每个 Rs 电流点稳定计数，对应 100ms。 */

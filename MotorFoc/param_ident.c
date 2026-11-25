@@ -11,7 +11,8 @@
 
 /** @brief 参数辨识结果对象，供控制逻辑和 Keil Watch 观察。 */
 volatile PARAM_IDENT_RESULT g_paramIdent = {0};
-
+// 可根据DTG值预定义成宏，DTG=50时用0.14f，DTG=100时用0.29f
+#define DEAD_ZONE_COMP  0.14f
 /** @brief 参数辨识状态机内部运行数据，不对其他模块开放。 */
 typedef struct
 {
@@ -217,7 +218,7 @@ static bool ParamIdent_RunAxisExcitation(uint8_t axis,
         // x为电流变化率，y为扣除Rs压降后的电感电压
         current_slope = (axis_current - g_paramIdentRuntime.axis_last_current) / TS;
         current_mid = 0.5f * (axis_current + g_paramIdentRuntime.axis_last_current);
-        model_voltage = g_paramIdentRuntime.axis_voltage_delay_2 -
+        model_voltage = g_paramIdentRuntime.axis_voltage_delay_1 -
             g_paramIdent.result_Rs * current_mid;
 
         g_paramIdentRuntime.axis_sum_x += current_slope;
@@ -238,10 +239,29 @@ static bool ParamIdent_RunAxisExcitation(uint8_t axis,
     if (g_paramIdentRuntime.axis_polarity == 0U)
     {
         axis_voltage += excite_voltage;
+        // 根据被辨识轴的电流极性叠加死区补偿电压
+        if (axis_current > 0.01f)       // 正电流，电压往上补
+        {
+         axis_voltage += DEAD_ZONE_COMP;
+        }
+    else if (axis_current < -0.01f)  // 负电流，电压往下补
+        {
+        axis_voltage -= DEAD_ZONE_COMP;
+        }
+        // ±0.01A死区不补偿，避免过零附近振荡
         g_paramIdentRuntime.axis_polarity = 1U;
     }
     else
     {
+        if (axis_current > 0.01f)       // 正电流，电压往上补
+        {
+         axis_voltage += DEAD_ZONE_COMP;
+        }
+    else if (axis_current < -0.01f)  // 负电流，电压往下补
+        {
+        axis_voltage -= DEAD_ZONE_COMP;
+        }
+        // ±0.01A死区不补偿，避免过零附近振荡
         axis_voltage -= excite_voltage;
         g_paramIdentRuntime.axis_polarity = 0U;
     }

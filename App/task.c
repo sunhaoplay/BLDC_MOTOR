@@ -174,6 +174,7 @@ void task_init(void)
     Svpwm.Ualpha = Svpwm.Ubeta = 0.0f;
     SvpwmCal(&Svpwm);
     HAL_Delay(1); /* 等待中性占空比装载，再开放三相功率输出。 */
+    Motor.CtrlMode = STOP;
     const uint32_t primask = __get_PRIMASK();
     __disable_irq();
     if (AdcFault != 0U)

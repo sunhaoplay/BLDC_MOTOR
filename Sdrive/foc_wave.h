@@ -12,7 +12,7 @@
 #define FOC_WAVE_VIEW_RAW       0U
 #define FOC_WAVE_VIEW_FILTERED  1U
 #define FOC_WAVE_VIEW_DQ_SPEED  2U
-#define FOC_WAVE_DEFAULT_VIEW   FOC_WAVE_VIEW_RAW
+#define FOC_WAVE_DEFAULT_VIEW   FOC_WAVE_VIEW_DQ_SPEED
 
 extern volatile uint8_t FocWaveEnabled;
 extern volatile uint32_t FocWaveView;    /**< 0=原始 U/V/W；1=反馈 U/V/W；2=Id/Iq/机械 rpm。 */

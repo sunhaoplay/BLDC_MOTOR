@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 1
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 1
   28:MotorFoc/fault.c ****  */
   29:MotorFoc/fault.c **** void FaultCheck(void)
   30:MotorFoc/fault.c **** {
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 2
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s 			page 2
 
 
   29              		.loc 1 30 1 view -0
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 1
   73 0030 1360     		str	r3, [r2]
   74 0032 12E0     		b	.L6
   75              	.L5:
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 3
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s 			page 3
 
 
   41:MotorFoc/fault.c ****             }
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 1
   58:MotorFoc/fault.c ****             if (MotorLVState < LV_PROTECT_TIME)
  113              		.loc 1 58 13 is_stmt 1 view .LVU24
  114              		.loc 1 58 30 is_stmt 0 view .LVU25
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 4
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s 			page 4
 
 
  115 006e 9A4B     		ldr	r3, .L47+20
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 1
   73:MotorFoc/fault.c ****         }
   74:MotorFoc/fault.c **** 
   75:MotorFoc/fault.c ****         // 反馈速度低于给定一半且 q 轴电流很大，视为可能堵转并开始累计�
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 5
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s 			page 5
 
 
   76:MotorFoc/fault.c ****         if (my_abs(pi_spd.Fbk) < my_abs(pi_spd.Ref / 2))
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 1
   98:MotorFoc/fault.c ****     // 速度足够高时才检测严重超调和实际转向相反，避开零速附近噪声。
   99:MotorFoc/fault.c ****     if (my_abs(pi_spd.Fbk) > 400 * Motor.P)
  187              		.loc 1 99 5 is_stmt 1 view .LVU47
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 6
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s 			page 6
 
 
  188              		.loc 1 99 9 is_stmt 0 view .LVU48
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 1
  219 011e FFF7FEFF 		bl	Sign
  220              	.LVL7:
  221 0122 0446     		mov	r4, r0
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 7
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s 			page 7
 
 
  222              		.loc 1 122 33 discriminator 1 view .LVU58
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 1
  265              		.loc 1 91 13 view .LVU71
   91:MotorFoc/fault.c ****             Locktime = 0;
  266              		.loc 1 91 34 is_stmt 0 view .LVU72
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 8
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s 			page 8
 
 
  267 0166 5A4A     		ldr	r2, .L47+12
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 1
  107:MotorFoc/fault.c ****                 }
  309              		.loc 1 107 21 is_stmt 1 view .LVU85
  107:MotorFoc/fault.c ****                 }
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 9
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s 			page 9
 
 
  310              		.loc 1 107 34 is_stmt 0 view .LVU86
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 1
  351 01e0 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
  352 01e2 43F02003 		orr	r3, r3, #32
  353 01e6 1370     		strb	r3, [r2]
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 10
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s 			page 10
 
 
  132:MotorFoc/fault.c ****                 Motor.CtrlMode = M_ERR;
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 1
  392              	.L26:
  148:MotorFoc/fault.c ****         }
  149:MotorFoc/fault.c ****         else
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 11
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s 			page 11
 
 
  150:MotorFoc/fault.c ****         {
@@ -658,7 +658,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 1
  414 0232 C72B     		cmp	r3, #199
  415 0234 3FD8     		bhi	.L30
  183:MotorFoc/fault.c ****             LedTask(0, 1, 0); // 系统正常时绿色 LED 闪烁。
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 12
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s 			page 12
 
 
  416              		.loc 1 183 13 is_stmt 1 view .LVU120
@@ -718,7 +718,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 1
  154:MotorFoc/fault.c ****         }
  459              		.loc 1 154 13 is_stmt 1 view .LVU129
  154:MotorFoc/fault.c ****         }
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 13
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s 			page 13
 
 
  460              		.loc 1 154 30 is_stmt 0 view .LVU130
@@ -778,7 +778,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 1
  500 02a6 124B     		ldr	r3, .L47+44
  501 02a8 0022     		movs	r2, #0
  502 02aa 1A60     		str	r2, [r3]
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 14
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s 			page 14
 
 
  503 02ac B5E7     		b	.L26
@@ -838,7 +838,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 1
  561              		.section	.bss.DownSpeedTime,"aw",%nobits
  562              		.align	2
  565              	DownSpeedTime:
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 15
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s 			page 15
 
 
  566 0000 00000000 		.space	4
@@ -877,32 +877,32 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 1
  609              		.file 7 "MotorFoc/motor_ctrl.h"
  610              		.file 8 "MotorFoc/fault.h"
  611              		.file 9 "Sdrive/led_drv.h"
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s 			page 16
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s 			page 16
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 fault.c
-C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:21     .text.FaultCheck:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:27     .text.FaultCheck:00000000 FaultCheck
-C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:522    .text.FaultCheck:000002c4 $d
-C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:593    .bss.MotorOVState:00000000 MotorOVState
-C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:600    .bss.Fault:00000000 Fault
-C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:586    .bss.MotorLVState:00000000 MotorLVState
-C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:579    .bss.Locktime:00000000 Locktime
-C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:565    .bss.DownSpeedTime:00000000 DownSpeedTime
-C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:572    .bss.OverSpeedTime:00000000 OverSpeedTime
-C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:558    .bss.MotorOtpState:00000000 MotorOtpState
-C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:544    .bss.i.0:00000000 i.0
-C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:551    .bss.MotorDisOtoState:00000000 MotorDisOtoState
-C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:541    .bss.i.0:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:548    .bss.MotorDisOtoState:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:555    .bss.MotorOtpState:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:562    .bss.DownSpeedTime:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:569    .bss.OverSpeedTime:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:576    .bss.Locktime:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:583    .bss.MotorLVState:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:590    .bss.MotorOVState:00000000 $d
-C:\Users\sunhao\AppData\Local\Temp\ccHzMl2H.s:597    .bss.Fault:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s:21     .text.FaultCheck:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s:27     .text.FaultCheck:00000000 FaultCheck
+C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s:522    .text.FaultCheck:000002c4 $d
+C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s:593    .bss.MotorOVState:00000000 MotorOVState
+C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s:600    .bss.Fault:00000000 Fault
+C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s:586    .bss.MotorLVState:00000000 MotorLVState
+C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s:579    .bss.Locktime:00000000 Locktime
+C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s:565    .bss.DownSpeedTime:00000000 DownSpeedTime
+C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s:572    .bss.OverSpeedTime:00000000 OverSpeedTime
+C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s:558    .bss.MotorOtpState:00000000 MotorOtpState
+C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s:544    .bss.i.0:00000000 i.0
+C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s:551    .bss.MotorDisOtoState:00000000 MotorDisOtoState
+C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s:541    .bss.i.0:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s:548    .bss.MotorDisOtoState:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s:555    .bss.MotorOtpState:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s:562    .bss.DownSpeedTime:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s:569    .bss.OverSpeedTime:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s:576    .bss.Locktime:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s:583    .bss.MotorLVState:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s:590    .bss.MotorOVState:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\cctDOi8q.s:597    .bss.Fault:00000000 $d
 
 UNDEFINED SYMBOLS
 MotorStop

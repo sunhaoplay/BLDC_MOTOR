@@ -60,7 +60,8 @@ build/motor_ctrl.o: MotorFoc/motor_ctrl.c MotorFoc/motor_ctrl.h \
  Drivers/CMSIS/DSP/Include/dsp/filtering_functions.h \
  Drivers/CMSIS/DSP/Include/dsp/support_functions.h \
  Drivers/CMSIS/DSP/Include/dsp/quaternion_math_functions.h MotorFoc/foc.h \
- MotorFoc/motor_para.h MotorFoc/pid.h MotorFoc/sen.h
+ MotorFoc/motor_para.h MotorFoc/pid.h MotorFoc/sen.h \
+ MotorFoc/param_ident.h
 MotorFoc/motor_ctrl.h:
 Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h:
 Drivers/CMSIS/Include/core_cm4.h:
@@ -134,3 +135,4 @@ MotorFoc/foc.h:
 MotorFoc/motor_para.h:
 MotorFoc/pid.h:
 MotorFoc/sen.h:
+MotorFoc/param_ident.h:

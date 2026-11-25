@@ -9,6 +9,7 @@
 
 #include "motor_ctrl.h"
 #include "sen.h"
+#include "param_ident.h"
 // FOC 坐标变换与电机运行状态对象
 CLARKE /******************/ Clarke = CLARKE_DEFAULTS;
 PARK /********************/ Park = PARK_DEFAULTS;
@@ -337,7 +338,7 @@ void VariableClear(void)
  */
 void MotorModeSel(void)
 {
-	// ParamIdent_MonitorModeExit();
+	ParamIdent_MonitorModeExit();
 
 	// 控制入口：根据 CtrlMode 执行对应闭环，再统一进入 SVPWM 输出
 	switch (Motor.CtrlMode)
@@ -468,11 +469,11 @@ void MotorModeSel(void)
 		break;
 	}
 
-	// case PARAM_IDENT:
-	// {
-	// 	// ParamIdent_Run20kHz();
-	// 	break;
-	// }
+	case PARAM_IDENT:
+	{
+		ParamIdent_Run20kHz();
+		break;
+	}
 
 	default:
 	{

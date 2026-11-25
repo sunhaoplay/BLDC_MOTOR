@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s 			page 1
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -43,35 +43,36 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s 			page 1
   13:App/htmi_app.c **** #include "motor_ctrl.h"
   14:App/htmi_app.c **** #include "key_drv.h"
   15:App/htmi_app.c **** #include "sen.h"
-  16:App/htmi_app.c **** /**
-  17:App/htmi_app.c ****  * @brief 按控制模式把电位器采样值映射为对应给定量。
-  18:App/htmi_app.c ****  *
-  19:App/htmi_app.c ****  * 速度模式写 Para.SpeedRef，电流/IF 模式写 Para.CurRef，位置模式写
-  20:App/htmi_app.c ****  * Para.PosRef；Limit_Sat() 对给定范围限幅，防止电位器端点产生越界指令。
-  21:App/htmi_app.c ****  */
-  22:App/htmi_app.c **** void VrTask(void)
-  23:App/htmi_app.c **** {
-  29              		.loc 1 23 1 view -0
+  16:App/htmi_app.c **** #include "param_ident.h"
+  17:App/htmi_app.c **** /**
+  18:App/htmi_app.c ****  * @brief 按控制模式把电位器采样值映射为对应给定量。
+  19:App/htmi_app.c ****  *
+  20:App/htmi_app.c ****  * 速度模式写 Para.SpeedRef，电流/IF 模式写 Para.CurRef，位置模式写
+  21:App/htmi_app.c ****  * Para.PosRef；Limit_Sat() 对给定范围限幅，防止电位器端点产生越界指令。
+  22:App/htmi_app.c ****  */
+  23:App/htmi_app.c **** void VrTask(void)
+  24:App/htmi_app.c **** {
+  29              		.loc 1 24 1 view -0
   30              		.cfi_startproc
   31              		@ args = 0, pretend = 0, frame = 0
   32              		@ frame_needed = 0, uses_anonymous_args = 0
   33 0000 10B5     		push	{r4, lr}
   34              	.LCFI0:
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s 			page 2
+
+
   35              		.cfi_def_cfa_offset 8
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s 			page 2
-
-
   36              		.cfi_offset 4, -8
   37              		.cfi_offset 14, -4
-  24:App/htmi_app.c **** 	static float AdcVr = 0;
-  38              		.loc 1 24 2 view .LVU1
-  25:App/htmi_app.c **** 
-  26:App/htmi_app.c **** 	switch (Motor.CtrlMode)
-  39              		.loc 1 26 2 view .LVU2
-  40              		.loc 1 26 15 is_stmt 0 view .LVU3
+  25:App/htmi_app.c **** 	static float AdcVr = 0;
+  38              		.loc 1 25 2 view .LVU1
+  26:App/htmi_app.c **** 
+  27:App/htmi_app.c **** 	switch (Motor.CtrlMode)
+  39              		.loc 1 27 2 view .LVU2
+  40              		.loc 1 27 15 is_stmt 0 view .LVU3
   41 0002 504B     		ldr	r3, .L13
   42 0004 1B7C     		ldrb	r3, [r3, #16]	@ zero_extendqisi2
-  43              		.loc 1 26 2 view .LVU4
+  43              		.loc 1 27 2 view .LVU4
   44 0006 092B     		cmp	r3, #9
   45 0008 00F29A80 		bhi	.L1
   46 000c DFE803F0 		tbb	[pc, r3]
@@ -88,244 +89,244 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s 			page 1
   57 0019 7C       		.byte	(.L3-.L4)/2
   58              		.p2align 1
   59              	.L10:
-  27:App/htmi_app.c **** 	{
-  28:App/htmi_app.c **** 	case STOP:
-  29:App/htmi_app.c **** 	{
-  30:App/htmi_app.c **** 		Para.SpeedRef = 0;
-  60              		.loc 1 30 3 is_stmt 1 view .LVU5
-  61              		.loc 1 30 17 is_stmt 0 view .LVU6
+  28:App/htmi_app.c **** 	{
+  29:App/htmi_app.c **** 	case STOP:
+  30:App/htmi_app.c **** 	{
+  31:App/htmi_app.c **** 		Para.SpeedRef = 0;
+  60              		.loc 1 31 3 is_stmt 1 view .LVU5
+  61              		.loc 1 31 17 is_stmt 0 view .LVU6
   62 001a 4B4B     		ldr	r3, .L13+4
   63 001c 0022     		movs	r2, #0
   64 001e 1A82     		strh	r2, [r3, #16]	@ movhi
-  31:App/htmi_app.c **** 		Para.CurRef = 0;
-  65              		.loc 1 31 3 is_stmt 1 view .LVU7
-  66              		.loc 1 31 15 is_stmt 0 view .LVU8
+  32:App/htmi_app.c **** 		Para.CurRef = 0;
+  65              		.loc 1 32 3 is_stmt 1 view .LVU7
+  66              		.loc 1 32 15 is_stmt 0 view .LVU8
   67 0020 0022     		movs	r2, #0
   68 0022 5A61     		str	r2, [r3, #20]	@ float
-  32:App/htmi_app.c **** 		break;
-  69              		.loc 1 32 3 is_stmt 1 view .LVU9
+  33:App/htmi_app.c **** 		break;
+  69              		.loc 1 33 3 is_stmt 1 view .LVU9
   70 0024 8CE0     		b	.L1
   71              	.L9:
-  33:App/htmi_app.c **** 	}
-  34:App/htmi_app.c **** 	case SPEED_LOOP:
-  35:App/htmi_app.c **** 	{
-  36:App/htmi_app.c **** 		AdcVr = (float)AdcPara.Vr;
-  72              		.loc 1 36 3 view .LVU10
-  73              		.loc 1 36 11 is_stmt 0 view .LVU11
+  34:App/htmi_app.c **** 	}
+  35:App/htmi_app.c **** 	case SPEED_LOOP:
+  36:App/htmi_app.c **** 	{
+  37:App/htmi_app.c **** 		AdcVr = (float)AdcPara.Vr;
+  72              		.loc 1 37 3 view .LVU10
+  73              		.loc 1 37 11 is_stmt 0 view .LVU11
   74 0026 494B     		ldr	r3, .L13+8
   75 0028 93ED010A 		vldr.32	s0, [r3, #4]
-  76              		.loc 1 36 9 view .LVU12
+  76              		.loc 1 37 9 view .LVU12
   77 002c 484B     		ldr	r3, .L13+12
   78 002e 83ED000A 		vstr.32	s0, [r3]
-  37:App/htmi_app.c **** 		Para.SpeedRef = (int16_t)AdcVr;
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s 			page 3
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s 			page 3
 
 
-  79              		.loc 1 37 3 is_stmt 1 view .LVU13
-  80              		.loc 1 37 19 is_stmt 0 view .LVU14
+  38:App/htmi_app.c **** 		Para.SpeedRef = (int16_t)AdcVr;
+  79              		.loc 1 38 3 is_stmt 1 view .LVU13
+  80              		.loc 1 38 19 is_stmt 0 view .LVU14
   81 0032 BDEEC00A 		vcvt.s32.f32	s0, s0
   82 0036 10EE103A 		vmov	r3, s0	@ int
   83 003a 1BB2     		sxth	r3, r3
-  84              		.loc 1 37 17 view .LVU15
+  84              		.loc 1 38 17 view .LVU15
   85 003c 424C     		ldr	r4, .L13+4
   86 003e 2382     		strh	r3, [r4, #16]	@ movhi
-  38:App/htmi_app.c **** 		Para.SpeedRef = Limit_Sat(Para.SpeedRef, SPD_REF_MAX, 100.0f);
-  87              		.loc 1 38 3 is_stmt 1 view .LVU16
-  88              		.loc 1 38 19 is_stmt 0 view .LVU17
+  39:App/htmi_app.c **** 		Para.SpeedRef = Limit_Sat(Para.SpeedRef, SPD_REF_MAX, 100.0f);
+  87              		.loc 1 39 3 is_stmt 1 view .LVU16
+  88              		.loc 1 39 19 is_stmt 0 view .LVU17
   89 0040 9FED441A 		vldr.32	s2, .L13+16
   90 0044 DFED440A 		vldr.32	s1, .L13+20
   91 0048 07EE903A 		vmov	s15, r3	@ int
   92 004c B8EEE70A 		vcvt.f32.s32	s0, s15
   93 0050 FFF7FEFF 		bl	Limit_Sat
   94              	.LVL0:
-  95              		.loc 1 38 17 discriminator 1 view .LVU18
+  95              		.loc 1 39 17 discriminator 1 view .LVU18
   96 0054 BDEEC00A 		vcvt.s32.f32	s0, s0
   97 0058 10EE103A 		vmov	r3, s0	@ int
   98 005c 2382     		strh	r3, [r4, #16]	@ movhi
-  39:App/htmi_app.c **** 		break;
-  99              		.loc 1 39 3 is_stmt 1 view .LVU19
+  40:App/htmi_app.c **** 		break;
+  99              		.loc 1 40 3 is_stmt 1 view .LVU19
  100 005e 6FE0     		b	.L1
  101              	.L8:
-  40:App/htmi_app.c **** 	}
-  41:App/htmi_app.c **** 	case CUR_LOOP:
-  42:App/htmi_app.c **** 	{
-  43:App/htmi_app.c **** 		AdcVr = (float)(AdcPara.Vr / 2000.0f);
- 102              		.loc 1 43 3 view .LVU20
- 103              		.loc 1 43 26 is_stmt 0 view .LVU21
+  41:App/htmi_app.c **** 	}
+  42:App/htmi_app.c **** 	case CUR_LOOP:
+  43:App/htmi_app.c **** 	{
+  44:App/htmi_app.c **** 		AdcVr = (float)(AdcPara.Vr / 2000.0f);
+ 102              		.loc 1 44 3 view .LVU20
+ 103              		.loc 1 44 26 is_stmt 0 view .LVU21
  104 0060 3A4B     		ldr	r3, .L13+8
  105 0062 93ED017A 		vldr.32	s14, [r3, #4]
- 106              		.loc 1 43 11 view .LVU22
+ 106              		.loc 1 44 11 view .LVU22
  107 0066 DFED3D7A 		vldr.32	s15, .L13+24
  108 006a 87EE270A 		vdiv.f32	s0, s14, s15
- 109              		.loc 1 43 9 view .LVU23
+ 109              		.loc 1 44 9 view .LVU23
  110 006e 384B     		ldr	r3, .L13+12
  111 0070 83ED000A 		vstr.32	s0, [r3]
-  44:App/htmi_app.c **** 		Para.CurRef = (float)AdcVr;
- 112              		.loc 1 44 3 is_stmt 1 view .LVU24
- 113              		.loc 1 44 15 is_stmt 0 view .LVU25
+  45:App/htmi_app.c **** 		Para.CurRef = (float)AdcVr;
+ 112              		.loc 1 45 3 is_stmt 1 view .LVU24
+ 113              		.loc 1 45 15 is_stmt 0 view .LVU25
  114 0074 344C     		ldr	r4, .L13+4
  115 0076 84ED050A 		vstr.32	s0, [r4, #20]
-  45:App/htmi_app.c **** 		Para.CurRef = Limit_Sat(Para.CurRef, 1.0f, 0.05f);
- 116              		.loc 1 45 3 is_stmt 1 view .LVU26
- 117              		.loc 1 45 17 is_stmt 0 view .LVU27
+  46:App/htmi_app.c **** 		Para.CurRef = Limit_Sat(Para.CurRef, 1.0f, 0.05f);
+ 116              		.loc 1 46 3 is_stmt 1 view .LVU26
+ 117              		.loc 1 46 17 is_stmt 0 view .LVU27
  118 007a 9FED391A 		vldr.32	s2, .L13+28
  119 007e F7EE000A 		vmov.f32	s1, #1.0e+0
  120 0082 FFF7FEFF 		bl	Limit_Sat
  121              	.LVL1:
- 122              		.loc 1 45 15 discriminator 1 view .LVU28
+ 122              		.loc 1 46 15 discriminator 1 view .LVU28
  123 0086 84ED050A 		vstr.32	s0, [r4, #20]
-  46:App/htmi_app.c **** 		break;
- 124              		.loc 1 46 3 is_stmt 1 view .LVU29
+  47:App/htmi_app.c **** 		break;
+ 124              		.loc 1 47 3 is_stmt 1 view .LVU29
  125 008a 59E0     		b	.L1
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s 			page 4
+
+
  126              	.L7:
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s 			page 4
-
-
-  47:App/htmi_app.c **** 	}
-  48:App/htmi_app.c **** 	case POS_LOOP:
-  49:App/htmi_app.c **** 	{
-  50:App/htmi_app.c **** 		Para.PosRef = (int32_t)AdcPara.Vr;
- 127              		.loc 1 50 3 view .LVU30
- 128              		.loc 1 50 33 is_stmt 0 view .LVU31
+  48:App/htmi_app.c **** 	}
+  49:App/htmi_app.c **** 	case POS_LOOP:
+  50:App/htmi_app.c **** 	{
+  51:App/htmi_app.c **** 		Para.PosRef = (int32_t)AdcPara.Vr;
+ 127              		.loc 1 51 3 view .LVU30
+ 128              		.loc 1 51 33 is_stmt 0 view .LVU31
  129 008c 2F4B     		ldr	r3, .L13+8
  130 008e D3ED017A 		vldr.32	s15, [r3, #4]
- 131              		.loc 1 50 17 view .LVU32
+ 131              		.loc 1 51 17 view .LVU32
  132 0092 FDEEE77A 		vcvt.s32.f32	s15, s15
- 133              		.loc 1 50 15 view .LVU33
+ 133              		.loc 1 51 15 view .LVU33
  134 0096 2C4B     		ldr	r3, .L13+4
  135 0098 C3ED067A 		vstr.32	s15, [r3, #24]	@ int
-  51:App/htmi_app.c **** 		break;
- 136              		.loc 1 51 3 is_stmt 1 view .LVU34
+  52:App/htmi_app.c **** 		break;
+ 136              		.loc 1 52 3 is_stmt 1 view .LVU34
  137 009c 50E0     		b	.L1
  138              	.L6:
-  52:App/htmi_app.c **** 	}
-  53:App/htmi_app.c **** 	case IF_CTRL:
-  54:App/htmi_app.c **** 	{
-  55:App/htmi_app.c **** 		AdcVr = (float)(AdcPara.Vr / 1000.0f);
- 139              		.loc 1 55 3 view .LVU35
- 140              		.loc 1 55 26 is_stmt 0 view .LVU36
+  53:App/htmi_app.c **** 	}
+  54:App/htmi_app.c **** 	case IF_CTRL:
+  55:App/htmi_app.c **** 	{
+  56:App/htmi_app.c **** 		AdcVr = (float)(AdcPara.Vr / 1000.0f);
+ 139              		.loc 1 56 3 view .LVU35
+ 140              		.loc 1 56 26 is_stmt 0 view .LVU36
  141 009e 2B4B     		ldr	r3, .L13+8
  142 00a0 93ED017A 		vldr.32	s14, [r3, #4]
- 143              		.loc 1 55 11 view .LVU37
+ 143              		.loc 1 56 11 view .LVU37
  144 00a4 DFED2F7A 		vldr.32	s15, .L13+32
  145 00a8 87EE270A 		vdiv.f32	s0, s14, s15
- 146              		.loc 1 55 9 view .LVU38
+ 146              		.loc 1 56 9 view .LVU38
  147 00ac 284B     		ldr	r3, .L13+12
  148 00ae 83ED000A 		vstr.32	s0, [r3]
-  56:App/htmi_app.c **** 		Para.CurRef = (float)AdcVr;
- 149              		.loc 1 56 3 is_stmt 1 view .LVU39
- 150              		.loc 1 56 15 is_stmt 0 view .LVU40
+  57:App/htmi_app.c **** 		Para.CurRef = (float)AdcVr;
+ 149              		.loc 1 57 3 is_stmt 1 view .LVU39
+ 150              		.loc 1 57 15 is_stmt 0 view .LVU40
  151 00b2 254C     		ldr	r4, .L13+4
  152 00b4 84ED050A 		vstr.32	s0, [r4, #20]
-  57:App/htmi_app.c **** 		Para.CurRef = Limit_Sat(Para.CurRef, 4.0f, 0.05f);
- 153              		.loc 1 57 3 is_stmt 1 view .LVU41
- 154              		.loc 1 57 17 is_stmt 0 view .LVU42
+  58:App/htmi_app.c **** 		Para.CurRef = Limit_Sat(Para.CurRef, 4.0f, 0.05f);
+ 153              		.loc 1 58 3 is_stmt 1 view .LVU41
+ 154              		.loc 1 58 17 is_stmt 0 view .LVU42
  155 00b8 9FED291A 		vldr.32	s2, .L13+28
  156 00bc F1EE000A 		vmov.f32	s1, #4.0e+0
  157 00c0 FFF7FEFF 		bl	Limit_Sat
  158              	.LVL2:
- 159              		.loc 1 57 15 discriminator 1 view .LVU43
+ 159              		.loc 1 58 15 discriminator 1 view .LVU43
  160 00c4 84ED050A 		vstr.32	s0, [r4, #20]
-  58:App/htmi_app.c **** 		break;
- 161              		.loc 1 58 3 is_stmt 1 view .LVU44
+  59:App/htmi_app.c **** 		break;
+ 161              		.loc 1 59 3 is_stmt 1 view .LVU44
  162 00c8 3AE0     		b	.L1
  163              	.L5:
-  59:App/htmi_app.c **** 	}
-  60:App/htmi_app.c **** 
-  61:App/htmi_app.c **** 	case HFI_CTRL:
-  62:App/htmi_app.c **** 	{
-  63:App/htmi_app.c **** 		AdcVr = (float)(AdcPara.Vr / 10.0f);
- 164              		.loc 1 63 3 view .LVU45
- 165              		.loc 1 63 26 is_stmt 0 view .LVU46
+  60:App/htmi_app.c **** 	}
+  61:App/htmi_app.c **** 
+  62:App/htmi_app.c **** 	case HFI_CTRL:
+  63:App/htmi_app.c **** 	{
+  64:App/htmi_app.c **** 		AdcVr = (float)(AdcPara.Vr / 10.0f);
+ 164              		.loc 1 64 3 view .LVU45
+ 165              		.loc 1 64 26 is_stmt 0 view .LVU46
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s 			page 5
+
+
  166 00ca 204B     		ldr	r3, .L13+8
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s 			page 5
-
-
  167 00cc D3ED017A 		vldr.32	s15, [r3, #4]
- 168              		.loc 1 63 11 view .LVU47
+ 168              		.loc 1 64 11 view .LVU47
  169 00d0 B2EE041A 		vmov.f32	s2, #1.0e+1
  170 00d4 87EE810A 		vdiv.f32	s0, s15, s2
- 171              		.loc 1 63 9 view .LVU48
+ 171              		.loc 1 64 9 view .LVU48
  172 00d8 1D4B     		ldr	r3, .L13+12
  173 00da 83ED000A 		vstr.32	s0, [r3]
-  64:App/htmi_app.c **** 		Para.SpeedRef = (int16_t)AdcVr;
- 174              		.loc 1 64 3 is_stmt 1 view .LVU49
- 175              		.loc 1 64 19 is_stmt 0 view .LVU50
+  65:App/htmi_app.c **** 		Para.SpeedRef = (int16_t)AdcVr;
+ 174              		.loc 1 65 3 is_stmt 1 view .LVU49
+ 175              		.loc 1 65 19 is_stmt 0 view .LVU50
  176 00de BDEEC00A 		vcvt.s32.f32	s0, s0
  177 00e2 10EE103A 		vmov	r3, s0	@ int
  178 00e6 1BB2     		sxth	r3, r3
- 179              		.loc 1 64 17 view .LVU51
+ 179              		.loc 1 65 17 view .LVU51
  180 00e8 174C     		ldr	r4, .L13+4
  181 00ea 2382     		strh	r3, [r4, #16]	@ movhi
-  65:App/htmi_app.c **** 		Para.SpeedRef = Limit_Sat(Para.SpeedRef, HFI_SPD_REF_MAX, 10.0f);
- 182              		.loc 1 65 3 is_stmt 1 view .LVU52
- 183              		.loc 1 65 19 is_stmt 0 view .LVU53
+  66:App/htmi_app.c **** 		Para.SpeedRef = Limit_Sat(Para.SpeedRef, HFI_SPD_REF_MAX, 10.0f);
+ 182              		.loc 1 66 3 is_stmt 1 view .LVU52
+ 183              		.loc 1 66 19 is_stmt 0 view .LVU53
  184 00ec DFED1E0A 		vldr.32	s1, .L13+36
  185 00f0 07EE903A 		vmov	s15, r3	@ int
  186 00f4 B8EEE70A 		vcvt.f32.s32	s0, s15
  187 00f8 FFF7FEFF 		bl	Limit_Sat
  188              	.LVL3:
- 189              		.loc 1 65 17 discriminator 1 view .LVU54
+ 189              		.loc 1 66 17 discriminator 1 view .LVU54
  190 00fc BDEEC00A 		vcvt.s32.f32	s0, s0
  191 0100 10EE103A 		vmov	r3, s0	@ int
  192 0104 2382     		strh	r3, [r4, #16]	@ movhi
-  66:App/htmi_app.c **** 		break;
- 193              		.loc 1 66 3 is_stmt 1 view .LVU55
+  67:App/htmi_app.c **** 		break;
+ 193              		.loc 1 67 3 is_stmt 1 view .LVU55
  194 0106 1BE0     		b	.L1
  195              	.L3:
-  67:App/htmi_app.c **** 	}
-  68:App/htmi_app.c **** 
-  69:App/htmi_app.c **** 	case HFI_SMO:
-  70:App/htmi_app.c **** 	case HFI_FLUX:
-  71:App/htmi_app.c **** 	case IF_SMO:
-  72:App/htmi_app.c **** 	case IF_FLUX:
-  73:App/htmi_app.c **** 	{
-  74:App/htmi_app.c **** 		AdcVr = (float)AdcPara.Vr;
- 196              		.loc 1 74 3 view .LVU56
- 197              		.loc 1 74 11 is_stmt 0 view .LVU57
+  68:App/htmi_app.c **** 	}
+  69:App/htmi_app.c **** 
+  70:App/htmi_app.c **** 	case HFI_SMO:
+  71:App/htmi_app.c **** 	case HFI_FLUX:
+  72:App/htmi_app.c **** 	case IF_SMO:
+  73:App/htmi_app.c **** 	case IF_FLUX:
+  74:App/htmi_app.c **** 	{
+  75:App/htmi_app.c **** 		AdcVr = (float)AdcPara.Vr;
+ 196              		.loc 1 75 3 view .LVU56
+ 197              		.loc 1 75 11 is_stmt 0 view .LVU57
  198 0108 104B     		ldr	r3, .L13+8
  199 010a 93ED010A 		vldr.32	s0, [r3, #4]
- 200              		.loc 1 74 9 view .LVU58
+ 200              		.loc 1 75 9 view .LVU58
  201 010e 104B     		ldr	r3, .L13+12
  202 0110 83ED000A 		vstr.32	s0, [r3]
-  75:App/htmi_app.c **** 		Para.SpeedRef = (int16_t)AdcVr;
- 203              		.loc 1 75 3 is_stmt 1 view .LVU59
- 204              		.loc 1 75 19 is_stmt 0 view .LVU60
+  76:App/htmi_app.c **** 		Para.SpeedRef = (int16_t)AdcVr;
+ 203              		.loc 1 76 3 is_stmt 1 view .LVU59
+ 204              		.loc 1 76 19 is_stmt 0 view .LVU60
  205 0114 BDEEC00A 		vcvt.s32.f32	s0, s0
  206 0118 10EE103A 		vmov	r3, s0	@ int
  207 011c 1BB2     		sxth	r3, r3
- 208              		.loc 1 75 17 view .LVU61
+ 208              		.loc 1 76 17 view .LVU61
  209 011e 0A4C     		ldr	r4, .L13+4
  210 0120 2382     		strh	r3, [r4, #16]	@ movhi
-  76:App/htmi_app.c **** 		Para.SpeedRef = Limit_Sat(Para.SpeedRef, SPD_REF_MAX, 500.0f);
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s 			page 6
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s 			page 6
 
 
- 211              		.loc 1 76 3 is_stmt 1 view .LVU62
- 212              		.loc 1 76 19 is_stmt 0 view .LVU63
+  77:App/htmi_app.c **** 		Para.SpeedRef = Limit_Sat(Para.SpeedRef, SPD_REF_MAX, 500.0f);
+ 211              		.loc 1 77 3 is_stmt 1 view .LVU62
+ 212              		.loc 1 77 19 is_stmt 0 view .LVU63
  213 0122 9FED121A 		vldr.32	s2, .L13+40
  214 0126 DFED0C0A 		vldr.32	s1, .L13+20
  215 012a 07EE903A 		vmov	s15, r3	@ int
  216 012e B8EEE70A 		vcvt.f32.s32	s0, s15
  217 0132 FFF7FEFF 		bl	Limit_Sat
  218              	.LVL4:
- 219              		.loc 1 76 17 discriminator 1 view .LVU64
+ 219              		.loc 1 77 17 discriminator 1 view .LVU64
  220 0136 BDEEC00A 		vcvt.s32.f32	s0, s0
  221 013a 10EE103A 		vmov	r3, s0	@ int
  222 013e 2382     		strh	r3, [r4, #16]	@ movhi
-  77:App/htmi_app.c **** 		break;
- 223              		.loc 1 77 3 is_stmt 1 view .LVU65
+  78:App/htmi_app.c **** 		break;
+ 223              		.loc 1 78 3 is_stmt 1 view .LVU65
  224              	.L1:
-  78:App/htmi_app.c **** 	}
-  79:App/htmi_app.c **** 	case TO_ZERO:
-  80:App/htmi_app.c **** 	{
-  81:App/htmi_app.c **** 		break;
-  82:App/htmi_app.c **** 	}
-  83:App/htmi_app.c **** 	default:
-  84:App/htmi_app.c **** 		break;
-  85:App/htmi_app.c **** 	}
-  86:App/htmi_app.c **** }
- 225              		.loc 1 86 1 is_stmt 0 view .LVU66
+  79:App/htmi_app.c **** 	}
+  80:App/htmi_app.c **** 	case TO_ZERO:
+  81:App/htmi_app.c **** 	{
+  82:App/htmi_app.c **** 		break;
+  83:App/htmi_app.c **** 	}
+  84:App/htmi_app.c **** 	default:
+  85:App/htmi_app.c **** 		break;
+  86:App/htmi_app.c **** 	}
+  87:App/htmi_app.c **** }
+ 225              		.loc 1 87 1 is_stmt 0 view .LVU66
  226 0140 10BD     		pop	{r4, pc}
  227              	.L14:
  228 0142 00BF     		.align	2
@@ -351,19 +352,19 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s 			page 1
  249              		.thumb_func
  251              	HmiTask:
  252              	.LFB273:
-  87:App/htmi_app.c **** 
-  88:App/htmi_app.c **** /**
-  89:App/htmi_app.c ****  * @brief 把短按、双击和长按事件映射为启动、停机、调零和控制模式切换�
-  90:App/htmi_app.c ****  *
-  91:App/htmi_app.c ****  * 按键 1/2 选择控制模式，按键 3 提供停机、IF+磁链和调零功能，按键 4 长�
-  92:App/htmi_app.c ****  * 关闭 PWR 保持信号。位置模式使用有感速度 PI 参数，其余模式使用无感参
-  93:App/htmi_app.c ****  */
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s 			page 7
+  88:App/htmi_app.c **** 
+  89:App/htmi_app.c **** /**
+  90:App/htmi_app.c ****  * @brief 把短按、双击和长按事件映射为启动、停机、调零和控制模式切换�
+  91:App/htmi_app.c ****  *
+  92:App/htmi_app.c ****  * 按键 1/2 选择控制模式，按键 3 提供停机、IF+磁链和调零功能，按键 4 长�
+  93:App/htmi_app.c ****  * 关闭 PWR 保持信号。位置模式使用有感速度 PI 参数，其余模式使用无感参
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s 			page 7
 
 
-  94:App/htmi_app.c **** void HmiTask(void)
-  95:App/htmi_app.c **** {
- 253              		.loc 1 95 1 is_stmt 1 view -0
+  94:App/htmi_app.c ****  */
+  95:App/htmi_app.c **** void HmiTask(void)
+  96:App/htmi_app.c **** {
+ 253              		.loc 1 96 1 is_stmt 1 view -0
  254              		.cfi_startproc
  255              		@ args = 0, pretend = 0, frame = 0
  256              		@ frame_needed = 0, uses_anonymous_args = 0
@@ -372,449 +373,446 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s 			page 1
  259              		.cfi_def_cfa_offset 8
  260              		.cfi_offset 4, -8
  261              		.cfi_offset 14, -4
-  96:App/htmi_app.c **** 	uint8_t keyVal;
- 262              		.loc 1 96 2 view .LVU68
-  97:App/htmi_app.c **** 
-  98:App/htmi_app.c **** 	keyVal = GetKeyVal();
- 263              		.loc 1 98 2 view .LVU69
- 264              		.loc 1 98 11 is_stmt 0 view .LVU70
+  97:App/htmi_app.c **** 	uint8_t keyVal;
+ 262              		.loc 1 97 2 view .LVU68
+  98:App/htmi_app.c **** 
+  99:App/htmi_app.c **** 	keyVal = GetKeyVal();
+ 263              		.loc 1 99 2 view .LVU69
+ 264              		.loc 1 99 11 is_stmt 0 view .LVU70
  265 0002 FFF7FEFF 		bl	GetKeyVal
  266              	.LVL5:
-  99:App/htmi_app.c **** 
- 100:App/htmi_app.c **** 	switch (keyVal)
- 267              		.loc 1 100 2 is_stmt 1 view .LVU71
+ 100:App/htmi_app.c **** 
+ 101:App/htmi_app.c **** 	switch (keyVal)
+ 267              		.loc 1 101 2 is_stmt 1 view .LVU71
  268 0006 8428     		cmp	r0, #132
- 269 0008 2BD8     		bhi	.L16
+ 269 0008 28D8     		bhi	.L16
  270 000a 5128     		cmp	r0, #81
  271 000c 1ED3     		bcc	.L33
  272 000e 5138     		subs	r0, r0, #81
  273              	.LVL6:
- 274              		.loc 1 100 2 is_stmt 0 view .LVU72
+ 274              		.loc 1 101 2 is_stmt 0 view .LVU72
  275 0010 3328     		cmp	r0, #51
- 276 0012 26D8     		bhi	.L16
+ 276 0012 23D8     		bhi	.L16
  277 0014 DFE800F0 		tbb	[pc, r0]
  278              	.L22:
- 279 0018 37       		.byte	(.L28-.L22)/2
- 280 0019 49       		.byte	(.L27-.L22)/2
- 281 001a 5B       		.byte	(.L26-.L22)/2
- 282 001b 25       		.byte	(.L16-.L22)/2
- 283 001c 25       		.byte	(.L16-.L22)/2
- 284 001d 25       		.byte	(.L16-.L22)/2
- 285 001e 25       		.byte	(.L16-.L22)/2
- 286 001f 25       		.byte	(.L16-.L22)/2
- 287 0020 25       		.byte	(.L16-.L22)/2
- 288 0021 25       		.byte	(.L16-.L22)/2
- 289 0022 25       		.byte	(.L16-.L22)/2
- 290 0023 25       		.byte	(.L16-.L22)/2
- 291 0024 25       		.byte	(.L16-.L22)/2
- 292 0025 25       		.byte	(.L16-.L22)/2
- 293 0026 25       		.byte	(.L16-.L22)/2
- 294 0027 25       		.byte	(.L16-.L22)/2
- 295 0028 25       		.byte	(.L16-.L22)/2
- 296 0029 25       		.byte	(.L16-.L22)/2
- 297 002a 25       		.byte	(.L16-.L22)/2
- 298 002b 25       		.byte	(.L16-.L22)/2
- 299 002c 25       		.byte	(.L16-.L22)/2
- 300 002d 25       		.byte	(.L16-.L22)/2
- 301 002e 25       		.byte	(.L16-.L22)/2
- 302 002f 25       		.byte	(.L16-.L22)/2
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s 			page 8
+ 279 0018 34       		.byte	(.L28-.L22)/2
+ 280 0019 46       		.byte	(.L27-.L22)/2
+ 281 001a 58       		.byte	(.L26-.L22)/2
+ 282 001b 22       		.byte	(.L16-.L22)/2
+ 283 001c 22       		.byte	(.L16-.L22)/2
+ 284 001d 22       		.byte	(.L16-.L22)/2
+ 285 001e 22       		.byte	(.L16-.L22)/2
+ 286 001f 22       		.byte	(.L16-.L22)/2
+ 287 0020 22       		.byte	(.L16-.L22)/2
+ 288 0021 22       		.byte	(.L16-.L22)/2
+ 289 0022 22       		.byte	(.L16-.L22)/2
+ 290 0023 22       		.byte	(.L16-.L22)/2
+ 291 0024 22       		.byte	(.L16-.L22)/2
+ 292 0025 22       		.byte	(.L16-.L22)/2
+ 293 0026 22       		.byte	(.L16-.L22)/2
+ 294 0027 22       		.byte	(.L16-.L22)/2
+ 295 0028 22       		.byte	(.L16-.L22)/2
+ 296 0029 22       		.byte	(.L16-.L22)/2
+ 297 002a 22       		.byte	(.L16-.L22)/2
+ 298 002b 22       		.byte	(.L16-.L22)/2
+ 299 002c 22       		.byte	(.L16-.L22)/2
+ 300 002d 22       		.byte	(.L16-.L22)/2
+ 301 002e 22       		.byte	(.L16-.L22)/2
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s 			page 8
 
 
- 303 0030 25       		.byte	(.L16-.L22)/2
- 304 0031 25       		.byte	(.L16-.L22)/2
- 305 0032 25       		.byte	(.L16-.L22)/2
- 306 0033 25       		.byte	(.L16-.L22)/2
- 307 0034 25       		.byte	(.L16-.L22)/2
- 308 0035 25       		.byte	(.L16-.L22)/2
- 309 0036 25       		.byte	(.L16-.L22)/2
- 310 0037 25       		.byte	(.L16-.L22)/2
- 311 0038 25       		.byte	(.L16-.L22)/2
- 312 0039 25       		.byte	(.L16-.L22)/2
- 313 003a 25       		.byte	(.L16-.L22)/2
- 314 003b 25       		.byte	(.L16-.L22)/2
- 315 003c 25       		.byte	(.L16-.L22)/2
- 316 003d 25       		.byte	(.L16-.L22)/2
- 317 003e 25       		.byte	(.L16-.L22)/2
- 318 003f 25       		.byte	(.L16-.L22)/2
- 319 0040 25       		.byte	(.L16-.L22)/2
- 320 0041 25       		.byte	(.L16-.L22)/2
- 321 0042 25       		.byte	(.L16-.L22)/2
- 322 0043 25       		.byte	(.L16-.L22)/2
- 323 0044 25       		.byte	(.L16-.L22)/2
- 324 0045 25       		.byte	(.L16-.L22)/2
- 325 0046 25       		.byte	(.L16-.L22)/2
- 326 0047 25       		.byte	(.L16-.L22)/2
- 327 0048 3D       		.byte	(.L25-.L22)/2
- 328 0049 4F       		.byte	(.L24-.L22)/2
- 329 004a 61       		.byte	(.L23-.L22)/2
- 330 004b 30       		.byte	(.L21-.L22)/2
+ 302 002f 22       		.byte	(.L16-.L22)/2
+ 303 0030 22       		.byte	(.L16-.L22)/2
+ 304 0031 22       		.byte	(.L16-.L22)/2
+ 305 0032 22       		.byte	(.L16-.L22)/2
+ 306 0033 22       		.byte	(.L16-.L22)/2
+ 307 0034 22       		.byte	(.L16-.L22)/2
+ 308 0035 22       		.byte	(.L16-.L22)/2
+ 309 0036 22       		.byte	(.L16-.L22)/2
+ 310 0037 22       		.byte	(.L16-.L22)/2
+ 311 0038 22       		.byte	(.L16-.L22)/2
+ 312 0039 22       		.byte	(.L16-.L22)/2
+ 313 003a 22       		.byte	(.L16-.L22)/2
+ 314 003b 22       		.byte	(.L16-.L22)/2
+ 315 003c 22       		.byte	(.L16-.L22)/2
+ 316 003d 22       		.byte	(.L16-.L22)/2
+ 317 003e 22       		.byte	(.L16-.L22)/2
+ 318 003f 22       		.byte	(.L16-.L22)/2
+ 319 0040 22       		.byte	(.L16-.L22)/2
+ 320 0041 22       		.byte	(.L16-.L22)/2
+ 321 0042 22       		.byte	(.L16-.L22)/2
+ 322 0043 22       		.byte	(.L16-.L22)/2
+ 323 0044 22       		.byte	(.L16-.L22)/2
+ 324 0045 22       		.byte	(.L16-.L22)/2
+ 325 0046 22       		.byte	(.L16-.L22)/2
+ 326 0047 22       		.byte	(.L16-.L22)/2
+ 327 0048 3A       		.byte	(.L25-.L22)/2
+ 328 0049 4C       		.byte	(.L24-.L22)/2
+ 329 004a 5E       		.byte	(.L23-.L22)/2
+ 330 004b 2D       		.byte	(.L21-.L22)/2
  331              	.LVL7:
  332              		.p2align 1
  333              	.L33:
- 334              		.loc 1 100 2 view .LVU73
+ 334              		.loc 1 101 2 view .LVU73
  335 004c 0228     		cmp	r0, #2
- 336 004e 26D0     		beq	.L18
+ 336 004e 23D0     		beq	.L18
  337 0050 0328     		cmp	r0, #3
- 338 0052 36D0     		beq	.L19
+ 338 0052 33D0     		beq	.L19
  339 0054 0128     		cmp	r0, #1
- 340 0056 04D1     		bne	.L16
- 101:App/htmi_app.c **** 	{
- 102:App/htmi_app.c **** 	case KEY4_SHORT_PRESS:
- 103:App/htmi_app.c **** 	{
- 104:App/htmi_app.c **** 	}
- 105:App/htmi_app.c **** 	break;
- 106:App/htmi_app.c **** 
- 107:App/htmi_app.c **** 	case KEY4_DOUBLE_PRESS:
- 108:App/htmi_app.c **** 	{
- 109:App/htmi_app.c **** 		// ParamIdent_Start();
- 110:App/htmi_app.c **** 	}
- 111:App/htmi_app.c **** 	break;
- 112:App/htmi_app.c **** 
- 113:App/htmi_app.c **** 	case KEY4_LONG_PRESS:
- 114:App/htmi_app.c **** 	{
- 115:App/htmi_app.c **** 		HAL_GPIO_WritePin(PWR_GPIO_Port, PWR_Pin, GPIO_PIN_RESET); // 长按关机
- 116:App/htmi_app.c **** 	}
- 117:App/htmi_app.c **** 	break;
- 118:App/htmi_app.c **** 	case KEY1_SHORT_PRESS:
- 119:App/htmi_app.c **** 	{
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s 			page 9
+ 340 0056 01D1     		bne	.L16
+ 102:App/htmi_app.c **** 	{
+ 103:App/htmi_app.c **** 	case KEY4_SHORT_PRESS:
+ 104:App/htmi_app.c **** 	{
+ 105:App/htmi_app.c **** 	}
+ 106:App/htmi_app.c **** 	break;
+ 107:App/htmi_app.c **** 
+ 108:App/htmi_app.c **** 	case KEY4_DOUBLE_PRESS:
+ 109:App/htmi_app.c **** 	{
+ 110:App/htmi_app.c **** 		// ParamIdent_Start();
+ 111:App/htmi_app.c **** 	}
+ 112:App/htmi_app.c **** 	break;
+ 113:App/htmi_app.c **** 
+ 114:App/htmi_app.c **** 	case KEY4_LONG_PRESS:
+ 115:App/htmi_app.c **** 	{
+ 116:App/htmi_app.c **** 		HAL_GPIO_WritePin(PWR_GPIO_Port, PWR_Pin, GPIO_PIN_RESET); // 长按关机
+ 117:App/htmi_app.c **** 	}
+ 118:App/htmi_app.c **** 	break;
+ 119:App/htmi_app.c **** 	case KEY1_SHORT_PRESS:
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s 			page 9
 
 
- 120:App/htmi_app.c **** 		MotorRun();				  // 启动PWM
- 341              		.loc 1 120 3 is_stmt 1 view .LVU74
- 342 0058 FFF7FEFF 		bl	MotorRun
+ 120:App/htmi_app.c **** 	{
+ 121:App/htmi_app.c **** 		// MotorRun();				  // 启动PWM
+ 122:App/htmi_app.c **** 		// Motor.CtrlMode = HFI_SMO; // 低速HFI，高速滑膜
+ 123:App/htmi_app.c **** 		ParamIdent_Start();
+ 341              		.loc 1 123 3 is_stmt 1 view .LVU74
+ 342 0058 FFF7FEFF 		bl	ParamIdent_Start
  343              	.LVL8:
- 121:App/htmi_app.c **** 		Motor.CtrlMode = HFI_SMO; // 低速HFI，高速滑膜
- 344              		.loc 1 121 3 view .LVU75
- 345              		.loc 1 121 18 is_stmt 0 view .LVU76
- 346 005c 264B     		ldr	r3, .L35
- 347 005e 0622     		movs	r2, #6
- 348 0060 1A74     		strb	r2, [r3, #16]
- 122:App/htmi_app.c **** 	}
- 123:App/htmi_app.c **** 	break;
- 349              		.loc 1 123 2 is_stmt 1 view .LVU77
- 350              	.L16:
- 124:App/htmi_app.c **** 
- 125:App/htmi_app.c **** 	case KEY1_DOUBLE_PRESS:
- 126:App/htmi_app.c **** 	{
- 127:App/htmi_app.c **** 		MotorRun();				 // 启动PWM
- 128:App/htmi_app.c **** 		Motor.CtrlMode = IF_SMO; // 低速IF高速SMO
- 129:App/htmi_app.c **** 	}
- 130:App/htmi_app.c **** 	break;
- 131:App/htmi_app.c **** 
- 132:App/htmi_app.c **** 	case KEY1_LONG_PRESS:
- 133:App/htmi_app.c **** 	{
- 134:App/htmi_app.c **** 		MotorRun();				   // 启动PWM
- 135:App/htmi_app.c **** 		Motor.CtrlMode = HFI_FLUX; // 低速HFI，高速磁链
- 136:App/htmi_app.c **** 	}
- 137:App/htmi_app.c **** 	break;
- 138:App/htmi_app.c **** 
- 139:App/htmi_app.c **** 	case KEY2_SHORT_PRESS:
- 140:App/htmi_app.c **** 	{
- 141:App/htmi_app.c **** 		MotorRun();					 // 启动PWM
- 142:App/htmi_app.c **** 		Motor.CtrlMode = SPEED_LOOP; // 有感，速度&电流闭环
- 143:App/htmi_app.c **** 	}
- 144:App/htmi_app.c **** 	break;
- 145:App/htmi_app.c **** 
- 146:App/htmi_app.c **** 	case KEY2_DOUBLE_PRESS:
- 147:App/htmi_app.c **** 	{
- 148:App/htmi_app.c **** 		MotorRun();				   // 启动PWM
- 149:App/htmi_app.c **** 		Motor.CtrlMode = CUR_LOOP; // 有感，电流闭环
- 150:App/htmi_app.c **** 	}
- 151:App/htmi_app.c **** 	break;
- 152:App/htmi_app.c **** 
- 153:App/htmi_app.c **** 	case KEY2_LONG_PRESS:
- 154:App/htmi_app.c **** 	{
- 155:App/htmi_app.c **** 		MotorRun();				   // 启动PWM
- 156:App/htmi_app.c **** 		Motor.CtrlMode = POS_LOOP; // 有感，位置闭环
- 157:App/htmi_app.c **** 	}
- 158:App/htmi_app.c **** 	break;
- 159:App/htmi_app.c **** 
- 160:App/htmi_app.c **** 	case KEY3_SHORT_PRESS:
- 161:App/htmi_app.c **** 	{
- 162:App/htmi_app.c **** 		MotorStop();
- 163:App/htmi_app.c **** 		Motor.CtrlMode = STOP;
- 164:App/htmi_app.c **** 	}
- 165:App/htmi_app.c **** 	break;
- 166:App/htmi_app.c **** 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s 			page 10
+ 124:App/htmi_app.c **** 	}
+ 125:App/htmi_app.c **** 	break;
+ 344              		.loc 1 125 2 view .LVU75
+ 345              	.L16:
+ 126:App/htmi_app.c **** 
+ 127:App/htmi_app.c **** 	case KEY1_DOUBLE_PRESS:
+ 128:App/htmi_app.c **** 	{
+ 129:App/htmi_app.c **** 		MotorRun();				 // 启动PWM
+ 130:App/htmi_app.c **** 		Motor.CtrlMode = IF_SMO; // 低速IF高速SMO
+ 131:App/htmi_app.c **** 	}
+ 132:App/htmi_app.c **** 	break;
+ 133:App/htmi_app.c **** 
+ 134:App/htmi_app.c **** 	case KEY1_LONG_PRESS:
+ 135:App/htmi_app.c **** 	{
+ 136:App/htmi_app.c **** 		MotorRun();				   // 启动PWM
+ 137:App/htmi_app.c **** 		Motor.CtrlMode = HFI_FLUX; // 低速HFI，高速磁链
+ 138:App/htmi_app.c **** 	}
+ 139:App/htmi_app.c **** 	break;
+ 140:App/htmi_app.c **** 
+ 141:App/htmi_app.c **** 	case KEY2_SHORT_PRESS:
+ 142:App/htmi_app.c **** 	{
+ 143:App/htmi_app.c **** 		MotorRun();					 // 启动PWM
+ 144:App/htmi_app.c **** 		Motor.CtrlMode = SPEED_LOOP; // 有感，速度&电流闭环
+ 145:App/htmi_app.c **** 	}
+ 146:App/htmi_app.c **** 	break;
+ 147:App/htmi_app.c **** 
+ 148:App/htmi_app.c **** 	case KEY2_DOUBLE_PRESS:
+ 149:App/htmi_app.c **** 	{
+ 150:App/htmi_app.c **** 		MotorRun();				   // 启动PWM
+ 151:App/htmi_app.c **** 		Motor.CtrlMode = CUR_LOOP; // 有感，电流闭环
+ 152:App/htmi_app.c **** 	}
+ 153:App/htmi_app.c **** 	break;
+ 154:App/htmi_app.c **** 
+ 155:App/htmi_app.c **** 	case KEY2_LONG_PRESS:
+ 156:App/htmi_app.c **** 	{
+ 157:App/htmi_app.c **** 		MotorRun();				   // 启动PWM
+ 158:App/htmi_app.c **** 		Motor.CtrlMode = POS_LOOP; // 有感，位置闭环
+ 159:App/htmi_app.c **** 	}
+ 160:App/htmi_app.c **** 	break;
+ 161:App/htmi_app.c **** 
+ 162:App/htmi_app.c **** 	case KEY3_SHORT_PRESS:
+ 163:App/htmi_app.c **** 	{
+ 164:App/htmi_app.c **** 		MotorStop();
+ 165:App/htmi_app.c **** 		Motor.CtrlMode = STOP;
+ 166:App/htmi_app.c **** 	}
+ 167:App/htmi_app.c **** 	break;
+ 168:App/htmi_app.c **** 
+ 169:App/htmi_app.c **** 	case KEY3_DOUBLE_PRESS:
+ 170:App/htmi_app.c **** 	{
+ 171:App/htmi_app.c **** 		MotorRun();				  // 启动PWM
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s 			page 10
 
 
- 167:App/htmi_app.c **** 	case KEY3_DOUBLE_PRESS:
- 168:App/htmi_app.c **** 	{
- 169:App/htmi_app.c **** 		MotorRun();				  // 启动PWM
- 170:App/htmi_app.c **** 		Motor.CtrlMode = IF_FLUX; // 低速IF，高速FLUX
- 171:App/htmi_app.c **** 	}
- 172:App/htmi_app.c **** 	break;
- 173:App/htmi_app.c **** 
- 174:App/htmi_app.c **** 	case KEY3_LONG_PRESS:
- 175:App/htmi_app.c **** 	{
- 176:App/htmi_app.c **** 		Motor.CtrlMode = TO_ZERO;
- 177:App/htmi_app.c **** 		PostionToZeroDouble(); // 二次调零
- 178:App/htmi_app.c **** 		Motor.CtrlMode = STOP;
- 179:App/htmi_app.c **** 	}
- 180:App/htmi_app.c **** 	break;
- 181:App/htmi_app.c **** 
- 182:App/htmi_app.c **** 	default:
- 183:App/htmi_app.c **** 		break;
- 184:App/htmi_app.c **** 	}
- 185:App/htmi_app.c **** 
- 186:App/htmi_app.c **** 	if (Motor.CtrlMode == POS_LOOP)
- 351              		.loc 1 186 2 view .LVU78
- 352              		.loc 1 186 11 is_stmt 0 view .LVU79
- 353 0062 254B     		ldr	r3, .L35
- 354 0064 1B7C     		ldrb	r3, [r3, #16]	@ zero_extendqisi2
- 355              		.loc 1 186 5 view .LVU80
- 356 0066 032B     		cmp	r3, #3
- 357 0068 3FD0     		beq	.L34
- 187:App/htmi_app.c **** 	{
- 188:App/htmi_app.c **** 		pi_spd.Kp = Para.SpdSenKp;
- 189:App/htmi_app.c **** 		pi_spd.Ki = Para.SpdSenKi;
- 190:App/htmi_app.c **** 	}
- 191:App/htmi_app.c **** 	else
- 192:App/htmi_app.c **** 	{
- 193:App/htmi_app.c **** 		pi_spd.Kp = Para.SpdLessKp;
- 358              		.loc 1 193 3 is_stmt 1 view .LVU81
- 359              		.loc 1 193 19 is_stmt 0 view .LVU82
- 360 006a 244A     		ldr	r2, .L35+4
- 361 006c 916C     		ldr	r1, [r2, #72]	@ float
- 362              		.loc 1 193 13 view .LVU83
- 363 006e 244B     		ldr	r3, .L35+8
- 364 0070 1961     		str	r1, [r3, #16]	@ float
- 194:App/htmi_app.c **** 		pi_spd.Ki = Para.SpdLessKi;
- 365              		.loc 1 194 3 is_stmt 1 view .LVU84
- 366              		.loc 1 194 19 is_stmt 0 view .LVU85
- 367 0072 D26C     		ldr	r2, [r2, #76]	@ float
- 368              		.loc 1 194 13 view .LVU86
- 369 0074 5A61     		str	r2, [r3, #20]	@ float
- 370              	.L15:
- 195:App/htmi_app.c **** 	}
- 196:App/htmi_app.c **** }...
- 371              		.loc 1 196 1 view .LVU87
- 372 0076 10BD     		pop	{r4, pc}
- 373              	.LVL9:
- 374              	.L21:
- 115:App/htmi_app.c **** 		HAL_GPIO_WritePin(PWR_GPIO_Port, PWR_Pin, GPIO_PIN_RESET); // 长按关机
- 375              		.loc 1 115 3 is_stmt 1 view .LVU88
- 376 0078 0022     		movs	r2, #0
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s 			page 11
+ 172:App/htmi_app.c **** 		Motor.CtrlMode = IF_FLUX; // 低速IF，高速FLUX
+ 173:App/htmi_app.c **** 	}
+ 174:App/htmi_app.c **** 	break;
+ 175:App/htmi_app.c **** 
+ 176:App/htmi_app.c **** 	case KEY3_LONG_PRESS:
+ 177:App/htmi_app.c **** 	{
+ 178:App/htmi_app.c **** 		Motor.CtrlMode = TO_ZERO;
+ 179:App/htmi_app.c **** 		PostionToZeroDouble(); // 二次调零
+ 180:App/htmi_app.c **** 		Motor.CtrlMode = STOP;
+ 181:App/htmi_app.c **** 	}
+ 182:App/htmi_app.c **** 	break;
+ 183:App/htmi_app.c **** 
+ 184:App/htmi_app.c **** 	default:
+ 185:App/htmi_app.c **** 		break;
+ 186:App/htmi_app.c **** 	}
+ 187:App/htmi_app.c **** 
+ 188:App/htmi_app.c **** 	if (Motor.CtrlMode == POS_LOOP)
+ 346              		.loc 1 188 2 view .LVU76
+ 347              		.loc 1 188 11 is_stmt 0 view .LVU77
+ 348 005c 254B     		ldr	r3, .L35
+ 349 005e 1B7C     		ldrb	r3, [r3, #16]	@ zero_extendqisi2
+ 350              		.loc 1 188 5 view .LVU78
+ 351 0060 032B     		cmp	r3, #3
+ 352 0062 3FD0     		beq	.L34
+ 189:App/htmi_app.c **** 	{
+ 190:App/htmi_app.c **** 		pi_spd.Kp = Para.SpdSenKp;
+ 191:App/htmi_app.c **** 		pi_spd.Ki = Para.SpdSenKi;
+ 192:App/htmi_app.c **** 	}
+ 193:App/htmi_app.c **** 	else
+ 194:App/htmi_app.c **** 	{
+ 195:App/htmi_app.c **** 		pi_spd.Kp = Para.SpdLessKp;
+ 353              		.loc 1 195 3 is_stmt 1 view .LVU79
+ 354              		.loc 1 195 19 is_stmt 0 view .LVU80
+ 355 0064 244A     		ldr	r2, .L35+4
+ 356 0066 916C     		ldr	r1, [r2, #72]	@ float
+ 357              		.loc 1 195 13 view .LVU81
+ 358 0068 244B     		ldr	r3, .L35+8
+ 359 006a 1961     		str	r1, [r3, #16]	@ float
+ 196:App/htmi_app.c **** 		pi_spd.Ki = Para.SpdLessKi;
+ 360              		.loc 1 196 3 is_stmt 1 view .LVU82
+ 361              		.loc 1 196 19 is_stmt 0 view .LVU83
+ 362 006c D26C     		ldr	r2, [r2, #76]	@ float
+ 363              		.loc 1 196 13 view .LVU84
+ 364 006e 5A61     		str	r2, [r3, #20]	@ float
+ 365              	.L15:
+ 197:App/htmi_app.c **** 	}
+ 198:App/htmi_app.c **** }...
+ 366              		.loc 1 198 1 view .LVU85
+ 367 0070 10BD     		pop	{r4, pc}
+ 368              	.LVL9:
+ 369              	.L21:
+ 116:App/htmi_app.c **** 		HAL_GPIO_WritePin(PWR_GPIO_Port, PWR_Pin, GPIO_PIN_RESET); // 长按关机
+ 370              		.loc 1 116 3 is_stmt 1 view .LVU86
+ 371 0072 0022     		movs	r2, #0
+ 372 0074 4FF48061 		mov	r1, #1024
+ 373 0078 2148     		ldr	r0, .L35+12
+ 374              	.LVL10:
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s 			page 11
 
 
- 377 007a 4FF48061 		mov	r1, #1024
- 378 007e 2148     		ldr	r0, .L35+12
- 379              	.LVL10:
- 115:App/htmi_app.c **** 		HAL_GPIO_WritePin(PWR_GPIO_Port, PWR_Pin, GPIO_PIN_RESET); // 长按关机
- 380              		.loc 1 115 3 is_stmt 0 view .LVU89
- 381 0080 FFF7FEFF 		bl	HAL_GPIO_WritePin
- 382              	.LVL11:
- 117:App/htmi_app.c **** 	break;
- 383              		.loc 1 117 2 is_stmt 1 view .LVU90
- 384 0084 EDE7     		b	.L16
- 385              	.LVL12:
- 386              	.L28:
- 127:App/htmi_app.c **** 		MotorRun();				 // 启动PWM
- 387              		.loc 1 127 3 view .LVU91
- 388 0086 FFF7FEFF 		bl	MotorRun
- 389              	.LVL13:
- 128:App/htmi_app.c **** 		Motor.CtrlMode = IF_SMO; // 低速IF高速SMO
- 390              		.loc 1 128 3 view .LVU92
- 128:App/htmi_app.c **** 		Motor.CtrlMode = IF_SMO; // 低速IF高速SMO
- 391              		.loc 1 128 18 is_stmt 0 view .LVU93
- 392 008a 1B4B     		ldr	r3, .L35
- 393 008c 0822     		movs	r2, #8
- 394 008e 1A74     		strb	r2, [r3, #16]
- 130:App/htmi_app.c **** 	break;
- 395              		.loc 1 130 2 is_stmt 1 view .LVU94
- 396 0090 E7E7     		b	.L16
- 397              	.LVL14:
- 398              	.L25:
- 134:App/htmi_app.c **** 		MotorRun();				   // 启动PWM
- 399              		.loc 1 134 3 view .LVU95
- 400 0092 FFF7FEFF 		bl	MotorRun
- 401              	.LVL15:
- 135:App/htmi_app.c **** 		Motor.CtrlMode = HFI_FLUX; // 低速HFI，高速磁链
- 402              		.loc 1 135 3 view .LVU96
- 135:App/htmi_app.c **** 		Motor.CtrlMode = HFI_FLUX; // 低速HFI，高速磁链
- 403              		.loc 1 135 18 is_stmt 0 view .LVU97
- 404 0096 184B     		ldr	r3, .L35
- 405 0098 0722     		movs	r2, #7
- 406 009a 1A74     		strb	r2, [r3, #16]
- 137:App/htmi_app.c **** 	break;
- 407              		.loc 1 137 2 is_stmt 1 view .LVU98
- 408 009c E1E7     		b	.L16
- 409              	.LVL16:
- 410              	.L18:
- 141:App/htmi_app.c **** 		MotorRun();					 // 启动PWM
- 411              		.loc 1 141 3 view .LVU99
- 412 009e FFF7FEFF 		bl	MotorRun
- 413              	.LVL17:
- 142:App/htmi_app.c **** 		Motor.CtrlMode = SPEED_LOOP; // 有感，速度&电流闭环
- 414              		.loc 1 142 3 view .LVU100
- 142:App/htmi_app.c **** 		Motor.CtrlMode = SPEED_LOOP; // 有感，速度&电流闭环
- 415              		.loc 1 142 18 is_stmt 0 view .LVU101
- 416 00a2 154B     		ldr	r3, .L35
- 417 00a4 0122     		movs	r2, #1
- 418 00a6 1A74     		strb	r2, [r3, #16]
- 144:App/htmi_app.c **** 	break;
- 419              		.loc 1 144 2 is_stmt 1 view .LVU102
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s 			page 12
+ 116:App/htmi_app.c **** 		HAL_GPIO_WritePin(PWR_GPIO_Port, PWR_Pin, GPIO_PIN_RESET); // 长按关机
+ 375              		.loc 1 116 3 is_stmt 0 view .LVU87
+ 376 007a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 377              	.LVL11:
+ 118:App/htmi_app.c **** 	break;
+ 378              		.loc 1 118 2 is_stmt 1 view .LVU88
+ 379 007e EDE7     		b	.L16
+ 380              	.LVL12:
+ 381              	.L28:
+ 129:App/htmi_app.c **** 		MotorRun();				 // 启动PWM
+ 382              		.loc 1 129 3 view .LVU89
+ 383 0080 FFF7FEFF 		bl	MotorRun
+ 384              	.LVL13:
+ 130:App/htmi_app.c **** 		Motor.CtrlMode = IF_SMO; // 低速IF高速SMO
+ 385              		.loc 1 130 3 view .LVU90
+ 130:App/htmi_app.c **** 		Motor.CtrlMode = IF_SMO; // 低速IF高速SMO
+ 386              		.loc 1 130 18 is_stmt 0 view .LVU91
+ 387 0084 1B4B     		ldr	r3, .L35
+ 388 0086 0822     		movs	r2, #8
+ 389 0088 1A74     		strb	r2, [r3, #16]
+ 132:App/htmi_app.c **** 	break;
+ 390              		.loc 1 132 2 is_stmt 1 view .LVU92
+ 391 008a E7E7     		b	.L16
+ 392              	.LVL14:
+ 393              	.L25:
+ 136:App/htmi_app.c **** 		MotorRun();				   // 启动PWM
+ 394              		.loc 1 136 3 view .LVU93
+ 395 008c FFF7FEFF 		bl	MotorRun
+ 396              	.LVL15:
+ 137:App/htmi_app.c **** 		Motor.CtrlMode = HFI_FLUX; // 低速HFI，高速磁链
+ 397              		.loc 1 137 3 view .LVU94
+ 137:App/htmi_app.c **** 		Motor.CtrlMode = HFI_FLUX; // 低速HFI，高速磁链
+ 398              		.loc 1 137 18 is_stmt 0 view .LVU95
+ 399 0090 184B     		ldr	r3, .L35
+ 400 0092 0722     		movs	r2, #7
+ 401 0094 1A74     		strb	r2, [r3, #16]
+ 139:App/htmi_app.c **** 	break;
+ 402              		.loc 1 139 2 is_stmt 1 view .LVU96
+ 403 0096 E1E7     		b	.L16
+ 404              	.LVL16:
+ 405              	.L18:
+ 143:App/htmi_app.c **** 		MotorRun();					 // 启动PWM
+ 406              		.loc 1 143 3 view .LVU97
+ 407 0098 FFF7FEFF 		bl	MotorRun
+ 408              	.LVL17:
+ 144:App/htmi_app.c **** 		Motor.CtrlMode = SPEED_LOOP; // 有感，速度&电流闭环
+ 409              		.loc 1 144 3 view .LVU98
+ 144:App/htmi_app.c **** 		Motor.CtrlMode = SPEED_LOOP; // 有感，速度&电流闭环
+ 410              		.loc 1 144 18 is_stmt 0 view .LVU99
+ 411 009c 154B     		ldr	r3, .L35
+ 412 009e 0122     		movs	r2, #1
+ 413 00a0 1A74     		strb	r2, [r3, #16]
+ 146:App/htmi_app.c **** 	break;
+ 414              		.loc 1 146 2 is_stmt 1 view .LVU100
+ 415 00a2 DBE7     		b	.L16
+ 416              	.LVL18:
+ 417              	.L27:
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s 			page 12
 
 
- 420 00a8 DBE7     		b	.L16
- 421              	.LVL18:
- 422              	.L27:
- 148:App/htmi_app.c **** 		MotorRun();				   // 启动PWM
- 423              		.loc 1 148 3 view .LVU103
- 424 00aa FFF7FEFF 		bl	MotorRun
- 425              	.LVL19:
- 149:App/htmi_app.c **** 		Motor.CtrlMode = CUR_LOOP; // 有感，电流闭环
- 426              		.loc 1 149 3 view .LVU104
- 149:App/htmi_app.c **** 		Motor.CtrlMode = CUR_LOOP; // 有感，电流闭环
- 427              		.loc 1 149 18 is_stmt 0 view .LVU105
- 428 00ae 124B     		ldr	r3, .L35
- 429 00b0 0222     		movs	r2, #2
- 430 00b2 1A74     		strb	r2, [r3, #16]
- 151:App/htmi_app.c **** 	break;
- 431              		.loc 1 151 2 is_stmt 1 view .LVU106
- 432 00b4 D5E7     		b	.L16
- 433              	.LVL20:
- 434              	.L24:
- 155:App/htmi_app.c **** 		MotorRun();				   // 启动PWM
- 435              		.loc 1 155 3 view .LVU107
- 436 00b6 FFF7FEFF 		bl	MotorRun
- 437              	.LVL21:
- 156:App/htmi_app.c **** 		Motor.CtrlMode = POS_LOOP; // 有感，位置闭环
- 438              		.loc 1 156 3 view .LVU108
- 156:App/htmi_app.c **** 		Motor.CtrlMode = POS_LOOP; // 有感，位置闭环
- 439              		.loc 1 156 18 is_stmt 0 view .LVU109
- 440 00ba 0F4B     		ldr	r3, .L35
- 441 00bc 0322     		movs	r2, #3
- 442 00be 1A74     		strb	r2, [r3, #16]
- 158:App/htmi_app.c **** 	break;
- 443              		.loc 1 158 2 is_stmt 1 view .LVU110
- 444 00c0 CFE7     		b	.L16
- 445              	.LVL22:
- 446              	.L19:
- 162:App/htmi_app.c **** 		MotorStop();
- 447              		.loc 1 162 3 view .LVU111
- 448 00c2 FFF7FEFF 		bl	MotorStop
- 449              	.LVL23:
- 163:App/htmi_app.c **** 		Motor.CtrlMode = STOP;
- 450              		.loc 1 163 3 view .LVU112
- 163:App/htmi_app.c **** 		Motor.CtrlMode = STOP;
- 451              		.loc 1 163 18 is_stmt 0 view .LVU113
- 452 00c6 0C4B     		ldr	r3, .L35
- 453 00c8 0022     		movs	r2, #0
- 454 00ca 1A74     		strb	r2, [r3, #16]
- 165:App/htmi_app.c **** 	break;
- 455              		.loc 1 165 2 is_stmt 1 view .LVU114
- 456 00cc C9E7     		b	.L16
- 457              	.LVL24:
- 458              	.L26:
- 169:App/htmi_app.c **** 		MotorRun();				  // 启动PWM
- 459              		.loc 1 169 3 view .LVU115
- 460 00ce FFF7FEFF 		bl	MotorRun
- 461              	.LVL25:
- 170:App/htmi_app.c **** 		Motor.CtrlMode = IF_FLUX; // 低速IF，高速FLUX
- 462              		.loc 1 170 3 view .LVU116
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s 			page 13
+ 150:App/htmi_app.c **** 		MotorRun();				   // 启动PWM
+ 418              		.loc 1 150 3 view .LVU101
+ 419 00a4 FFF7FEFF 		bl	MotorRun
+ 420              	.LVL19:
+ 151:App/htmi_app.c **** 		Motor.CtrlMode = CUR_LOOP; // 有感，电流闭环
+ 421              		.loc 1 151 3 view .LVU102
+ 151:App/htmi_app.c **** 		Motor.CtrlMode = CUR_LOOP; // 有感，电流闭环
+ 422              		.loc 1 151 18 is_stmt 0 view .LVU103
+ 423 00a8 124B     		ldr	r3, .L35
+ 424 00aa 0222     		movs	r2, #2
+ 425 00ac 1A74     		strb	r2, [r3, #16]
+ 153:App/htmi_app.c **** 	break;
+ 426              		.loc 1 153 2 is_stmt 1 view .LVU104
+ 427 00ae D5E7     		b	.L16
+ 428              	.LVL20:
+ 429              	.L24:
+ 157:App/htmi_app.c **** 		MotorRun();				   // 启动PWM
+ 430              		.loc 1 157 3 view .LVU105
+ 431 00b0 FFF7FEFF 		bl	MotorRun
+ 432              	.LVL21:
+ 158:App/htmi_app.c **** 		Motor.CtrlMode = POS_LOOP; // 有感，位置闭环
+ 433              		.loc 1 158 3 view .LVU106
+ 158:App/htmi_app.c **** 		Motor.CtrlMode = POS_LOOP; // 有感，位置闭环
+ 434              		.loc 1 158 18 is_stmt 0 view .LVU107
+ 435 00b4 0F4B     		ldr	r3, .L35
+ 436 00b6 0322     		movs	r2, #3
+ 437 00b8 1A74     		strb	r2, [r3, #16]
+ 160:App/htmi_app.c **** 	break;
+ 438              		.loc 1 160 2 is_stmt 1 view .LVU108
+ 439 00ba CFE7     		b	.L16
+ 440              	.LVL22:
+ 441              	.L19:
+ 164:App/htmi_app.c **** 		MotorStop();
+ 442              		.loc 1 164 3 view .LVU109
+ 443 00bc FFF7FEFF 		bl	MotorStop
+ 444              	.LVL23:
+ 165:App/htmi_app.c **** 		Motor.CtrlMode = STOP;
+ 445              		.loc 1 165 3 view .LVU110
+ 165:App/htmi_app.c **** 		Motor.CtrlMode = STOP;
+ 446              		.loc 1 165 18 is_stmt 0 view .LVU111
+ 447 00c0 0C4B     		ldr	r3, .L35
+ 448 00c2 0022     		movs	r2, #0
+ 449 00c4 1A74     		strb	r2, [r3, #16]
+ 167:App/htmi_app.c **** 	break;
+ 450              		.loc 1 167 2 is_stmt 1 view .LVU112
+ 451 00c6 C9E7     		b	.L16
+ 452              	.LVL24:
+ 453              	.L26:
+ 171:App/htmi_app.c **** 		MotorRun();				  // 启动PWM
+ 454              		.loc 1 171 3 view .LVU113
+ 455 00c8 FFF7FEFF 		bl	MotorRun
+ 456              	.LVL25:
+ 172:App/htmi_app.c **** 		Motor.CtrlMode = IF_FLUX; // 低速IF，高速FLUX
+ 457              		.loc 1 172 3 view .LVU114
+ 172:App/htmi_app.c **** 		Motor.CtrlMode = IF_FLUX; // 低速IF，高速FLUX
+ 458              		.loc 1 172 18 is_stmt 0 view .LVU115
+ 459 00cc 094B     		ldr	r3, .L35
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s 			page 13
 
 
- 170:App/htmi_app.c **** 		Motor.CtrlMode = IF_FLUX; // 低速IF，高速FLUX
- 463              		.loc 1 170 18 is_stmt 0 view .LVU117
- 464 00d2 094B     		ldr	r3, .L35
- 465 00d4 0922     		movs	r2, #9
- 466 00d6 1A74     		strb	r2, [r3, #16]
- 172:App/htmi_app.c **** 	break;
- 467              		.loc 1 172 2 is_stmt 1 view .LVU118
- 468 00d8 C3E7     		b	.L16
- 469              	.LVL26:
- 470              	.L23:
- 176:App/htmi_app.c **** 		Motor.CtrlMode = TO_ZERO;
- 471              		.loc 1 176 3 view .LVU119
- 176:App/htmi_app.c **** 		Motor.CtrlMode = TO_ZERO;
- 472              		.loc 1 176 18 is_stmt 0 view .LVU120
- 473 00da 074C     		ldr	r4, .L35
- 474 00dc 0A23     		movs	r3, #10
- 475 00de 2374     		strb	r3, [r4, #16]
- 177:App/htmi_app.c **** 		PostionToZeroDouble(); // 二次调零
- 476              		.loc 1 177 3 is_stmt 1 view .LVU121
- 477 00e0 FFF7FEFF 		bl	PostionToZeroDouble
- 478              	.LVL27:
- 178:App/htmi_app.c **** 		Motor.CtrlMode = STOP;
- 479              		.loc 1 178 3 view .LVU122
- 178:App/htmi_app.c **** 		Motor.CtrlMode = STOP;
- 480              		.loc 1 178 18 is_stmt 0 view .LVU123
- 481 00e4 0023     		movs	r3, #0
- 482 00e6 2374     		strb	r3, [r4, #16]
- 180:App/htmi_app.c **** 	break;
- 483              		.loc 1 180 2 is_stmt 1 view .LVU124
- 484 00e8 BBE7     		b	.L16
- 485              	.L34:
- 188:App/htmi_app.c **** 		pi_spd.Kp = Para.SpdSenKp;
- 486              		.loc 1 188 3 view .LVU125
- 188:App/htmi_app.c **** 		pi_spd.Kp = Para.SpdSenKp;
- 487              		.loc 1 188 19 is_stmt 0 view .LVU126
- 488 00ea 044A     		ldr	r2, .L35+4
- 489 00ec 116C     		ldr	r1, [r2, #64]	@ float
- 188:App/htmi_app.c **** 		pi_spd.Kp = Para.SpdSenKp;
- 490              		.loc 1 188 13 view .LVU127
- 491 00ee 044B     		ldr	r3, .L35+8
- 492 00f0 1961     		str	r1, [r3, #16]	@ float
- 189:App/htmi_app.c **** 		pi_spd.Ki = Para.SpdSenKi;
- 493              		.loc 1 189 3 is_stmt 1 view .LVU128
- 189:App/htmi_app.c **** 		pi_spd.Ki = Para.SpdSenKi;
- 494              		.loc 1 189 19 is_stmt 0 view .LVU129
- 495 00f2 526C     		ldr	r2, [r2, #68]	@ float
- 189:App/htmi_app.c **** 		pi_spd.Ki = Para.SpdSenKi;
- 496              		.loc 1 189 13 view .LVU130
- 497 00f4 5A61     		str	r2, [r3, #20]	@ float
- 498 00f6 BEE7     		b	.L15
- 499              	.L36:
- 500              		.align	2
- 501              	.L35:
- 502 00f8 00000000 		.word	Motor
- 503 00fc 00000000 		.word	Para
- 504 0100 00000000 		.word	pi_spd
- 505 0104 00040240 		.word	1073873920
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s 			page 14
+ 460 00ce 0922     		movs	r2, #9
+ 461 00d0 1A74     		strb	r2, [r3, #16]
+ 174:App/htmi_app.c **** 	break;
+ 462              		.loc 1 174 2 is_stmt 1 view .LVU116
+ 463 00d2 C3E7     		b	.L16
+ 464              	.LVL26:
+ 465              	.L23:
+ 178:App/htmi_app.c **** 		Motor.CtrlMode = TO_ZERO;
+ 466              		.loc 1 178 3 view .LVU117
+ 178:App/htmi_app.c **** 		Motor.CtrlMode = TO_ZERO;
+ 467              		.loc 1 178 18 is_stmt 0 view .LVU118
+ 468 00d4 074C     		ldr	r4, .L35
+ 469 00d6 0A23     		movs	r3, #10
+ 470 00d8 2374     		strb	r3, [r4, #16]
+ 179:App/htmi_app.c **** 		PostionToZeroDouble(); // 二次调零
+ 471              		.loc 1 179 3 is_stmt 1 view .LVU119
+ 472 00da FFF7FEFF 		bl	PostionToZeroDouble
+ 473              	.LVL27:
+ 180:App/htmi_app.c **** 		Motor.CtrlMode = STOP;
+ 474              		.loc 1 180 3 view .LVU120
+ 180:App/htmi_app.c **** 		Motor.CtrlMode = STOP;
+ 475              		.loc 1 180 18 is_stmt 0 view .LVU121
+ 476 00de 0023     		movs	r3, #0
+ 477 00e0 2374     		strb	r3, [r4, #16]
+ 182:App/htmi_app.c **** 	break;
+ 478              		.loc 1 182 2 is_stmt 1 view .LVU122
+ 479 00e2 BBE7     		b	.L16
+ 480              	.L34:
+ 190:App/htmi_app.c **** 		pi_spd.Kp = Para.SpdSenKp;
+ 481              		.loc 1 190 3 view .LVU123
+ 190:App/htmi_app.c **** 		pi_spd.Kp = Para.SpdSenKp;
+ 482              		.loc 1 190 19 is_stmt 0 view .LVU124
+ 483 00e4 044A     		ldr	r2, .L35+4
+ 484 00e6 116C     		ldr	r1, [r2, #64]	@ float
+ 190:App/htmi_app.c **** 		pi_spd.Kp = Para.SpdSenKp;
+ 485              		.loc 1 190 13 view .LVU125
+ 486 00e8 044B     		ldr	r3, .L35+8
+ 487 00ea 1961     		str	r1, [r3, #16]	@ float
+ 191:App/htmi_app.c **** 		pi_spd.Ki = Para.SpdSenKi;
+ 488              		.loc 1 191 3 is_stmt 1 view .LVU126
+ 191:App/htmi_app.c **** 		pi_spd.Ki = Para.SpdSenKi;
+ 489              		.loc 1 191 19 is_stmt 0 view .LVU127
+ 490 00ec 526C     		ldr	r2, [r2, #68]	@ float
+ 191:App/htmi_app.c **** 		pi_spd.Ki = Para.SpdSenKi;
+ 491              		.loc 1 191 13 view .LVU128
+ 492 00ee 5A61     		str	r2, [r3, #20]	@ float
+ 493 00f0 BEE7     		b	.L15
+ 494              	.L36:
+ 495 00f2 00BF     		.align	2
+ 496              	.L35:
+ 497 00f4 00000000 		.word	Motor
+ 498 00f8 00000000 		.word	Para
+ 499 00fc 00000000 		.word	pi_spd
+ 500 0100 00040240 		.word	1073873920
+ 501              		.cfi_endproc
+ 502              	.LFE273:
+ 504              		.section	.bss.AdcVr.0,"aw",%nobits
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s 			page 14
 
 
- 506              		.cfi_endproc
- 507              	.LFE273:
- 509              		.section	.bss.AdcVr.0,"aw",%nobits
- 510              		.align	2
- 513              	AdcVr.0:
- 514 0000 00000000 		.space	4
- 515              		.text
- 516              	.Letext0:
- 517              		.file 2 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
- 518              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
- 519              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
- 520              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
- 521              		.file 6 "Sdrive/adc_drv.h"
- 522              		.file 7 "MotorFoc/pid.h"
- 523              		.file 8 "MotorFoc/motor_ctrl.h"
- 524              		.file 9 "MotorFoc/sen.h"
- 525              		.file 10 "Sdrive/key_drv.h"
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s 			page 15
+ 505              		.align	2
+ 508              	AdcVr.0:
+ 509 0000 00000000 		.space	4
+ 510              		.text
+ 511              	.Letext0:
+ 512              		.file 2 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 513              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 514              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 515              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 516              		.file 6 "Sdrive/adc_drv.h"
+ 517              		.file 7 "MotorFoc/pid.h"
+ 518              		.file 8 "MotorFoc/motor_ctrl.h"
+ 519              		.file 9 "MotorFoc/sen.h"
+ 520              		.file 10 "MotorFoc/param_ident.h"
+ 521              		.file 11 "Sdrive/key_drv.h"
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s 			page 15
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 htmi_app.c
-C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s:21     .text.VrTask:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s:27     .text.VrTask:00000000 VrTask
-C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s:48     .text.VrTask:00000010 $d
-C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s:58     .text.VrTask:0000001a $t
-C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s:230    .text.VrTask:00000144 $d
-C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s:513    .bss.AdcVr.0:00000000 AdcVr.0
-C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s:245    .text.HmiTask:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s:251    .text.HmiTask:00000000 HmiTask
-C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s:279    .text.HmiTask:00000018 $d
-C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s:332    .text.HmiTask:0000004c $t
-C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s:502    .text.HmiTask:000000f8 $d
-C:\Users\sunhao\AppData\Local\Temp\ccT0qFoP.s:510    .bss.AdcVr.0:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s:21     .text.VrTask:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s:27     .text.VrTask:00000000 VrTask
+C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s:48     .text.VrTask:00000010 $d
+C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s:58     .text.VrTask:0000001a $t
+C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s:230    .text.VrTask:00000144 $d
+C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s:508    .bss.AdcVr.0:00000000 AdcVr.0
+C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s:245    .text.HmiTask:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s:251    .text.HmiTask:00000000 HmiTask
+C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s:279    .text.HmiTask:00000018 $d
+C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s:332    .text.HmiTask:0000004c $t
+C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s:497    .text.HmiTask:000000f4 $d
+C:\Users\sunhao\AppData\Local\Temp\ccpCrVss.s:505    .bss.AdcVr.0:00000000 $d
 
 UNDEFINED SYMBOLS
 Limit_Sat
@@ -822,8 +820,9 @@ Motor
 Para
 AdcPara
 GetKeyVal
-MotorRun
+ParamIdent_Start
 HAL_GPIO_WritePin
+MotorRun
 MotorStop
 PostionToZeroDouble
 pi_spd

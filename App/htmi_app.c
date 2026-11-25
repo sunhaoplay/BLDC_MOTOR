@@ -13,6 +13,7 @@
 #include "motor_ctrl.h"
 #include "key_drv.h"
 #include "sen.h"
+#include "param_ident.h"
 /**
  * @brief 按控制模式把电位器采样值映射为对应给定量。
  *
@@ -117,8 +118,9 @@ void HmiTask(void)
 	break;
 	case KEY1_SHORT_PRESS:
 	{
-		MotorRun();				  // 启动PWM
-		Motor.CtrlMode = HFI_SMO; // 低速HFI，高速滑膜
+		// MotorRun();				  // 启动PWM
+		// Motor.CtrlMode = HFI_SMO; // 低速HFI，高速滑膜
+		ParamIdent_Start();
 	}
 	break;
 

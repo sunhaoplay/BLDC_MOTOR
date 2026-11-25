@@ -4,7 +4,7 @@
 #include "usart.h"
 #include <float.h>
 #include <stddef.h>
-
+#include "param_ident.h"
 typedef struct
 {
     float channels[3];
@@ -87,9 +87,14 @@ void FocWaveCapture(float iu, float iv, float iw)
         frame->channels[2] = AdcFilPara.CurW;
         break;
     case FOC_WAVE_VIEW_DQ_SPEED:
-        frame->channels[0] = Park.Ds;
-        frame->channels[1] = Park.Qs;
-        frame->channels[2] = Motor.speed_M_rpm;
+        // frame->channels[0] = Park.Ds;
+        // frame->channels[1] = Park.Qs;
+        // frame->channels[2] = Motor.speed_M_rpm;
+        frame->channels[0] = g_paramIdent.result_Ld;
+        frame->channels[1] = g_paramIdent.result_Lq;
+        frame->channels[2] = g_paramIdent.result_Rs;
+        // frame->channels[1] = (float)g_paramIdent.progress;
+        // frame->channels[2] = (float)g_paramIdent.sample_count;
         break;
     default:
         frame->channels[0] = iu;
