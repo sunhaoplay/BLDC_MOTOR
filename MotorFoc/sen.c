@@ -9,6 +9,31 @@
 #include "motor_ctrl.h"
 #include "sen.h"
 #include "motor_para.h"
+/* 强拖状态变量 */
+float Test_Spin_Angle = 0.0f;
+
+/**
+ * @brief 极简开环强拖：让电机以固定速度持续旋转。
+ * @note 每进一次 20kHz 中断，角度累加一次，无任何死循环和延时。
+ */
+void OpenLoopSpinControl(void)
+{
+    // 1. 角度累加（5.0 rad/s，约 0.8 圈/秒，可自己调）
+    Test_Spin_Angle += 10.0f * TS; 
+    if (Test_Spin_Angle >= (PIX2))
+    {
+        Test_Spin_Angle -= (PIX2); // 限制在 0 ~ 2PI 循环
+    }
+
+    // 2. 强行指定 D 轴电压和当前角度
+    Ipark.Theta = Test_Spin_Angle;
+    Ipark.Ds = 0.8f; // 强拖电压，可根据发热和转动力度微调
+    Ipark.Qs = 0.0f;
+
+    // 3. 直接走反Park和SVPWM
+    IPARK_Cale((M_IPARK)&Ipark);
+    FocSvpwm();
+}
 /**
  * @brief 用固定 alpha 轴电压吸合转子并把当前位置定义为编码器零点。
  *

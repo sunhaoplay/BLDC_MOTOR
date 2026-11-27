@@ -64,6 +64,7 @@ typedef struct
     float result_Rs;                        /**< 定子相电阻辨识结果，单位 ohm。 */
     float result_Ld;                        /**< d 轴增量电感辨识结果，单位 H。 */
     float result_Lq;                        /**< q 轴增量电感辨识结果，单位 H。 */
+    uint8_t  result_PP;                      /**< 电机极对数识别结果。 */
     float voltage_offset;                   /**< Rs 拟合得到的逆变器等效电压偏置，单位 V。 */
     float ld_voltage_offset;                /**< Ld 拟合截距对应的 d 轴电压偏置，单位 V。 */
     float lq_voltage_offset;                /**< Lq 拟合截距对应的 q 轴电压偏置，单位 V。 */
@@ -85,6 +86,8 @@ void ParamIdent_Reset(void);
 bool ParamIdent_IsRunning(void);
 /** @brief 记录故障或控制模式切换导致的中断。 */
 void ParamIdent_MonitorModeExit(void);
+/** @brief 强托识别电机极对数。*/
+void paramidentParis(void);
 
 #endif
 

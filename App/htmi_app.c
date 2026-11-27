@@ -102,6 +102,12 @@ void HmiTask(void)
 	{
 	case KEY4_SHORT_PRESS:
 	{
+		// 清除之前的残留状态
+ 		Test_Spin_Angle = 0.0f; 
+
+		// 启动强拖
+		MotorRun(); 
+		Motor.CtrlMode = OPEN_LOOP_SPIN;
 	}
 	break;
 

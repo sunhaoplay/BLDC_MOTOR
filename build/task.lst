@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
   29:App/task.c    **** #endif
   30:App/task.c    **** 		{0, 5, 5, HmiTask},		 // 按键处理任务
   31:App/task.c    **** 		//{0, 10, 10, SendToVofa}, // 发送数据任务
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 2
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 2
 
 
   32:App/task.c    **** 		{0, 1, 1, FaultCheck},	 // 故障检测任务
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
   63              		.loc 1 50 6 view .LVU10
   64 0018 002B     		cmp	r3, #0
   65 001a F4D0     		beq	.L3
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 3
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 3
 
 
   51:App/task.c    **** 		{
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
   68:App/task.c    ****  */
   69:App/task.c    **** static void TaskScheduleCb(void)
   70:App/task.c    **** {
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 4
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 4
 
 
  105              		.loc 1 70 1 is_stmt 1 view -0
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
   77:App/task.c    **** 			{
   78:App/task.c    **** 				g_taskComps[i].run = 1;
  153              		.loc 1 78 5 is_stmt 1 view .LVU34
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 5
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 5
 
 
  154              		.loc 1 78 24 is_stmt 0 view .LVU35
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  197 0002 0248     		ldr	r0, .L18
  198 0004 FFF7FEFF 		bl	TaskScheduleCbReg
  199              	.LVL10:
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 6
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 6
 
 
   92:App/task.c    **** }
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  130:App/task.c    ****             pattern_start = now;
  131:App/task.c    ****         }
  132:App/task.c    ****     }
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 7
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 7
 
 
  133:App/task.c    **** 
@@ -388,7 +388,7 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  148:App/task.c    ****     Init_Over = false;
  227              		.loc 1 148 5 view .LVU44
  228              		.loc 1 148 15 is_stmt 0 view .LVU45
- 229 0002 2B4B     		ldr	r3, .L29
+ 229 0002 284B     		ldr	r3, .L29
  230 0004 0022     		movs	r2, #0
  231 0006 1A70     		strb	r2, [r3]
  149:App/task.c    ****     MotorInit();
@@ -405,122 +405,111 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  240 0010 FFF7FEFF 		bl	UART_DMA_Init
  241              	.LVL13:
  242              		.loc 1 151 8 discriminator 1 view .LVU50
- 243 0014 28B9     		cbnz	r0, .L21
+ 243 0014 20B9     		cbnz	r0, .L21
  152:App/task.c    ****         HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL) != HAL_OK ||
  244              		.loc 1 152 9 view .LVU51
  245 0016 3C21     		movs	r1, #60
- 246 0018 2648     		ldr	r0, .L29+4
+ 246 0018 2348     		ldr	r0, .L29+4
  247 001a FFF7FEFF 		bl	HAL_TIM_Encoder_Start
  248              	.LVL14:
  151:App/task.c    ****     if (UART_DMA_Init() != HAL_OK ||
  249              		.loc 1 151 35 discriminator 1 view .LVU52
- 250 001e 0028     		cmp	r0, #0
- 251 0020 35D0     		beq	.L26
- 252              	.L21:
+ 250 001e 78B3     		cbz	r0, .L26
+ 251              	.L21:
  153:App/task.c    ****         AdcSamplingStart() != HAL_OK)
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 8
-
-
  154:App/task.c    ****     {
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 8
+
+
  155:App/task.c    ****         MotorStop();
- 253              		.loc 1 155 9 is_stmt 1 view .LVU53
- 254 0022 FFF7FEFF 		bl	MotorStop
- 255              	.LVL15:
+ 252              		.loc 1 155 9 is_stmt 1 view .LVU53
+ 253 0020 FFF7FEFF 		bl	MotorStop
+ 254              	.LVL15:
  156:App/task.c    ****         Error_Handler();
- 256              		.loc 1 156 9 view .LVU54
- 257 0026 FFF7FEFF 		bl	Error_Handler
- 258              	.LVL16:
- 259              	.L22:
+ 255              		.loc 1 156 9 view .LVU54
+ 256 0024 FFF7FEFF 		bl	Error_Handler
+ 257              	.LVL16:
+ 258              	.L22:
  157:App/task.c    ****     }
  158:App/task.c    ****     AppInit();
- 260              		.loc 1 158 5 view .LVU55
- 261 002a FFF7FEFF 		bl	AppInit
- 262              	.LVL17:
+ 259              		.loc 1 158 5 view .LVU55
+ 260 0028 FFF7FEFF 		bl	AppInit
+ 261              	.LVL17:
  159:App/task.c    ****     (void)FocWaveInit(); /* 遥测失败只禁用波形，不阻止电机启动。 */
- 263              		.loc 1 159 5 view .LVU56
- 264              		.loc 1 159 11 is_stmt 0 view .LVU57
- 265 002e FFF7FEFF 		bl	FocWaveInit
- 266              	.LVL18:
+ 262              		.loc 1 159 5 view .LVU56
+ 263              		.loc 1 159 11 is_stmt 0 view .LVU57
+ 264 002c FFF7FEFF 		bl	FocWaveInit
+ 265              	.LVL18:
  160:App/task.c    ****     /* 定时器和 ADC 已运行，三相输出关闭，先等待霍尔电流传感器稳定。 */
  161:App/task.c    ****     HAL_Delay(100);
- 267              		.loc 1 161 5 is_stmt 1 view .LVU58
- 268 0032 6420     		movs	r0, #100
- 269 0034 FFF7FEFF 		bl	HAL_Delay
- 270              	.LVL19:
+ 266              		.loc 1 161 5 is_stmt 1 view .LVU58
+ 267 0030 6420     		movs	r0, #100
+ 268 0032 FFF7FEFF 		bl	HAL_Delay
+ 269              	.LVL19:
  162:App/task.c    ****     AdcSampleOffset();
- 271              		.loc 1 162 5 view .LVU59
- 272 0038 FFF7FEFF 		bl	AdcSampleOffset
- 273              	.LVL20:
+ 270              		.loc 1 162 5 view .LVU59
+ 271 0036 FFF7FEFF 		bl	AdcSampleOffset
+ 272              	.LVL20:
  163:App/task.c    ****     Motor.CtrlMode = TO_ZERO;
- 274              		.loc 1 163 5 view .LVU60
- 275              		.loc 1 163 20 is_stmt 0 view .LVU61
- 276 003c 1E4B     		ldr	r3, .L29+8
- 277 003e 0A22     		movs	r2, #10
- 278 0040 1A74     		strb	r2, [r3, #16]
+ 273              		.loc 1 163 5 view .LVU60
+ 274              		.loc 1 163 20 is_stmt 0 view .LVU61
+ 275 003a 1C4B     		ldr	r3, .L29+8
+ 276 003c 0A22     		movs	r2, #10
+ 277 003e 1A74     		strb	r2, [r3, #16]
  164:App/task.c    ****     PostionToZeroDouble();
- 279              		.loc 1 164 5 is_stmt 1 view .LVU62
- 280 0042 FFF7FEFF 		bl	PostionToZeroDouble
- 281              	.LVL21:
+ 278              		.loc 1 164 5 is_stmt 1 view .LVU62
+ 279 0040 FFF7FEFF 		bl	PostionToZeroDouble
+ 280              	.LVL21:
  165:App/task.c    ****     if (AdcFault != 0U)
- 282              		.loc 1 165 5 view .LVU63
- 283              		.loc 1 165 18 is_stmt 0 view .LVU64
- 284 0046 1D4B     		ldr	r3, .L29+12
- 285 0048 1B68     		ldr	r3, [r3]
- 286              		.loc 1 165 8 view .LVU65
- 287 004a 2BBB     		cbnz	r3, .L27
- 288              	.L23:
+ 281              		.loc 1 165 5 view .LVU63
+ 282              		.loc 1 165 18 is_stmt 0 view .LVU64
+ 283 0044 1A4B     		ldr	r3, .L29+12
+ 284 0046 1B68     		ldr	r3, [r3]
+ 285              		.loc 1 165 8 view .LVU65
+ 286 0048 FBB9     		cbnz	r3, .L27
+ 287              	.L23:
  166:App/task.c    ****     {
  167:App/task.c    ****         MotorStop();
  168:App/task.c    ****         Error_Handler();
  169:App/task.c    ****     }
  170:App/task.c    **** 
  171:App/task.c    ****     VariableClear();
- 289              		.loc 1 171 5 is_stmt 1 view .LVU66
- 290 004c FFF7FEFF 		bl	VariableClear
- 291              	.LVL22:
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 9
-
-
+ 288              		.loc 1 171 5 is_stmt 1 view .LVU66
+ 289 004a FFF7FEFF 		bl	VariableClear
+ 290              	.LVL22:
  172:App/task.c    ****     EnCoSpeed.EncoLastCnt = TIM3->CNT;
- 292              		.loc 1 172 5 view .LVU67
- 293              		.loc 1 172 33 is_stmt 0 view .LVU68
- 294 0050 1B4B     		ldr	r3, .L29+16
- 295 0052 5A6A     		ldr	r2, [r3, #36]
- 296              		.loc 1 172 27 view .LVU69
- 297 0054 1B4B     		ldr	r3, .L29+20
- 298 0056 5A60     		str	r2, [r3, #4]
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 9
+
+
+ 291              		.loc 1 172 5 view .LVU67
+ 292              		.loc 1 172 33 is_stmt 0 view .LVU68
+ 293 004e 194B     		ldr	r3, .L29+16
+ 294 0050 5A6A     		ldr	r2, [r3, #36]
+ 295              		.loc 1 172 27 view .LVU69
+ 296 0052 194B     		ldr	r3, .L29+20
+ 297 0054 5A60     		str	r2, [r3, #4]
  173:App/task.c    ****     EnCoSpeed.SpeedClock = 0U;
- 299              		.loc 1 173 5 is_stmt 1 view .LVU70
- 300              		.loc 1 173 26 is_stmt 0 view .LVU71
- 301 0058 0024     		movs	r4, #0
- 302 005a 1C81     		strh	r4, [r3, #8]	@ movhi
- 174:App/task.c    ****     Svpwm.Ualpha = Svpwm.Ubeta = 0.0f;
- 303              		.loc 1 174 5 is_stmt 1 view .LVU72
- 304              		.loc 1 174 32 is_stmt 0 view .LVU73
- 305 005c 1A48     		ldr	r0, .L29+24
- 306 005e 0023     		movs	r3, #0
- 307 0060 4360     		str	r3, [r0, #4]	@ float
- 308              		.loc 1 174 18 view .LVU74
- 309 0062 0360     		str	r3, [r0]	@ float
- 175:App/task.c    ****     SvpwmCal(&Svpwm);
- 310              		.loc 1 175 5 is_stmt 1 view .LVU75
- 311 0064 FFF7FEFF 		bl	SvpwmCal
- 312              	.LVL23:
+ 298              		.loc 1 173 5 is_stmt 1 view .LVU70
+ 299              		.loc 1 173 26 is_stmt 0 view .LVU71
+ 300 0056 0024     		movs	r4, #0
+ 301 0058 1C81     		strh	r4, [r3, #8]	@ movhi
+ 174:App/task.c    ****     // Svpwm.Ualpha = Svpwm.Ubeta = 0.0f;
+ 175:App/task.c    ****     // SvpwmCal(&Svpwm);
  176:App/task.c    ****     HAL_Delay(1); /* 等待中性占空比装载，再开放三相功率输出。 */
- 313              		.loc 1 176 5 view .LVU76
- 314 0068 0120     		movs	r0, #1
- 315 006a FFF7FEFF 		bl	HAL_Delay
- 316              	.LVL24:
+ 302              		.loc 1 176 5 is_stmt 1 view .LVU72
+ 303 005a 0120     		movs	r0, #1
+ 304 005c FFF7FEFF 		bl	HAL_Delay
+ 305              	.LVL23:
  177:App/task.c    ****     Motor.CtrlMode = STOP;
- 317              		.loc 1 177 5 view .LVU77
- 318              		.loc 1 177 20 is_stmt 0 view .LVU78
- 319 006e 124B     		ldr	r3, .L29+8
- 320 0070 1C74     		strb	r4, [r3, #16]
+ 306              		.loc 1 177 5 view .LVU73
+ 307              		.loc 1 177 20 is_stmt 0 view .LVU74
+ 308 0060 124B     		ldr	r3, .L29+8
+ 309 0062 1C74     		strb	r4, [r3, #16]
  178:App/task.c    ****     const uint32_t primask = __get_PRIMASK();
- 321              		.loc 1 178 5 is_stmt 1 view .LVU79
- 322              	.LBB14:
- 323              	.LBI14:
- 324              		.file 2 "Drivers/CMSIS/Include/cmsis_gcc.h"
+ 310              		.loc 1 178 5 is_stmt 1 view .LVU75
+ 311              	.LBB14:
+ 312              	.LBI14:
+ 313              		.file 2 "Drivers/CMSIS/Include/cmsis_gcc.h"
    1:Drivers/CMSIS/Include/cmsis_gcc.h **** /**************************************************************************//**
    2:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @file     cmsis_gcc.h
    3:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @brief    CMSIS compiler GCC header file
@@ -538,9 +527,6 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
   15:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
   16:Drivers/CMSIS/Include/cmsis_gcc.h ****  * www.apache.org/licenses/LICENSE-2.0
   17:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 10
-
-
   18:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Unless required by applicable law or agreed to in writing, software
   19:Drivers/CMSIS/Include/cmsis_gcc.h ****  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
   20:Drivers/CMSIS/Include/cmsis_gcc.h ****  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -552,6 +538,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
   26:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_H
   27:Drivers/CMSIS/Include/cmsis_gcc.h **** 
   28:Drivers/CMSIS/Include/cmsis_gcc.h **** /* ignore some GCC warnings */
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 10
+
+
   29:Drivers/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic push
   30:Drivers/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wsign-conversion"
   31:Drivers/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wconversion"
@@ -598,9 +587,6 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
   72:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
   73:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
   74:Drivers/CMSIS/Include/cmsis_gcc.h ****   struct __attribute__((packed)) T_UINT32 { uint32_t v; };
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 11
-
-
   75:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
   76:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32(x)                  (((struct T_UINT32 *)(x))->v)
   77:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
@@ -612,6 +598,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
   83:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
   84:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT16_WRITE(addr, val)    (void)((((struct T_UINT16_WRITE *)(void *)(addr))-
   85:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 11
+
+
   86:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT16_READ
   87:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
   88:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
@@ -658,9 +647,6 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  129:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  130:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  131:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE __NO_RETURN void __cmsis_start(void)
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 12
-
-
  132:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  133:Drivers/CMSIS/Include/cmsis_gcc.h ****   extern void _start(void) __NO_RETURN;
  134:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -672,6 +658,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  140:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  141:Drivers/CMSIS/Include/cmsis_gcc.h ****   typedef struct {
  142:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t* dest;
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 12
+
+
  143:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t  wlen;
  144:Drivers/CMSIS/Include/cmsis_gcc.h ****   } __zero_table_t;
  145:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -718,9 +707,6 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  186:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __STACK_SEAL
  187:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __STACK_SEAL              __StackSeal
  188:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 13
-
-
  189:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  190:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __TZ_STACK_SEAL_SIZE
  191:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __TZ_STACK_SEAL_SIZE      8U
@@ -732,6 +718,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  197:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  198:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  199:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __TZ_set_STACKSEAL_S (uint32_t* stackTop) {
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 13
+
+
  200:Drivers/CMSIS/Include/cmsis_gcc.h ****   *((uint64_t *)stackTop) = __TZ_STACK_SEAL_VALUE;
  201:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  202:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
@@ -778,9 +767,6 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  243:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  244:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  245:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 14
-
-
  246:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Send Event
  247:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Send Event is a hint instruction. It causes an event to be signaled to the CPU.
  248:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
@@ -792,6 +778,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  254:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Instruction Synchronization Barrier flushes the pipeline in the processor,
  255:Drivers/CMSIS/Include/cmsis_gcc.h ****            so that all instructions following the ISB are fetched from cache or memory,
  256:Drivers/CMSIS/Include/cmsis_gcc.h ****            after the instruction has been completed.
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 14
+
+
  257:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  258:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __ISB(void)
  259:Drivers/CMSIS/Include/cmsis_gcc.h **** {
@@ -838,9 +827,6 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  300:Drivers/CMSIS/Include/cmsis_gcc.h ****   return result;
  301:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
  302:Drivers/CMSIS/Include/cmsis_gcc.h **** }
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 15
-
-
  303:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  304:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  305:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
@@ -852,6 +838,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  311:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __REV16(uint32_t value)
  312:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  313:Drivers/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 15
+
+
  314:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  315:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM ("rev16 %0, %1" : __CMSIS_GCC_OUT_REG (result) : __CMSIS_GCC_USE_REG (value) );
  316:Drivers/CMSIS/Include/cmsis_gcc.h ****   return result;
@@ -898,9 +887,6 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  357:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  358:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Breakpoint
  359:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Causes the processor to enter Debug state.
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 16
-
-
  360:Drivers/CMSIS/Include/cmsis_gcc.h ****            Debug tools can use this to investigate system state when the instruction at a particula
  361:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    value  is ignored by the processor.
  362:Drivers/CMSIS/Include/cmsis_gcc.h ****                  If required, a debugger can use it to store additional information about the break
@@ -912,6 +898,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  368:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Reverse bit order of value
  369:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Reverses the bit order of the given value.
  370:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    value  Value to reverse
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 16
+
+
  371:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return               Reversed value
  372:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  373:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __RBIT(uint32_t value)
@@ -958,9 +947,6 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  414:Drivers/CMSIS/Include/cmsis_gcc.h ****   if (value == 0U)
  415:Drivers/CMSIS/Include/cmsis_gcc.h ****   {
  416:Drivers/CMSIS/Include/cmsis_gcc.h ****     return 32U;
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 17
-
-
  417:Drivers/CMSIS/Include/cmsis_gcc.h ****   }
  418:Drivers/CMSIS/Include/cmsis_gcc.h ****   return __builtin_clz(value);
  419:Drivers/CMSIS/Include/cmsis_gcc.h **** }
@@ -972,6 +958,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  425:Drivers/CMSIS/Include/cmsis_gcc.h ****      (defined (__ARM_ARCH_8M_BASE__ ) && (__ARM_ARCH_8M_BASE__ == 1))    )
  426:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  427:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   LDR Exclusive (8 bit)
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 17
+
+
  428:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a exclusive LDR instruction for 8 bit value.
  429:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
  430:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return             value of type uint8_t at (*ptr)
@@ -1018,9 +1007,6 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  471:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   LDR Exclusive (32 bit)
  472:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a exclusive LDR instruction for 32 bit values.
  473:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 18
-
-
  474:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return        value of type uint32_t at (*ptr)
  475:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  476:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __LDREXW(volatile uint32_t *addr)
@@ -1032,6 +1018,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  482:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  483:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  484:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 18
+
+
  485:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  486:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   STR Exclusive (8 bit)
  487:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a exclusive STR instruction for 8 bit values.
@@ -1078,9 +1067,6 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  528:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  529:Drivers/CMSIS/Include/cmsis_gcc.h ****    uint32_t result;
  530:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 19
-
-
  531:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("strex %0, %2, %1" : "=&r" (result), "=Q" (*addr) : "r" (value) );
  532:Drivers/CMSIS/Include/cmsis_gcc.h ****    return(result);
  533:Drivers/CMSIS/Include/cmsis_gcc.h **** }
@@ -1092,6 +1078,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  539:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  540:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __CLREX(void)
  541:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 19
+
+
  542:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("clrex" ::: "memory");
  543:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  544:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -1138,9 +1127,6 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  585:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  586:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  587:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Rotate Right with Extend (32 bit)
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 20
-
-
  588:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Moves each bit of a bitstring right by one bit.
  589:Drivers/CMSIS/Include/cmsis_gcc.h ****            The carry input is shifted in at the left end of the bitstring.
  590:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    value  Value to rotate
@@ -1152,6 +1138,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  596:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  597:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("rrx %0, %1" : __CMSIS_GCC_OUT_REG (result) : __CMSIS_GCC_USE_REG (value) );
  598:Drivers/CMSIS/Include/cmsis_gcc.h ****   return(result);
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 20
+
+
  599:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  600:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  601:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -1198,9 +1187,6 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  642:Drivers/CMSIS/Include/cmsis_gcc.h ****    return ((uint16_t) result);    /* Add explicit type cast here */
  643:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  644:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 21
-
-
  645:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  646:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  647:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   LDRT Unprivileged (32 bit)
@@ -1212,6 +1198,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  653:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  654:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t result;
  655:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 21
+
+
  656:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("ldrt %0, %1" : "=r" (result) : "Q" (*ptr) );
  657:Drivers/CMSIS/Include/cmsis_gcc.h ****    return(result);
  658:Drivers/CMSIS/Include/cmsis_gcc.h **** }
@@ -1258,9 +1247,6 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  699:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  700:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  701:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Signed Saturate
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 22
-
-
  702:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Saturates a signed value.
  703:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to be saturated
  704:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    sat  Bit position to saturate to (1..32)
@@ -1272,6 +1258,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  710:Drivers/CMSIS/Include/cmsis_gcc.h ****   {
  711:Drivers/CMSIS/Include/cmsis_gcc.h ****     const int32_t max = (int32_t)((1U << (sat - 1U)) - 1U);
  712:Drivers/CMSIS/Include/cmsis_gcc.h ****     const int32_t min = -1 - max ;
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 22
+
+
  713:Drivers/CMSIS/Include/cmsis_gcc.h ****     if (val > max)
  714:Drivers/CMSIS/Include/cmsis_gcc.h ****     {
  715:Drivers/CMSIS/Include/cmsis_gcc.h ****       return max;
@@ -1318,9 +1307,6 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  756:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  757:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Load-Acquire (8 bit)
  758:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a LDAB instruction for 8 bit value.
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 23
-
-
  759:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
  760:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return             value of type uint8_t at (*ptr)
  761:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
@@ -1332,6 +1318,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  767:Drivers/CMSIS/Include/cmsis_gcc.h ****    return ((uint8_t) result);
  768:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  769:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 23
+
+
  770:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  771:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  772:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Load-Acquire (16 bit)
@@ -1378,9 +1367,6 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  813:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  814:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Store-Release (16 bit)
  815:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a STLH instruction for 16 bit values.
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 24
-
-
  816:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to store
  817:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
  818:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
@@ -1392,6 +1378,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  824:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  825:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  826:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Store-Release (32 bit)
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 24
+
+
  827:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a STL instruction for 32 bit values.
  828:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to store
  829:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
@@ -1438,9 +1427,6 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  870:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to data
  871:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return        value of type uint32_t at (*ptr)
  872:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 25
-
-
  873:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __LDAEX(volatile uint32_t *ptr)
  874:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  875:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t result;
@@ -1452,6 +1438,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  881:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  882:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  883:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Store-Release Exclusive (8 bit)
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 25
+
+
  884:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Executes a STLB exclusive instruction for 8 bit values.
  885:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]  value  Value to store
  886:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    ptr  Pointer to location
@@ -1498,9 +1487,6 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  927:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  928:Drivers/CMSIS/Include/cmsis_gcc.h ****    __ASM volatile ("stlex %0, %2, %1" : "=&r" (result), "=Q" (*ptr) : "r" ((uint32_t)value) : "memo
  929:Drivers/CMSIS/Include/cmsis_gcc.h ****    return(result);
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 26
-
-
  930:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  931:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  932:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif /* ((defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) || \
@@ -1512,6 +1498,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  938:Drivers/CMSIS/Include/cmsis_gcc.h **** /* ###########################  Core Function Access  ########################### */
  939:Drivers/CMSIS/Include/cmsis_gcc.h **** /** \ingroup  CMSIS_Core_FunctionInterface
  940:Drivers/CMSIS/Include/cmsis_gcc.h ****     \defgroup CMSIS_Core_RegAccFunctions CMSIS Core Register Access Functions
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 26
+
+
  941:Drivers/CMSIS/Include/cmsis_gcc.h ****   @{
  942:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  943:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -1558,9 +1547,6 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  984:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return               non-secure Control Register value
  985:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
  986:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __TZ_get_CONTROL_NS(void)
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 27
-
-
  987:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  988:Drivers/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
  989:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -1572,6 +1558,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
  995:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  996:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  997:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Set Control Register
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 27
+
+
  998:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Writes the given value to the Control Register.
  999:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    control  Control Register value to set
 1000:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
@@ -1618,9 +1607,6 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
 1041:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __get_APSR(void)
 1042:Drivers/CMSIS/Include/cmsis_gcc.h **** {
 1043:Drivers/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 28
-
-
 1044:Drivers/CMSIS/Include/cmsis_gcc.h **** 
 1045:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MRS %0, apsr" : "=r" (result) );
 1046:Drivers/CMSIS/Include/cmsis_gcc.h ****   return(result);
@@ -1632,6 +1618,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
 1052:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Returns the content of the xPSR Register.
 1053:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return               xPSR Register value
 1054:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 28
+
+
 1055:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __get_xPSR(void)
 1056:Drivers/CMSIS/Include/cmsis_gcc.h **** {
 1057:Drivers/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
@@ -1678,9 +1667,6 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
 1098:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
 1099:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __set_PSP(uint32_t topOfProcStack)
 1100:Drivers/CMSIS/Include/cmsis_gcc.h **** {
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 29
-
-
 1101:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MSR psp, %0" : : "r" (topOfProcStack) : );
 1102:Drivers/CMSIS/Include/cmsis_gcc.h **** }
 1103:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -1692,6 +1678,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
 1109:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    topOfProcStack  Process Stack Pointer value to set
 1110:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
 1111:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __TZ_set_PSP_NS(uint32_t topOfProcStack)
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 29
+
+
 1112:Drivers/CMSIS/Include/cmsis_gcc.h **** {
 1113:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MSR psp_ns, %0" : : "r" (topOfProcStack) : );
 1114:Drivers/CMSIS/Include/cmsis_gcc.h **** }
@@ -1738,9 +1727,6 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
 1155:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MSR msp, %0" : : "r" (topOfMainStack) : );
 1156:Drivers/CMSIS/Include/cmsis_gcc.h **** }
 1157:Drivers/CMSIS/Include/cmsis_gcc.h **** 
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 30
-
-
 1158:Drivers/CMSIS/Include/cmsis_gcc.h **** 
 1159:Drivers/CMSIS/Include/cmsis_gcc.h **** #if (defined (__ARM_FEATURE_CMSE ) && (__ARM_FEATURE_CMSE == 3))
 1160:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
@@ -1752,6 +1738,9 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
 1166:Drivers/CMSIS/Include/cmsis_gcc.h **** {
 1167:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MSR msp_ns, %0" : : "r" (topOfMainStack) : );
 1168:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 30
+
+
 1169:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
 1170:Drivers/CMSIS/Include/cmsis_gcc.h **** 
 1171:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -1788,90 +1777,90 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
 1202:Drivers/CMSIS/Include/cmsis_gcc.h ****   \return               Priority Mask value
 1203:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
 1204:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE uint32_t __get_PRIMASK(void)
- 325              		.loc 2 1204 31 view .LVU80
- 326              	.LBB15:
+ 314              		.loc 2 1204 31 view .LVU76
+ 315              	.LBB15:
 1205:Drivers/CMSIS/Include/cmsis_gcc.h **** {
 1206:Drivers/CMSIS/Include/cmsis_gcc.h ****   uint32_t result;
- 327              		.loc 2 1206 3 view .LVU81
+ 316              		.loc 2 1206 3 view .LVU77
 1207:Drivers/CMSIS/Include/cmsis_gcc.h **** 
 1208:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MRS %0, primask" : "=r" (result) );
- 328              		.loc 2 1208 3 view .LVU82
- 329              		.syntax unified
- 330              	@ 1208 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 31
-
-
- 331 0072 EFF31084 		MRS r4, primask
- 332              	@ 0 "" 2
- 333              	.LVL25:
+ 317              		.loc 2 1208 3 view .LVU78
+ 318              		.syntax unified
+ 319              	@ 1208 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 320 0064 EFF31084 		MRS r4, primask
+ 321              	@ 0 "" 2
+ 322              	.LVL24:
 1209:Drivers/CMSIS/Include/cmsis_gcc.h ****   return(result);
- 334              		.loc 2 1209 3 view .LVU83
- 335              		.loc 2 1209 3 is_stmt 0 view .LVU84
- 336              		.thumb
- 337              		.syntax unified
- 338              	.LBE15:
- 339              	.LBE14:
+ 323              		.loc 2 1209 3 view .LVU79
+ 324              		.loc 2 1209 3 is_stmt 0 view .LVU80
+ 325              		.thumb
+ 326              		.syntax unified
+ 327              	.LBE15:
+ 328              	.LBE14:
  179:App/task.c    ****     __disable_irq();
- 340              		.loc 1 179 5 is_stmt 1 view .LVU85
- 341              	.LBB16:
- 342              	.LBI16:
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 31
+
+
+ 329              		.loc 1 179 5 is_stmt 1 view .LVU81
+ 330              	.LBB16:
+ 331              	.LBI16:
  960:Drivers/CMSIS/Include/cmsis_gcc.h **** {
- 343              		.loc 2 960 27 view .LVU86
- 344              	.LBB17:
+ 332              		.loc 2 960 27 view .LVU82
+ 333              	.LBB17:
  962:Drivers/CMSIS/Include/cmsis_gcc.h **** }
- 345              		.loc 2 962 3 view .LVU87
- 346              		.syntax unified
- 347              	@ 962 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
- 348 0076 72B6     		cpsid i
- 349              	@ 0 "" 2
- 350              		.thumb
- 351              		.syntax unified
- 352              	.LBE17:
- 353              	.LBE16:
+ 334              		.loc 2 962 3 view .LVU83
+ 335              		.syntax unified
+ 336              	@ 962 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 337 0068 72B6     		cpsid i
+ 338              	@ 0 "" 2
+ 339              		.thumb
+ 340              		.syntax unified
+ 341              	.LBE17:
+ 342              	.LBE16:
  180:App/task.c    ****     if (AdcFault != 0U)
- 354              		.loc 1 180 5 view .LVU88
- 355              		.loc 1 180 18 is_stmt 0 view .LVU89
- 356 0078 104B     		ldr	r3, .L29+12
- 357 007a 1B68     		ldr	r3, [r3]
- 358              		.loc 1 180 8 view .LVU90
- 359 007c 8BB9     		cbnz	r3, .L28
- 360              	.L24:
+ 343              		.loc 1 180 5 view .LVU84
+ 344              		.loc 1 180 18 is_stmt 0 view .LVU85
+ 345 006a 114B     		ldr	r3, .L29+12
+ 346 006c 1B68     		ldr	r3, [r3]
+ 347              		.loc 1 180 8 view .LVU86
+ 348 006e 8BB9     		cbnz	r3, .L28
+ 349              	.L24:
  181:App/task.c    ****     {
  182:App/task.c    ****         __set_PRIMASK(primask);
  183:App/task.c    ****         MotorStop();
  184:App/task.c    ****         Error_Handler();
  185:App/task.c    ****     }
  186:App/task.c    ****     __DMB();
- 361              		.loc 1 186 5 is_stmt 1 view .LVU91
- 362              	.LBB18:
- 363              	.LBI18:
+ 350              		.loc 1 186 5 is_stmt 1 view .LVU87
+ 351              	.LBB18:
+ 352              	.LBI18:
  280:Drivers/CMSIS/Include/cmsis_gcc.h **** {
- 364              		.loc 2 280 27 view .LVU92
- 365              	.LBB19:
+ 353              		.loc 2 280 27 view .LVU88
+ 354              	.LBB19:
  282:Drivers/CMSIS/Include/cmsis_gcc.h **** }
- 366              		.loc 2 282 3 view .LVU93
- 367              		.syntax unified
- 368              	@ 282 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
- 369 007e BFF35F8F 		dmb 0xF
- 370              	@ 0 "" 2
- 371              		.thumb
- 372              		.syntax unified
- 373              	.LBE19:
- 374              	.LBE18:
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 32
-
-
+ 355              		.loc 2 282 3 view .LVU89
+ 356              		.syntax unified
+ 357              	@ 282 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 358 0070 BFF35F8F 		dmb 0xF
+ 359              	@ 0 "" 2
+ 360              		.thumb
+ 361              		.syntax unified
+ 362              	.LBE19:
+ 363              	.LBE18:
  187:App/task.c    ****     Init_Over = true;
- 375              		.loc 1 187 5 view .LVU94
- 376              		.loc 1 187 15 is_stmt 0 view .LVU95
- 377 0082 0B4B     		ldr	r3, .L29
- 378 0084 0122     		movs	r2, #1
- 379 0086 1A70     		strb	r2, [r3]
+ 364              		.loc 1 187 5 view .LVU90
+ 365              		.loc 1 187 15 is_stmt 0 view .LVU91
+ 366 0074 0B4B     		ldr	r3, .L29
+ 367 0076 0122     		movs	r2, #1
+ 368 0078 1A70     		strb	r2, [r3]
  188:App/task.c    ****     __set_PRIMASK(primask);
- 380              		.loc 1 188 5 is_stmt 1 view .LVU96
- 381              	.LVL26:
- 382              	.LBB20:
- 383              	.LBI20:
+ 369              		.loc 1 188 5 is_stmt 1 view .LVU92
+ 370              	.LVL25:
+ 371              	.LBB20:
+ 372              	.LBI20:
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 32
+
+
 1210:Drivers/CMSIS/Include/cmsis_gcc.h **** }
 1211:Drivers/CMSIS/Include/cmsis_gcc.h **** 
 1212:Drivers/CMSIS/Include/cmsis_gcc.h **** 
@@ -1897,200 +1886,198 @@ ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 1
 1232:Drivers/CMSIS/Include/cmsis_gcc.h ****   \param [in]    priMask  Priority Mask
 1233:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
 1234:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __set_PRIMASK(uint32_t priMask)
- 384              		.loc 2 1234 27 view .LVU97
- 385              	.LBB21:
+ 373              		.loc 2 1234 27 view .LVU93
+ 374              	.LBB21:
 1235:Drivers/CMSIS/Include/cmsis_gcc.h **** {
 1236:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("MSR primask, %0" : : "r" (priMask) : "memory");
- 386              		.loc 2 1236 3 view .LVU98
- 387              		.syntax unified
- 388              	@ 1236 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
- 389 0088 84F31088 		MSR primask, r4
- 390              	@ 0 "" 2
- 391              	.LVL27:
- 392              		.loc 2 1236 3 is_stmt 0 view .LVU99
- 393              		.thumb
- 394              		.syntax unified
- 395              	.LBE21:
- 396              	.LBE20:
+ 375              		.loc 2 1236 3 view .LVU94
+ 376              		.syntax unified
+ 377              	@ 1236 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 378 007a 84F31088 		MSR primask, r4
+ 379              	@ 0 "" 2
+ 380              	.LVL26:
+ 381              		.loc 2 1236 3 is_stmt 0 view .LVU95
+ 382              		.thumb
+ 383              		.syntax unified
+ 384              	.LBE21:
+ 385              	.LBE20:
  189:App/task.c    **** }
- 397              		.loc 1 189 1 view .LVU100
- 398 008c 10BD     		pop	{r4, pc}
- 399              	.LVL28:
- 400              	.L26:
+ 386              		.loc 1 189 1 view .LVU96
+ 387 007e 10BD     		pop	{r4, pc}
+ 388              	.LVL27:
+ 389              	.L26:
  153:App/task.c    ****     {
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 33
-
-
- 401              		.loc 1 153 9 view .LVU101
- 402 008e FFF7FEFF 		bl	AdcSamplingStart
- 403              	.LVL29:
+ 390              		.loc 1 153 9 view .LVU97
+ 391 0080 FFF7FEFF 		bl	AdcSamplingStart
+ 392              	.LVL28:
  152:App/task.c    ****         AdcSamplingStart() != HAL_OK)
- 404              		.loc 1 152 66 view .LVU102
- 405 0092 0028     		cmp	r0, #0
- 406 0094 C9D0     		beq	.L22
- 407 0096 C4E7     		b	.L21
- 408              	.L27:
+ 393              		.loc 1 152 66 view .LVU98
+ 394 0084 0028     		cmp	r0, #0
+ 395 0086 CFD0     		beq	.L22
+ 396 0088 CAE7     		b	.L21
+ 397              	.L27:
  167:App/task.c    ****         Error_Handler();
- 409              		.loc 1 167 9 is_stmt 1 view .LVU103
- 410 0098 FFF7FEFF 		bl	MotorStop
- 411              	.LVL30:
+ 398              		.loc 1 167 9 is_stmt 1 view .LVU99
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 33
+
+
+ 399 008a FFF7FEFF 		bl	MotorStop
+ 400              	.LVL29:
  168:App/task.c    ****     }
- 412              		.loc 1 168 9 view .LVU104
- 413 009c FFF7FEFF 		bl	Error_Handler
- 414              	.LVL31:
- 415 00a0 D4E7     		b	.L23
- 416              	.LVL32:
- 417              	.L28:
+ 401              		.loc 1 168 9 view .LVU100
+ 402 008e FFF7FEFF 		bl	Error_Handler
+ 403              	.LVL30:
+ 404 0092 DAE7     		b	.L23
+ 405              	.LVL31:
+ 406              	.L28:
  182:App/task.c    ****         MotorStop();
- 418              		.loc 1 182 9 view .LVU105
- 419              	.LBB22:
- 420              	.LBI22:
+ 407              		.loc 1 182 9 view .LVU101
+ 408              	.LBB22:
+ 409              	.LBI22:
 1234:Drivers/CMSIS/Include/cmsis_gcc.h **** {
- 421              		.loc 2 1234 27 view .LVU106
- 422              	.LBB23:
- 423              		.loc 2 1236 3 view .LVU107
- 424              		.syntax unified
- 425              	@ 1236 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
- 426 00a2 84F31088 		MSR primask, r4
- 427              	@ 0 "" 2
- 428              	.LVL33:
- 429              		.loc 2 1236 3 is_stmt 0 view .LVU108
- 430              		.thumb
- 431              		.syntax unified
- 432              	.LBE23:
- 433              	.LBE22:
+ 410              		.loc 2 1234 27 view .LVU102
+ 411              	.LBB23:
+ 412              		.loc 2 1236 3 view .LVU103
+ 413              		.syntax unified
+ 414              	@ 1236 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 415 0094 84F31088 		MSR primask, r4
+ 416              	@ 0 "" 2
+ 417              	.LVL32:
+ 418              		.loc 2 1236 3 is_stmt 0 view .LVU104
+ 419              		.thumb
+ 420              		.syntax unified
+ 421              	.LBE23:
+ 422              	.LBE22:
  183:App/task.c    ****         Error_Handler();
- 434              		.loc 1 183 9 is_stmt 1 view .LVU109
- 435 00a6 FFF7FEFF 		bl	MotorStop
- 436              	.LVL34:
+ 423              		.loc 1 183 9 is_stmt 1 view .LVU105
+ 424 0098 FFF7FEFF 		bl	MotorStop
+ 425              	.LVL33:
  184:App/task.c    ****     }
- 437              		.loc 1 184 9 view .LVU110
- 438 00aa FFF7FEFF 		bl	Error_Handler
- 439              	.LVL35:
- 440 00ae E6E7     		b	.L24
- 441              	.L30:
- 442              		.align	2
- 443              	.L29:
- 444 00b0 00000000 		.word	Init_Over
- 445 00b4 00000000 		.word	htim3
- 446 00b8 00000000 		.word	Motor
- 447 00bc 00000000 		.word	AdcFault
- 448 00c0 00040040 		.word	1073742848
- 449 00c4 00000000 		.word	EnCoSpeed
- 450 00c8 00000000 		.word	Svpwm
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 34
-
-
- 451              		.cfi_endproc
- 452              	.LFE276:
- 454              		.section	.text.task_loop,"ax",%progbits
- 455              		.align	1
- 456              		.global	task_loop
- 457              		.syntax unified
- 458              		.thumb
- 459              		.thumb_func
- 461              	task_loop:
- 462              	.LFB277:
+ 426              		.loc 1 184 9 view .LVU106
+ 427 009c FFF7FEFF 		bl	Error_Handler
+ 428              	.LVL34:
+ 429 00a0 E6E7     		b	.L24
+ 430              	.L30:
+ 431 00a2 00BF     		.align	2
+ 432              	.L29:
+ 433 00a4 00000000 		.word	Init_Over
+ 434 00a8 00000000 		.word	htim3
+ 435 00ac 00000000 		.word	Motor
+ 436 00b0 00000000 		.word	AdcFault
+ 437 00b4 00040040 		.word	1073742848
+ 438 00b8 00000000 		.word	EnCoSpeed
+ 439              		.cfi_endproc
+ 440              	.LFE276:
+ 442              		.section	.text.task_loop,"ax",%progbits
+ 443              		.align	1
+ 444              		.global	task_loop
+ 445              		.syntax unified
+ 446              		.thumb
+ 447              		.thumb_func
+ 449              	task_loop:
+ 450              	.LFB277:
  190:App/task.c    **** 
  191:App/task.c    **** void task_loop(void)
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 34
+
+
  192:App/task.c    **** {
- 463              		.loc 1 192 1 view -0
- 464              		.cfi_startproc
- 465              		@ args = 0, pretend = 0, frame = 0
- 466              		@ frame_needed = 0, uses_anonymous_args = 0
- 467 0000 08B5     		push	{r3, lr}
- 468              	.LCFI3:
- 469              		.cfi_def_cfa_offset 8
- 470              		.cfi_offset 3, -8
- 471              		.cfi_offset 14, -4
+ 451              		.loc 1 192 1 view -0
+ 452              		.cfi_startproc
+ 453              		@ args = 0, pretend = 0, frame = 0
+ 454              		@ frame_needed = 0, uses_anonymous_args = 0
+ 455 0000 08B5     		push	{r3, lr}
+ 456              	.LCFI3:
+ 457              		.cfi_def_cfa_offset 8
+ 458              		.cfi_offset 3, -8
+ 459              		.cfi_offset 14, -4
  193:App/task.c    ****     static uint32_t last_led;
- 472              		.loc 1 193 5 view .LVU112
+ 460              		.loc 1 193 5 view .LVU108
  194:App/task.c    ****     static uint32_t last_wave_led;
- 473              		.loc 1 194 5 view .LVU113
+ 461              		.loc 1 194 5 view .LVU109
  195:App/task.c    ****     FocWaveService();
- 474              		.loc 1 195 5 view .LVU114
- 475 0002 FFF7FEFF 		bl	FocWaveService
- 476              	.LVL36:
+ 462              		.loc 1 195 5 view .LVU110
+ 463 0002 FFF7FEFF 		bl	FocWaveService
+ 464              	.LVL35:
  196:App/task.c    ****     const uint32_t now = HAL_GetTick();
- 477              		.loc 1 196 5 view .LVU115
- 478              		.loc 1 196 26 is_stmt 0 view .LVU116
- 479 0006 FFF7FEFF 		bl	HAL_GetTick
- 480              	.LVL37:
+ 465              		.loc 1 196 5 view .LVU111
+ 466              		.loc 1 196 26 is_stmt 0 view .LVU112
+ 467 0006 FFF7FEFF 		bl	HAL_GetTick
+ 468              	.LVL36:
  197:App/task.c    **** 	TaskHandler(); // 任务调度
- 481              		.loc 1 197 2 is_stmt 1 view .LVU117
- 482 000a FFF7FEFF 		bl	TaskHandler
- 483              	.LVL38:
+ 469              		.loc 1 197 2 is_stmt 1 view .LVU113
+ 470 000a FFF7FEFF 		bl	TaskHandler
+ 471              	.LVL37:
  198:App/task.c    **** }
- 484              		.loc 1 198 1 is_stmt 0 view .LVU118
- 485 000e 08BD     		pop	{r3, pc}
- 486              		.cfi_endproc
- 487              	.LFE277:
- 489              		.section	.data.g_taskComps,"aw"
- 490              		.align	2
- 493              	g_taskComps:
- 494 0000 00       		.byte	0
- 495 0001 00       		.space	1
- 496 0002 0100     		.short	1
- 497 0004 0100     		.short	1
- 498 0006 0000     		.space	2
- 499 0008 00000000 		.word	VrTask
- 500 000c 00       		.byte	0
- 501 000d 00       		.space	1
- 502 000e 0500     		.short	5
- 503 0010 0500     		.short	5
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 35
+ 472              		.loc 1 198 1 is_stmt 0 view .LVU114
+ 473 000e 08BD     		pop	{r3, pc}
+ 474              		.cfi_endproc
+ 475              	.LFE277:
+ 477              		.section	.data.g_taskComps,"aw"
+ 478              		.align	2
+ 481              	g_taskComps:
+ 482 0000 00       		.byte	0
+ 483 0001 00       		.space	1
+ 484 0002 0100     		.short	1
+ 485 0004 0100     		.short	1
+ 486 0006 0000     		.space	2
+ 487 0008 00000000 		.word	VrTask
+ 488 000c 00       		.byte	0
+ 489 000d 00       		.space	1
+ 490 000e 0500     		.short	5
+ 491 0010 0500     		.short	5
+ 492 0012 0000     		.space	2
+ 493 0014 00000000 		.word	HmiTask
+ 494 0018 00       		.byte	0
+ 495 0019 00       		.space	1
+ 496 001a 0100     		.short	1
+ 497 001c 0100     		.short	1
+ 498 001e 0000     		.space	2
+ 499 0020 00000000 		.word	FaultCheck
+ 500              		.text
+ 501              	.Letext0:
+ 502              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ 503              		.file 4 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 35
 
 
- 504 0012 0000     		.space	2
- 505 0014 00000000 		.word	HmiTask
- 506 0018 00       		.byte	0
- 507 0019 00       		.space	1
- 508 001a 0100     		.short	1
- 509 001c 0100     		.short	1
- 510 001e 0000     		.space	2
- 511 0020 00000000 		.word	FaultCheck
- 512              		.text
- 513              	.Letext0:
- 514              		.file 3 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
- 515              		.file 4 "C:\\Users\\sunhao\\AppData\\Local\\stm32cube\\bundles\\gnu-tools-for-stm32\\14.3.1+st.2\\
- 516              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
- 517              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
- 518              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
- 519              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
- 520              		.file 9 "Sdrive/tim_drv.h"
- 521              		.file 10 "Sdrive/adc_drv.h"
- 522              		.file 11 "App/task.h"
- 523              		.file 12 "MotorFoc/foc.h"
- 524              		.file 13 "MotorFoc/motor_ctrl.h"
- 525              		.file 14 "Sdrive/foc_wave.h"
- 526              		.file 15 "MotorFoc/fault.h"
- 527              		.file 16 "App/htmi_app.h"
- 528              		.file 17 "Core/Inc/stm32f4xx_it.h"
- 529              		.file 18 "MotorFoc/sen.h"
- 530              		.file 19 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
- 531              		.file 20 "Core/Inc/main.h"
- 532              		.file 21 "Core/Inc/usart.h"
-ARM GAS  C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s 			page 36
+ 504              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h"
+ 505              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 506              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 507              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 508              		.file 9 "Sdrive/tim_drv.h"
+ 509              		.file 10 "Sdrive/adc_drv.h"
+ 510              		.file 11 "App/task.h"
+ 511              		.file 12 "MotorFoc/motor_ctrl.h"
+ 512              		.file 13 "Sdrive/foc_wave.h"
+ 513              		.file 14 "MotorFoc/fault.h"
+ 514              		.file 15 "App/htmi_app.h"
+ 515              		.file 16 "MotorFoc/sen.h"
+ 516              		.file 17 "Core/Inc/stm32f4xx_it.h"
+ 517              		.file 18 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 518              		.file 19 "Core/Inc/main.h"
+ 519              		.file 20 "Core/Inc/usart.h"
+ARM GAS  C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s 			page 36
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 task.c
-C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s:21     .text.TaskHandler:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s:26     .text.TaskHandler:00000000 TaskHandler
-C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s:93     .text.TaskHandler:00000038 $d
-C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s:493    .data.g_taskComps:00000000 g_taskComps
-C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s:98     .text.TaskScheduleCb:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s:103    .text.TaskScheduleCb:00000000 TaskScheduleCb
-C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s:175    .text.TaskScheduleCb:00000050 $d
-C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s:180    .text.AppInit:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s:185    .text.AppInit:00000000 AppInit
-C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s:205    .text.AppInit:0000000c $d
-C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s:210    .text.task_init:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s:216    .text.task_init:00000000 task_init
-C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s:444    .text.task_init:000000b0 $d
-C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s:455    .text.task_loop:00000000 $t
-C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s:461    .text.task_loop:00000000 task_loop
-C:\Users\sunhao\AppData\Local\Temp\ccGpARIa.s:490    .data.g_taskComps:00000000 $d
+C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s:21     .text.TaskHandler:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s:26     .text.TaskHandler:00000000 TaskHandler
+C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s:93     .text.TaskHandler:00000038 $d
+C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s:481    .data.g_taskComps:00000000 g_taskComps
+C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s:98     .text.TaskScheduleCb:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s:103    .text.TaskScheduleCb:00000000 TaskScheduleCb
+C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s:175    .text.TaskScheduleCb:00000050 $d
+C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s:180    .text.AppInit:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s:185    .text.AppInit:00000000 AppInit
+C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s:205    .text.AppInit:0000000c $d
+C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s:210    .text.task_init:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s:216    .text.task_init:00000000 task_init
+C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s:433    .text.task_init:000000a4 $d
+C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s:443    .text.task_loop:00000000 $t
+C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s:449    .text.task_loop:00000000 task_loop
+C:\Users\sunhao\AppData\Local\Temp\cck81sjH.s:478    .data.g_taskComps:00000000 $d
 
 UNDEFINED SYMBOLS
 TaskScheduleCbReg
@@ -2104,14 +2091,12 @@ HAL_Delay
 AdcSampleOffset
 PostionToZeroDouble
 VariableClear
-SvpwmCal
 AdcSamplingStart
 Init_Over
 htim3
 Motor
 AdcFault
 EnCoSpeed
-Svpwm
 FocWaveService
 HAL_GetTick
 VrTask

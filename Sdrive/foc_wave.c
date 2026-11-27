@@ -90,7 +90,9 @@ void FocWaveCapture(float iu, float iv, float iw)
         // frame->channels[0] = Park.Ds;
         // frame->channels[1] = Park.Qs;
         // frame->channels[2] = Motor.speed_M_rpm;
-        frame->channels[0] = g_paramIdent.result_Ld;
+        // frame->channels[2] = (float)TIM3->CNT;
+        // frame->channels[0] = g_paramIdent.result_Ld;
+        frame->channels[0] = (float)g_paramIdent.result_PP;
         frame->channels[1] = g_paramIdent.result_Lq;
         frame->channels[2] = g_paramIdent.result_Rs;
         // frame->channels[1] = (float)g_paramIdent.progress;

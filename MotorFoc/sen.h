@@ -5,6 +5,7 @@
  * 电流环是最内层，速度环输出 q 轴电流给定，位置环输出速度给定。调零函数通过
  * 固定定子电压矢量把转子吸合到已知方向，再把 TIM3 编码器计数清零。
  */
+extern float Test_Spin_Angle ;
 
 #ifndef __SEN_H
 #define __SEN_H
@@ -19,5 +20,8 @@ void PosCloseloop(void);
 void PositionToZero(void);
 /** @brief 用两个正交电压矢量分两步吸合后执行机械零位校准。 */
 void PostionToZeroDouble(void);
+/** @brief 给d轴注入电压，角度按周期步进进行强托。*/
+void OpenLoopSpinControl(void);
+
 
 #endif

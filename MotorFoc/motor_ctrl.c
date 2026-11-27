@@ -474,7 +474,13 @@ void MotorModeSel(void)
 		ParamIdent_Run20kHz();
 		break;
 	}
-
+    // 强拖模式 
+    case OPEN_LOOP_SPIN:
+    {
+		paramidentParis();//极对数辨识
+        // OpenLoopSpinControl();
+        break;
+    }
 	default:
 	{
 		MotorStop(); // 停机

@@ -68,7 +68,7 @@
 #define IF_FLUX /***********************/ 9  /**< IF 启动后切换磁链观测。 */
 
 #define PARAM_IDENT /*******************/ 12 /**< Rs/Ld/Lq 参数辨识。 */
-
+#define OPEN_LOOP_SPIN/*************** */ 13 /**< 开环强托>*/
 /* 参数辨识算法配置（20kHz 控制周期）。 */
 #define PARAM_IDENT_RS_POINT_NUM /******/ 3U                                /**< Rs 辨识的电流点数。 */
 #define PARAM_IDENT_RS_CURRENT_1 /******/ 1.0f                              /**< 第 1 个 Rs 辨识 d 轴电流点，单位 A。 */

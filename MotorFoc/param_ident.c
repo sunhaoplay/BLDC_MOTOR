@@ -1,6 +1,7 @@
 #include "param_ident.h"
 #include "motor_ctrl.h"
 #include "fault.h"
+#include "sen.h"
 /**
  * @file param_ident.c
  * @brief Rs、Ld、Lq 静态参数辨识模块，执行顺序为 Rs -> Ld -> Lq。
@@ -751,3 +752,88 @@ void ParamIdent_Run20kHz(void)
         break;
     }
 }
+
+
+// 把这几个变量加到全局（方便 Watch 观察）
+volatile uint16_t  PP_Start_Cnt = 0;       // 起步编码器值
+volatile uint16_t  PP_End_Cnt = 0;         // 停机后编码器值
+volatile int16_t  PP_Diff_Cnt = 0;        // 编码器差值 (End - Start)
+
+void paramidentParis(void)
+{
+    static uint8_t  pp_state = 0;          // 0=起步, 1=强拖, 2=停机
+    static uint32_t spin_timer = 0;
+    static float    current_voltage = 0.0f;
+    static float    total_elec_angle = 0.0f;
+
+    // 角度平滑累加（保持你测出来的不到2秒一圈的速度）
+    Test_Spin_Angle += 4.0f * TS; 
+    if (Test_Spin_Angle >= PIX2)
+    {
+        Test_Spin_Angle -= PIX2; 
+    }
+
+    switch (pp_state)
+    {
+        case 0: // 【阶段 0：软启动与预定位，用时 1 秒】
+            current_voltage += 0.001f; 
+            if (current_voltage > 0.8f) current_voltage = 0.8f; // 防烧管限幅
+
+            spin_timer++;
+            if (spin_timer >= 20000U) // 1 秒后
+            {
+                PP_Start_Cnt = TIM3->CNT; // 记录起点
+                total_elec_angle = 0.0f;
+                spin_timer = 0;
+                pp_state = 1;             // 进入强拖阶段
+            }
+            break;
+
+        case 1: // 【阶段 1：强拖旋转，刚好转 4 个电周期】
+            total_elec_angle += 4.0f * TS; 
+            
+            if (total_elec_angle >= (8.0f * PIX2)) // 满 4 圈电角度
+            {
+                current_voltage = 0.0f; // 电压立刻归零
+                spin_timer = 0;
+                pp_state = 2;           // 进入停机等待
+            }
+            break;
+
+            case 2: // 【阶段 2：等待转子停稳，记录终点】
+            spin_timer++;
+            if (spin_timer >= 10000U) // 停机后等 0.5 秒，彻底停稳
+            {
+                PP_End_Cnt = TIM3->CNT; // 记录终点
+                
+                // 1. 计算差值
+                PP_Diff_Cnt = (int16_t)(PP_End_Cnt - PP_Start_Cnt); 
+                
+                // 2. 取绝对值，防止逆时针转导致负数崩溃
+                int32_t abs_diff = (PP_Diff_Cnt > 0) ? PP_Diff_Cnt : -PP_Diff_Cnt;
+                
+                // 3. 防呆保护
+                if (abs_diff > 50) 
+                {
+                    g_paramIdent.result_PP = (uint16_t)((8 * 4096 + (abs_diff / 2)) / abs_diff);
+                }
+                else
+                {
+                    g_paramIdent.result_PP = 0; // 没动，报错
+                }
+
+                MotorStop();
+                Motor.CtrlMode = STOP;
+                pp_state = 0; // 恢复状态，方便下次再测
+            }
+            break;
+    }
+
+    // ============ 电压输出 ============
+    Ipark.Theta = Test_Spin_Angle;
+    Ipark.Ds = current_voltage; 
+    Ipark.Qs = 0.0f;
+    IPARK_Cale((M_IPARK)&Ipark);
+    FocSvpwm();
+}
+
